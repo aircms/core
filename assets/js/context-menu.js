@@ -61,6 +61,7 @@ class ContextMenu {
 
     if (!ContextMenu.initialized) {
       ContextMenu.initialized = true;
+      
 
       $(document).click(() => ContextMenu.hideAll());
       $('*').scroll(() => ContextMenu.hideAll());
@@ -69,9 +70,10 @@ class ContextMenu {
 
   static hideAll() {
     const contextMenu = $(`body > [${ContextMenu.cMTargetAttr}]`);
-    ContextMenu.listeners.hide.forEach((cb) => cb(this.cMEl, contextMenu));
-
-    $(`body > [${ContextMenu.cMTargetAttr}]`).remove();
+    if (contextMenu.length) {
+      ContextMenu.listeners.hide.forEach((cb) => cb(this.cMEl, contextMenu));
+      contextMenu.remove();
+    }
   }
 }
 
