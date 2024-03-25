@@ -1,0 +1,14 @@
+<?php
+
+use Air\Form\Element\ElementAbstract;
+
+/** @var ElementAbstract $element */
+$element = $this->element;
+
+if (!$element->hasError()) {
+  return;
+}
+?>
+<div class="text-danger-emphasis small mt-2">
+  <?php echo implode('<br />', $element->getErrorMessages()); ?>
+</div>

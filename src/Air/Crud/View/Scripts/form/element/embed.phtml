@@ -1,0 +1,26 @@
+<?php
+
+use Air\Form\Element\Embed;
+
+/** @var Embed $element */
+$element = $this->element;
+?>
+
+<div data-admin-form-embed-container="<?php echo $element->getName(); ?>">
+  <input type="hidden"
+         name="<?php echo $element->getName(); ?>"
+         value="<?php echo $element->getValue(); ?>">
+
+  <a class="btn btn-primary btn-block" data-admin-form-embed-add>
+    <i class="fas fa-plus me-1"></i>
+    Type URL
+  </a>
+  <div class="position-relative" data-admin-form-embed-value>
+    <?php if ($value = $element->getValue()) : ?>
+      <div data-admin-form-embed
+           data-admin-embed-removable="true"
+           data-admin-embed-id="<?php echo $element->getName(); ?>"
+           data-admin-embed-src="<?php echo $value; ?>"></div>
+    <?php endif; ?>
+  </div>
+</div>

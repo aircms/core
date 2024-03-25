@@ -1,0 +1,16 @@
+<?php
+
+use Air\Form\Element\ElementAbstract;
+
+/** @var ElementAbstract $element */
+$element = $this->element;
+?>
+<div class="d-flex align-items-start">
+  <div class="me-3 admin-form-label">
+    <?php echo $this->partial($element->getLabelTemplate()); ?>
+  </div>
+  <div class="flex-grow-1">
+    <?php echo $this->partial($element->getElementTemplate()); ?>
+    <?php echo $this->partial($element->getErrorTemplate()); ?>
+  </div>
+</div>

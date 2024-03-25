@@ -1,0 +1,21 @@
+{
+  "name": "aircms/core",
+  "authors": [
+    {
+      "name": "Edward Komissarov",
+      "email": "execrot@airkod.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-mongodb": "*",
+    "ext-curl": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Air": "src/"
+    }
+  }
+}

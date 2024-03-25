@@ -1,0 +1,198 @@
+.menu {
+  width: 400px;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+}
+
+.header {
+  background: linear-gradient(180deg, var(--mdb-body-bg) 50%, rgba(0, 0, 0, 0) 100%);
+}
+
+.header-menu {
+  background: linear-gradient(180deg, var(--mdb-tertiary-bg) 50%, rgba(0, 0, 0, 0) 100%);
+}
+
+.content {
+  min-height: calc(100vh - 130px);
+}
+
+.admin-select-searchable {
+  max-height: 400px;
+}
+
+.admin-select-image {
+  min-width: 25px;
+  min-height: 25px;
+  max-width: 25px;
+  max-height: 25px;
+}
+
+.admin-select-button .admin-select-image {
+  min-width: 15px;
+  min-height: 15px;
+  max-width: 15px;
+  max-height: 15px;
+}
+
+.admin-select-button .admin-select-button-title {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.admin-table-row-image {
+  width: 10px;
+}
+
+.admin-table-row-model .bg-image,
+.admin-table-row-image .bg-image {
+  height: 40px;
+  width: 40px;
+  min-width: 40px;
+  max-height: 40px;
+}
+
+.admin-table-row-bool {
+  width: 10px;
+}
+
+.table tbody td {
+  --mdb-table-bg: --mdb-surface-bg;
+}
+
+.dropdown-menu {
+  --mdb-dropdown-bg: var(--mdb-body-bg);
+}
+
+.admin-form-label {
+  width: 300px;
+  min-width: 300px;
+}
+
+.admin-form-image-preview {
+  width: 175px;
+  height: 175px;
+}
+
+.admin-embed-image {
+  height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px);
+}
+
+.admin-embed-image p:empty {
+  display: none;
+}
+
+.modal-dialog.modal-xxl {
+  --mdb-modal-width: 90%;
+}
+
+.admin-form-multiple-model-activity,
+.admin-form-tab-has-errors {
+  width: 10px;
+  height: 10px;
+}
+
+.admin-form-multiple-model .bg-image {
+  height: 40px;
+  width: 40px;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.admin-form-multiple-model .h6 {
+  max-width: 150px;
+  width: 150px;
+}
+
+.counter {
+  height: 40px;
+  width: 40px;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.admin-form-doc-page .page {
+  box-shadow: 0 0 20px 3px rgb(0 0 0 / 31%);
+
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-form-doc-page .page.transparent {
+  background-color: white;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAABhJREFUeJxjYGBgiMOCsYKhoHCQOYd8hQCajhJd1n1/yQAAAABJRU5ErkJggg==');
+  background-repeat: repeat;
+  background-size: auto;
+}
+
+.admin-form-doc-page .page .item {
+  border-radius: 4px !important;
+  position: absolute;
+  overflow: hidden;
+  box-shadow: 0 0 20px 3px rgb(0 0 0 / 31%);
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
+}
+
+.admin-form-doc-page .page .item .helper {
+  display: none;
+  position: absolute;
+  background-color: black;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  line-height: 12px;
+  font-size: 12px;
+  box-shadow: 0 0 20px 3px rgb(0 0 0 / 31%);
+}
+
+.admin-form-doc-page .page .item .helper.resizable {
+  bottom: 10px;
+  right: 10px;
+}
+
+.admin-form-doc-page .page .item .helper.draggable {
+  top: 10px;
+  left: 10px;
+}
+
+.admin-form-doc-page .page .item:hover .helper {
+  display: block;
+}
+
+.tox .tox-collection__item-label > * {
+  background-color: transparent !important;
+  font-size: 16px !important;
+}
+
+.color-preview {
+  width: 45px;
+  height: 45px;
+  border: 1px solid #2e2929;
+  border-radius: 4px;
+}
+
+.page-html-content {
+  padding: 10px;
+}
+
+.page-items-sorting-preview {
+  width: 20px;
+  height: 20px;
+}
+
+.page-items-sorting-item {
+  min-width: 230px;
+}
+
+.admin-nav-link .fas,
+.admin-nav-section .fas {
+  width: 16px;
+}

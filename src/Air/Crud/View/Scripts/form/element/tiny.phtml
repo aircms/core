@@ -1,0 +1,10 @@
+<?php
+
+use Air\Form\Element\Tiny;
+
+/** @var Tiny $element */
+$element = $this->element;
+?>
+
+<textarea name="<?php echo $element->getName(); ?>"
+          data-admin-form-tiny><?php echo $element->getValue(); ?></textarea>

@@ -1,0 +1,301 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Air\Model;
+
+use Air\Model\Meta\Exception\CollectionCantBeWithoutPrimary;
+use Air\Model\Meta\Exception\CollectionCantBeWithoutProperties;
+use Air\Model\Meta\Exception\CollectionNameDoesNotExists;
+use Air\Model\Meta\Exception\PropertyIsSetIncorrectly;
+use Air\Model\Meta\Exception\PropertyWasNotFound;
+use Air\Model\Meta\Property;
+use ReflectionClass;
+use ReflectionException;
+
+final class Meta
+{
+  const ID_COLLECTION = '@collection';
+  const ID_PROPERTY = '@property';
+  const ID_PRIMARY = '@primary';
+
+  /**
+   * @var array
+   */
+  private static array $cache = [];
+
+  /**
+   * @var array
+   */
+  private static array $namespaceCache = [];
+
+  /**
+   * @var string|null
+   */
+  private ?string $collection = null;
+
+  /**
+   * @var string
+   */
+  private string $primary = 'id';
+
+  /**
+   * @var Property[]
+   */
+  private array $properties = [];
+
+  /**
+   * @var Property[]
+   */
+  private array $assocProperties = [];
+
+  /**
+   * @var string|null
+   */
+  private ?string $modelClassName;
+
+  /**
+   * @param ModelAbstract $model
+   * @throws CollectionCantBeWithoutPrimary
+   * @throws CollectionCantBeWithoutProperties
+   * @throws CollectionNameDoesNotExists
+   * @throws PropertyIsSetIncorrectly
+   * @throws ReflectionException
+   */
+  public function __construct(ModelAbstract $model)
+  {
+    $this->modelClassName = get_class($model);
+    $this->parse($model);
+  }
+
+  /**
+   * @param ModelAbstract $model
+   * @return void
+   * @throws CollectionCantBeWithoutPrimary
+   * @throws CollectionCantBeWithoutProperties
+   * @throws CollectionNameDoesNotExists
+   * @throws PropertyIsSetIncorrectly
+   * @throws ReflectionException
+   */
+  private function parse(ModelAbstract $model): void
+  {
+    if (!empty(self::$cache[$this->modelClassName])) {
+
+      $cache = self::$cache[$this->modelClassName];
+
+      $this->collection = $cache['collection'];
+      $this->primary = $cache['primary'];
+      $this->properties = $cache['properties'];
+      $this->assocProperties = $cache['assocProperties'];
+
+      return;
+    }
+
+    $reflection = new ReflectionClass($model);
+
+    $docblock = $reflection->getDocComment();
+
+    $docblock = str_replace('*', '', $docblock);
+
+    $docblock = array_filter(array_map(function ($line) {
+
+      $line = trim($line);
+
+      if (strlen($line) > 0) {
+        return $line;
+      }
+    }, explode("\n", $docblock)));
+
+    $this->properties = [];
+    $this->collection = null;
+
+    foreach ($docblock as $line) {
+
+      if (str_starts_with($line, self::ID_COLLECTION)) {
+        $this->collection = ucfirst(strtolower(trim(str_replace(self::ID_COLLECTION, '', $line))));
+        continue;
+      }
+
+      if (str_starts_with($line, self::ID_PRIMARY)) {
+        $this->primary = trim(str_replace(self::ID_PRIMARY, '', $line));
+        continue;
+      }
+
+      if (str_starts_with($line, self::ID_PROPERTY)) {
+
+        $propertyLine = array_values(array_filter(explode(' ', $line)));
+
+        $property = new Property();
+
+        if (count($propertyLine) < 3) {
+          throw new PropertyIsSetIncorrectly($model, $line);
+        }
+
+        $propertyName = str_replace('$', '', $propertyLine[2]);
+        $propertyType = $propertyLine[1];
+
+        $isArray = false;
+        $propType = $propertyType;
+
+        if (str_ends_with($propType, '[]')) {
+          $propType = substr($propType, 0, -2);
+          $isArray = true;
+        }
+
+        $namespaces = $this->getUsedNamespaces($model);
+
+        if (class_exists($namespaces['namespace'] . '\\' . $propType)) {
+          $propType = $namespaces['namespace'] . '\\' . $propType;
+
+        } else {
+          foreach ($namespaces['uses'] as $namespace) {
+            if (str_contains($namespace, $propType)) {
+              $propType = $namespace;
+            }
+          }
+        }
+
+        if ($isArray) {
+          $propType .= '[]';
+        }
+
+        $propertyType = $propType;
+
+        $property->setType($propertyType);
+        $property->setName($propertyName);
+
+        $this->assocProperties[$property->getName()] = $property;
+        $this->properties[] = $property;
+      }
+    }
+
+    if (!strlen($this->collection)) {
+      throw new CollectionNameDoesNotExists($model);
+    }
+
+    if (!strlen($this->primary)) {
+      throw new CollectionCantBeWithoutPrimary($model);
+    }
+
+    if (!count($this->properties)) {
+      throw new CollectionCantBeWithoutProperties($model);
+    }
+
+    self::$cache[$this->modelClassName] = [
+      'collection' => $this->collection,
+      'properties' => $this->properties,
+      'primary' => $this->primary,
+      'assocProperties' => $this->assocProperties
+    ];
+  }
+
+  /**
+   * @param ModelAbstract $model
+   * @return array
+   * @throws ReflectionException
+   */
+  public function getUsedNamespaces(ModelAbstract $model): array
+  {
+    if (!isset(self::$namespaceCache[get_class($model)])) {
+      $usedNamespaces = [
+        'namespace' => '',
+        'uses' => []
+      ];
+
+      $r = new ReflectionClass($model::class);
+      $filePath = $r->getFileName();
+
+      foreach (explode("\n", file_get_contents($filePath)) as $line) {
+        if (str_starts_with(trim($line), 'use ')) {
+          $usedNamespaces['uses'][] = str_replace(';', '', trim(explode('use', $line)[1]));
+          continue;
+        }
+
+        if (str_starts_with(trim($line), 'namespace ')) {
+          $usedNamespaces['namespace'] = str_replace(';', '', trim(explode('namespace', $line)[1]));
+        }
+      }
+      self::$namespaceCache[get_class($model)] = $usedNamespaces;
+    }
+    return self::$namespaceCache[get_class($model)];
+  }
+
+  /**
+   * @return string
+   */
+  public function getPrimary(): string
+  {
+    return $this->primary;
+  }
+
+  /**
+   * @param string $primary
+   */
+  public function setPrimary(string $primary): void
+  {
+    $this->primary = $primary;
+  }
+
+  /**
+   * @return Property[]
+   */
+  public function getProperties(): array
+  {
+    return $this->properties;
+  }
+
+  /**
+   * @return Property[]
+   */
+  public function getAssocProperties(): array
+  {
+    return $this->assocProperties;
+  }
+
+  /**
+   * @param array $fields
+   */
+  public function setProperties(array $fields): void
+  {
+    $this->properties = $fields;
+  }
+
+  /**
+   * @param string $name
+   * @return Property
+   * @throws PropertyWasNotFound
+   */
+  public function getPropertyWithName(string $name): Property
+  {
+    if (isset($this->assocProperties[$name])) {
+      return $this->assocProperties[$name];
+    }
+
+    throw new PropertyWasNotFound($this->getCollection(), $name);
+  }
+
+  /**
+   * @return string
+   */
+  public function getCollection(): string
+  {
+    return $this->collection;
+  }
+
+  /**
+   * @param string $collection
+   */
+  public function setCollection(string $collection): void
+  {
+    $this->collection = $collection;
+  }
+
+  /**
+   * @param string $name
+   * @return bool
+   */
+  public function hasProperty(string $name): bool
+  {
+    return isset($this->assocProperties[$name]);
+  }
+}

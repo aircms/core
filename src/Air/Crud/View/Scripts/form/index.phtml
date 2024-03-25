@@ -1,0 +1,53 @@
+<?php
+
+use Air\Form\Element\Hidden;
+use Air\Form\Form;
+
+/** @var Form $form */
+$form = $this->form;
+
+$groupedElements = $form->getGroupedElements();
+
+echo $this->partial('common/header');
+?>
+
+<div class="p-3 pt-0 overflow-hidden overflow-y-auto z-1 content">
+  <div class="card">
+    <div class="card-body p-3">
+      <form data-admin-from-manage>
+        <input type="hidden" value="<?php echo $form->getReturnUrl(); ?>" name="return-url"/>
+        <input type="hidden" value="" name="quick-save"/>
+
+        <div data-admin-tab>
+
+          <div class="d-flex" data-admin-tab-nav>
+            <?php foreach ($groupedElements as $title => $group) : ?>
+              <div class="rounded-4 p-3 m-0 me-2 h6 position-relative" role="button" data-mdb-ripple-init>
+                <?php echo $title; ?>
+                <?php if ($group['hasErrors']) : ?>
+                  <div
+                    class="rounded-pill bg-danger position-absolute end-0 top-0 lh-sm admin-form-tab-has-errors"></div>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          </div>
+
+          <div class="d-flex w-100" data-admin-tab-content>
+            <?php foreach ($groupedElements as $title => $group) : ?>
+              <div class="rounded-4 py-0 px-3 mt-2 bg-body-secondary w-100">
+                <?php foreach ($group['elements'] as $element) : ?>
+                  <?php if ($element instanceof Hidden) : ?>
+                    <?php echo $element; ?>
+                  <?php else: ?>
+                    <div class="py-3"><?php echo $element; ?></div>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </div>
+            <?php endforeach; ?>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

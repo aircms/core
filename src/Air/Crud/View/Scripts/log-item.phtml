@@ -1,0 +1,17 @@
+<?php
+
+use Air\Crud\Log\ModelAbstract;
+
+/** @var ModelAbstract $log */
+$log = $this->log;
+?>
+
+<div class="w-100 overflow-hidden overflow-y-auto">
+  <span class="badge badge-<?php if ($log->level === 'info') : ?>info<?php else: ?>danger<?php endif; ?> fs-6 py-2 me-2">
+    <?php echo date('Y/m/d H:i', $log->created); ?>
+  </span>
+  <span class="badge badge-<?php if ($log->level === 'info') : ?>info<?php else: ?>danger<?php endif; ?> fs-6 py-2">
+    <?php echo $log->title; ?>
+  </span>
+  <textarea rows="10" class="form-control mt-3"><?php echo json_encode($log->data, JSON_PRETTY_PRINT); ?></textarea>
+</div>

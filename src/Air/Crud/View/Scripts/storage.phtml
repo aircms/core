@@ -1,0 +1,14 @@
+<?php
+
+/** @var array $storageConfig */
+$storageConfig = $this->storageConfig;
+
+/** @var string $theme */
+$theme = $this->theme;
+?>
+<div class="w-100 h-100 overflow-hidden">
+  <iframe class="border-0 bg-transparent"
+          src="<?php echo $storageConfig['url']; ?>?key=<?php echo $storageConfig['key']; ?>&theme=<?php echo $theme; ?>"
+          style="height: 0; width: 0;"
+          data-storage-frame></iframe>
+</div>
