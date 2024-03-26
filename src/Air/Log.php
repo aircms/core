@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air;
 
+use Air\Core\Front;
 use Air\Crud\Log\Model;
 
 class Log
@@ -36,13 +37,17 @@ class Log
    */
   public static function write(string $title, array $data = [], string $level = Model::INFO): int
   {
-    $log = new Model();
+    $logsEnabled = Front::getInstance()->getConfig()['ait']['admin']['logs']['enabled'] ?? false;
 
-    $log->title = $title;
-    $log->data = $data;
-    $log->level = $level;
-    $log->created = time();
+    if ($logsEnabled) {
+      $log = new Model();
 
-    return $log->save();
+      $log->title = $title;
+      $log->data = $data;
+      $log->level = $level;
+      $log->created = time();
+
+      return $log->save();
+    }
   }
 }
