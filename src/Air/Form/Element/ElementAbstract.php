@@ -89,19 +89,26 @@ abstract class ElementAbstract
   public ?string $placeholder = null;
 
   /**
+   * @var array
+   */
+  public array $userOptions = [];
+
+  /**
    * ElementAbstract constructor.
    *
    * @param string $name
-   * @param array $options
+   * @param array $userOptions
    */
-  public function __construct(string $name, array $options = [])
+  public function __construct(string $name, array $userOptions = [])
   {
     $this->setName($name);
-    foreach ($options as $name => $value) {
+    foreach ($userOptions as $name => $value) {
       if (is_callable([$this, 'set' . ucfirst($name)])) {
         call_user_func_array([$this, 'set' . ucfirst($name)], [$value]);
       }
     }
+
+    $this->userOptions = $userOptions;
   }
 
   /**
@@ -230,6 +237,22 @@ abstract class ElementAbstract
   public function setView(View $view): void
   {
     $this->view = $view;
+  }
+
+  /**
+   * @return array
+   */
+  public function getUserOptions(): array
+  {
+    return $this->userOptions;
+  }
+
+  /**
+   * @param array $userOptions
+   */
+  public function setUserOptions(array $userOptions): void
+  {
+    $this->userOptions = $userOptions;
   }
 
   /**

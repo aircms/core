@@ -17,12 +17,12 @@ class Checkbox extends ElementAbstract
    * Checkbox constructor.
    *
    * @param string $name
-   * @param array $options
+   * @param array $userOptions
    */
-  public function __construct(string $name, array $options = [])
+  public function __construct(string $name, array $userOptions = [])
   {
+    parent::__construct($name, $userOptions);
     $this->setAllowNull(true);
-    parent::__construct($name, $options);
   }
 
   /**
