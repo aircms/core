@@ -49,5 +49,7 @@ class Log
 
       return $log->save();
     }
+
+    return 0;
   }
 }
