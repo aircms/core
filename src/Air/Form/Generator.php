@@ -189,8 +189,8 @@ final class Generator
       case 'richContent':
         return RichContent::class;
 
-      case 'document':
-      case 'documents':
+      case 'page':
+      case 'pages':
         return Page::class;
 
       default:
