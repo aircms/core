@@ -10,6 +10,7 @@ use Air\Form\Element\Checkbox;
 use Air\Form\Element\Date;
 use Air\Form\Element\DateTime;
 use Air\Form\Element\ElementAbstract;
+use Air\Form\Element\MultiplePage;
 use Air\Form\Element\Page;
 use Air\Form\Element\Embed;
 use Air\Form\Element\Meta;
@@ -96,51 +97,73 @@ final class Generator
 
   /**
    * @param ModelAbstract|null $model
-   * @param ElementAbstract[] $elements
+   * @param ElementAbstract[] $userElements
    * @return array
    */
-  public static function defaultElement(ModelAbstract $model = null, array $elements = []): array
+  public static function defaultElement(ModelAbstract $model = null, array $userElements = []): array
   {
-    $me = [];
-    foreach ($elements as $groupElements) {
-      foreach ($groupElements as $groupElement) {
-        $me[$groupElement->getName()] = $groupElement;
+    $formElements = [
+      'General' => [
+        'enabled' => null,
+        'url' => null,
+        'date' => null,
+        'dateTime' => null,
+        'title' => null,
+        'subTitle' => null,
+        'description' => null,
+        'quote' => null,
+      ],
+      'Documents' => [
+        'page' => null,
+        'pages' => null,
+      ],
+      'Images' => [
+        'image' => null,
+        'images' => null,
+        'file' => null,
+        'files' => null,
+      ],
+      'Content' => [
+        'content' => null,
+        'richContent' => null,
+        'embed' => null,
+      ],
+      'META settings' => [
+        'meta' => null,
+      ],
+    ];
+
+    $count = 0;
+
+    foreach ($userElements as $userGroupName => $userGroupElements) {
+      foreach ($userGroupElements as $userGroupElement) {
+        $userGroupElementName = $userGroupElement->getname();
+
+        $formElements[$userGroupName] = $formElements[$userGroupName] ?? [];
+
+        if (!isset($formElements[$userGroupName][$userGroupElementName])) {
+          $formElements[$userGroupName][$userGroupElementName] = $userGroupElement;
+        }
+
+        foreach ($formElements as $formGroupName => $formGroupElements) {
+          if ($formGroupName !== $userGroupName) {
+            unset($formElements[$formGroupName][$userGroupElementName]);
+          }
+          $count++;
+        }
       }
     }
 
-    return array_merge_recursive(
-      array_filter([
-        'General' => array_filter([
-          self::addElement('enabled', $model, $me),
-          self::addElement('url', $model, $me),
-          self::addElement('date', $model, $me),
-          self::addElement('dateTime', $model, $me),
-          self::addElement('title', $model, $me),
-          self::addElement('subTitle', $model, $me),
-          self::addElement('description', $model, $me),
-          self::addElement('quote', $model, $me),
-        ]),
-        'Documents' => array_filter([
-          self::addElement('page', $model, $me),
-          self::addElement('pages', $model, $me),
-        ]),
-        'Images' => array_filter([
-          self::addElement('image', $model, $me),
-          self::addElement('images', $model, $me),
-          self::addElement('file', $model, $me),
-          self::addElement('files', $model, $me),
-        ]),
-        'Content' => array_filter([
-          self::addElement('content', $model, $me),
-          self::addElement('richContent', $model, $me),
-          self::addElement('embed', $model, $me),
-        ]),
-        'META settings' => array_filter([
-          self::addElement('meta', $model, $me),
-        ]),
-      ]),
-      $elements
-    );
+    foreach ($formElements as $groupName => $elements) {
+      foreach ($elements as $elementName => $element) {
+        if ($completedElement = self::addElement($elementName, $model, $element)) {
+          $formElements[$groupName][$elementName] = $completedElement;
+        }
+      }
+      $formElements[$groupName] = array_values(array_filter($formElements[$groupName]));
+    }
+
+    return array_filter($formElements);
   }
 
   /**
@@ -190,8 +213,10 @@ final class Generator
         return RichContent::class;
 
       case 'page':
-      case 'pages':
         return Page::class;
+
+      case 'pages':
+        return MultiplePage::class;
 
       default:
         return null;
@@ -201,10 +226,13 @@ final class Generator
   /**
    * @param string $name
    * @param ModelAbstract $model
-   * @param array $elements
+   * @param ElementAbstract|null $userElement
    * @return ElementAbstract|null
    */
-  private static function addElement(string $name, ModelAbstract $model, array $elements = []): ?ElementAbstract
+  private static function addElement(
+    string          $name, ModelAbstract $model,
+    ElementAbstract $userElement = null
+  ): ?ElementAbstract
   {
     $hasProperty = $model->getMeta()->hasProperty($name);
     $elementClassName = self::getElementClassName($name);
@@ -217,9 +245,9 @@ final class Generator
     $elementOptions = call_user_func([self::class, $name]);
     $elementOptions['allowNull'] = true;
 
-    if (isset($elements[$name])) {
-      $elementClassName = $elements[$name]::class;
-      $elementOptions = array_merge($elementOptions, $elements[$name]->getUserOptions());
+    if ($userElement) {
+      $elementClassName = $userElement::class;
+      $elementOptions = array_merge($elementOptions, $userElement->getUserOptions());
     }
 
     return new $elementClassName($name, $elementOptions);
@@ -412,7 +440,6 @@ final class Generator
   {
     return [
       'label' => 'Document',
-      'isMultiple' => false,
       'description' => 'Pdf driven similar block.<br>You can resize the canvas and add elements such as:<br><ul><li>' .
         'Image</li><li>Video</li><li>Document</li><li>Rich text</li><li>Embed</li></ul>'
     ];
@@ -425,7 +452,6 @@ final class Generator
   {
     return [...self::page(), ...[
       'label' => 'Documents',
-      'isMultiple' => true,
     ]];
   }
 }
