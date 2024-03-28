@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Model\Driver;
 
+use Air\Type\Meta;
 use ArrayAccess;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Model\Driver\Exception\PropertyHasDifferentType;
@@ -254,7 +255,7 @@ abstract class DocumentAbstract implements ArrayAccess
       if (is_array($value)) {
 
         $typeClassName = $property->getType();
-        $instance = new $typeClassName($value);
+        $instance = new $typeClassName($value, $this->getModel());
 
         if ($toArray) {
           return (array)$instance;
@@ -292,8 +293,8 @@ abstract class DocumentAbstract implements ArrayAccess
         $objectsA = [];
 
         foreach ($value as $item) {
-          $objects[] = new $typeClassName($item);
           $objectsA[] = $item;
+          $objects[] = new $typeClassName($item, $this->getModel());
         }
 
         if ($toArray) {
