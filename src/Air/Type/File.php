@@ -119,7 +119,7 @@ class File extends TypeAbstract
    */
   public function getThumbnail(): string
   {
-    return Front::getInstance()->getConfig()['air']['storage']['url'] . '/' . $this->thumbnail;
+    return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->thumbnail;
   }
 
   /**
@@ -128,7 +128,7 @@ class File extends TypeAbstract
    */
   public function getSrc(): string
   {
-    return Front::getInstance()->getConfig()['air']['storage']['url'] . '/' . $this->src;
+    return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->src;
   }
 
   /**
