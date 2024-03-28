@@ -5,18 +5,23 @@ declare(strict_types=1);
 namespace Air\Core;
 
 use Error;
-use Air\Core\Exception\ActionMethodIsReserved;
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Core\Exception\Stop;
-use Air\Crud\Login;
-use Air\Crud\Storage;
-use Air\Crud\System;
-use Air\Model\ModelAbstract;
-use Air\View\View;
+use Throwable;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use Throwable;
+
+use Air\Crud\Controller\Admin;
+use Air\Crud\Controller\Font;
+use Air\Crud\Controller\History;
+use Air\Crud\Controller\Log;
+use Air\Crud\Controller\Login;
+use Air\Crud\Controller\Storage;
+use Air\Crud\Controller\System;
+use Air\Core\Exception\ActionMethodIsReserved;
+use Air\Core\Exception\ClassWasNotFound;
+use Air\Core\Exception\Stop;
+use Air\Model\ModelAbstract;
+use Air\View\View;
 
 final class Front
 {
@@ -285,7 +290,6 @@ final class Front
       $modules = null;
 
       if ($this->config['air']['modules'] ?? false) {
-
         $modules = implode('/', array_slice(explode('\\', $this->config['air']['modules']), 2));
 
         $viewPath = realpath(implode('/', [
@@ -294,8 +298,8 @@ final class Front
           ucfirst($this->router->getModule()),
           'View'
         ]));
-      } else {
 
+      } else {
         $viewPath = realpath(implode('/', [
           $this->config['air']['loader']['path'],
           'View'
@@ -303,12 +307,11 @@ final class Front
       }
 
       if ($viewPath) {
-
         $this->_view->setPath($viewPath);
-
         $this->_view->setLayoutEnabled(true);
         $this->_view->setLayoutTemplate('index');
         $this->_view->setScript($this->router->getController() . '/' . $this->router->getAction());
+
       } else {
         $this->_view->setAutoRender(false);
         $this->_view->setLayoutEnabled(false);
@@ -336,6 +339,7 @@ final class Front
       if ($exception && is_subclass_of($controller, '\\Air\\Core\\ErrorController')) {
         $controller->setException($exception);
         $controller->setExceptionEnabled($this->config['air']['exception'] ?? false);
+
       } else if ($exception) {
         throw $exception;
       }
@@ -465,16 +469,16 @@ final class Front
       return System::class;
 
     } else if (($this->getConfig()['air']['admin']['manage'] ?? false) == $controller) {
-      return \Air\Crud\Admin\Controller::class;
+      return Admin::class;
 
     } else if (($this->getConfig()['air']['admin']['history'] ?? false) == $controller) {
-      return \Air\Crud\AdminHistory\Controller::class;
+      return History::class;
 
     } else if (($this->getConfig()['air']['admin']['fonts'] ?? false) == $controller) {
-      return \Air\Crud\Font\Controller::class;
+      return Font::class;
 
     } else if (($this->getConfig()['air']['logs']['route'] ?? false) == $controller) {
-      return \Air\Crud\Log\Controller::class;
+      return Log::class;
     }
 
     if ($this->config['air']['modules'] ?? false) {

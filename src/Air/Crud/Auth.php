@@ -57,6 +57,7 @@ class Auth
   /**
    * @param $identity
    * @return bool
+   * @throws ClassWasNotFound
    */
   public function set($identity): bool
   {
@@ -74,6 +75,7 @@ class Auth
 
   /**
    * @return bool
+   * @throws ClassWasNotFound
    */
   public function remove(): bool
   {

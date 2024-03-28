@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Air\Crud\Admin;
+namespace Air\Crud\Controller;
 
 use Air\Form\Element\Checkbox;
 use Air\Form\Form;
@@ -22,7 +22,7 @@ use Air\Form\Generator;
  * @mod-header {"title": "Login", "by": "login"}
  * @mod-header {"title": "Activity", "type": "bool", "by": "enabled"}
  */
-class Controller extends Multiple
+class Admin extends Multiple
 {
   /**
    * @return string[]
@@ -37,7 +37,7 @@ class Controller extends Multiple
    */
   public function getModelClassName(): string
   {
-    return ModelAbstract::class;
+    return \Air\Crud\Model\Admin::class;
   }
 
   /**
@@ -74,7 +74,7 @@ class Controller extends Multiple
    */
   public function manage(string $id = null): void
   {
-    $model = ModelAbstract::fetchObject([
+    $model = \Air\Crud\Model\Admin::fetchObject([
       'id' => $this->getRequest()->getParam('id')
     ]);
 

@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Crud\Model\History;
 use Exception;
+use ReflectionClass;
+use MongoDB\BSON\Regex;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Exception\DomainMustBeProvided;
 use Air\Core\Exception\RouterVarMustBeProvided;
 use Air\Core\Front;
-use Air\Crud\AdminHistory\Controller;
 use Air\Crud\Auth;
-use Air\Crud\AuthCrud;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Map;
@@ -22,8 +23,6 @@ use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\ModelAbstract;
 use Air\Model\ModelInterface;
 use Air\Model\Paginator;
-use MongoDB\BSON\Regex;
-use ReflectionClass;
 
 abstract class Multiple extends AuthCrud
 {
@@ -423,6 +422,7 @@ abstract class Multiple extends AuthCrud
    * @throws ConfigWasNotProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws Exception
    */
   protected function adminLog(
     string $type,
@@ -433,10 +433,10 @@ abstract class Multiple extends AuthCrud
   ): void
   {
     if (Front::getInstance()->getConfig()['air']['admin']['history'] ?? false) {
-      if ($this instanceof Controller) {
+      if ($this instanceof \Air\Crud\Controller\History) {
         return;
       }
-      $section = $section ?? $this->title ?? null;
+      $section = $section ?? $this->getTitle() ?? null;
       if (!$section) {
         $section = strtolower($this->getRouter()->getController());
         foreach (Front::getInstance()->getConfig()['air']['admin']['menu'] ?? [] as $menu) {
@@ -450,7 +450,7 @@ abstract class Multiple extends AuthCrud
         }
       }
 
-      $history = new \Air\Crud\AdminHistory\ModelAbstract();
+      $history = new History();
       $data = [
         'dateTime' => time(),
         'admin' => Auth::getInstance()->get(),
@@ -674,7 +674,7 @@ abstract class Multiple extends AuthCrud
    */
   public function index()
   {
-    $this->adminLog(\Air\Crud\AdminHistory\ModelAbstract::TYPE_READ_TABLE);
+    $this->adminLog(History::TYPE_READ_TABLE);
 
     $this->getView()->setVars([
       'icon' => $this->getAdminMenuItem()['icon'] ?? null,
@@ -796,8 +796,8 @@ abstract class Multiple extends AuthCrud
 
         $this->adminLog(
           $model->id
-            ? \Air\Crud\AdminHistory\ModelAbstract::TYPE_WRITE_ENTITY
-            : \Air\Crud\AdminHistory\ModelAbstract::TYPE_CREATE_ENTITY,
+            ? History::TYPE_WRITE_ENTITY
+            : History::TYPE_CREATE_ENTITY,
           isset($oldData['title']) ? [$oldData['title']] : $oldData,
           null,
           $oldData,
@@ -847,10 +847,7 @@ abstract class Multiple extends AuthCrud
       } catch (\Throwable) {
         $data = ['id' => $model->id];
       }
-      $this->adminLog(
-        \Air\Crud\AdminHistory\ModelAbstract::TYPE_READ_ENTITY,
-        $data,
-      );
+      $this->adminLog(History::TYPE_READ_ENTITY, $data,);
     }
 
     $returnUrl = $this->getParam('returnUrl');

@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Air\Crud;
+namespace Air\Crud\Controller;
 
+use Air\Crud\Auth;
+use Air\Crud\Model\Admin;
 use Exception;
 use Air\Core\Controller;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Exception\DomainMustBeProvided;
 use Air\Core\Exception\RouterVarMustBeProvided;
 use Air\Core\Front;
-use Air\Crud\Admin\ModelAbstract;
 use Air\Filter\Trim;
 use Air\Model\Exception\CallUndefinedMethod;
 use Air\Model\Exception\ConfigWasNotProvided;
@@ -46,7 +47,7 @@ class Login extends Controller
 
       if (($config['source'] ?? false) === 'database') {
 
-        $admin = ModelAbstract::one([
+        $admin = Admin::one([
           'login' => $login,
           'password' => md5($password)
         ]);
@@ -68,13 +69,14 @@ class Login extends Controller
     }
 
     $this->getView()->assign('title', Front::getInstance()->getConfig()['air']['admin']['title']);
-    $this->getView()->setPath(__DIR__ . '/View');
+    $this->getView()->setPath(__DIR__ . '/../View');
 
     return $this->getView()->render('login');
   }
 
   /**
    * @return void
+   * @throws ClassWasNotFound
    * @throws DomainMustBeProvided
    * @throws RouterVarMustBeProvided
    */

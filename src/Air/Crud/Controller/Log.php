@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Air\Crud\Log;
-
-use Air\Crud\Controller\Multiple;
+namespace Air\Crud\Controller;
 
 /**
  * @mod-title Logs
@@ -14,14 +12,14 @@ use Air\Crud\Controller\Multiple;
  * @mod-filter {"type": "search", "by": ["title", "all"]}
  * @mod-filter {"type": "dateTime", "by": "created"}
  */
-class Controller extends Multiple
+class Log extends Multiple
 {
   /**
    * @return string
    */
   public function getModelClassName(): string
   {
-    return Model::class;
+    return \Air\Crud\Model\Log::class;
   }
 
   /**
@@ -40,7 +38,7 @@ class Controller extends Multiple
     return [
       'title' => [
         'title' => 'Record',
-        'source' => function (Model $log) {
+        'source' => function (\Air\Crud\Model\Log $log) {
           return $this->getView()->render('log-item', ['log' => $log]);
         },
       ],

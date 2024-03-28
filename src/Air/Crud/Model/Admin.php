@@ -1,6 +1,10 @@
 <?php
 
-namespace Air\Crud\Admin;
+declare(strict_types=1);
+
+namespace Air\Crud\Model;
+
+use Air\Model\ModelAbstract;
 
 /**
  * @collection AirAdmin
@@ -11,6 +15,6 @@ namespace Air\Crud\Admin;
  * @property string $password
  * @property boolean $enabled
  */
-class ModelAbstract extends \Air\Model\ModelAbstract
+class Admin extends ModelAbstract
 {
 }

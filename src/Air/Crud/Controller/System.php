@@ -2,14 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Air\Crud;
+namespace Air\Crud\Controller;
 
-use Air\Crud\Controller\Multiple;
+use Throwable;
 
-/**
- * Class System
- * @package Air\Crud
- */
 class System extends Multiple
 {
   /**
@@ -27,8 +23,9 @@ class System extends Multiple
         'cpuCoreCount' => \Air\System::cpuCoreCount(),
         'cpuName' => \Air\System::cpuName(),
       ]);
-    } catch (\Throwable) {
+    } catch (Throwable) {
     }
+
     $this->getView()->setScript('system');
   }
 }

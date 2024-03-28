@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Air\Crud\Font;
+namespace Air\Crud\Controller;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
-use Air\Crud\Controller\Multiple;
 use Air\Form\Element\Storage;
 use Air\Form\Form;
 use Air\Form\Generator;
@@ -23,14 +22,14 @@ use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
  * @mod-header {"title": "Title", "by": "title"}
  * @mod-header {"title": "Activity", "type": "bool", "by": "enabled"}
  */
-class Controller extends Multiple
+class Font extends Multiple
 {
   /**
    * @return string
    */
   public function getModelClassName(): string
   {
-    return Model::class;
+    return \Air\Crud\Model\Font::class;
   }
 
   /**
@@ -51,7 +50,7 @@ class Controller extends Multiple
   }
 
   /**
-   * @param Model $model
+   * @param \Air\Crud\AddOn\Font\Model\Font $model
    * @return Form
    */
   protected function getForm($model = null): Form
@@ -108,11 +107,16 @@ class Controller extends Multiple
    */
   public function css(): string
   {
+    $this->getView()->setPath(realpath(__DIR__ . '/../View'));
     $this->getResponse()->setHeader('Content-type', 'text/css');
-    return $this->getView()->render('fonts', ['fonts' => Model::all()]);
+    return $this->getView()->render('fonts', [
+      'fonts' => \Air\Crud\Model\Font::all()
+    ]);
   }
 
   /**
+   * That kind of response need to TinyMce
+   *
    * @return string
    * @throws CallUndefinedMethod
    * @throws ClassWasNotFound
@@ -122,11 +126,12 @@ class Controller extends Multiple
    */
   public function fonts(): string
   {
+    $this->getView()->setLayoutEnabled(false);
+
     $fonts = [];
-    foreach (Model::all() as $font) {
+    foreach (\Air\Crud\Model\Font::all() as $font) {
       $fonts[] = $font->title . '=' . $font->title;
     }
-
     return implode('; ', $fonts);
   }
 }

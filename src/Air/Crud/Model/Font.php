@@ -1,6 +1,8 @@
 <?php
 
-namespace Air\Crud\Font;
+declare(strict_types=1);
+
+namespace Air\Crud\Model;
 
 use Air\Model\ModelAbstract;
 use Air\Type\File;
@@ -21,6 +23,6 @@ use Air\Type\File;
  *
  * @property boolean $enabled
  */
-class Model extends ModelAbstract
+class Font extends ModelAbstract
 {
 }

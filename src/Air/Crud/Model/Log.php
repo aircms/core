@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Air\Crud\Log;
+namespace Air\Crud\Model;
 
 use Air\Model\ModelAbstract;
 
@@ -16,8 +16,8 @@ use Air\Model\ModelAbstract;
  * @property string $level
  * @property integer $created
  */
-class Model extends ModelAbstract
+class Log extends ModelAbstract
 {
-  const INFO = 'info';
-  const ERROR = 'error';
+  const string INFO = 'info';
+  const string ERROR = 'error';
 }

@@ -69,6 +69,10 @@
   --mdb-dropdown-bg: var(--mdb-body-bg);
 }
 
+ul.dropdown-menu > li > a > .fas {
+  width: 16px;
+}
+
 .admin-form-label {
   width: 300px;
   min-width: 300px;
