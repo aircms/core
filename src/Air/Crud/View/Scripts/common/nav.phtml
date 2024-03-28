@@ -3,41 +3,56 @@
 use Air\Cookie;
 use Air\Core\Front;
 
+/**
+ * @param mixed $value
+ * @param mixed $default
+ * @return mixed
+ */
+$value = function (mixed $value, mixed $default = '') {
+  return $value ?: $default;
+};
+
+$route = function (?string $controller = null) {
+  return $controller ? $this->uri(['controller' => $controller]) : null;
+};
+
+$config = Front::getInstance()->getConfig()['air'];
+
 /** @var string $title */
-$title = Front::getInstance()->getConfig()['air']['admin']['title'];
+$title = $value($config['admin']['title'] ?? null, 'AirCms');
 
 /** @var array $menu */
-$menu = Front::getInstance()->getConfig()['air']['admin']['menu'];
+$menu = $value($config['admin']['menu'] ?? null, []);
 
 /** @var string $logo */
-$logo = Front::getInstance()->getConfig()['air']['admin']['logo'];
+$logo = $value($config['admin']['logo'] ?? null);
 
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
 /** @var string $logout */
-$logout = $this->uri([
-  'controller' => Front::getInstance()->getConfig()['air']['admin']['auth']['route'],
-  'action' => 'logout'
-]);
+$logout = $this->uri(['controller' => $config['admin']['auth']['route'], 'action' => 'logout']);
 
 /** @var string $storage */
-$storage = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['storage']['route']]);
+$storage = $route($config['storage']['route'] ?? null);
 
 /** @var string $system */
-$system = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['admin']['system']]);
+$system = $route($config['admin']['system'] ?? null);
 
 /** @var string $logs */
-$logs = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['logs']['route']]);
+$logs = $route($config['logs']['route'] ?? null);
 
 /** @var string $administrators */
-$administrators = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['admin']['manage']]);
+$administrators = $route($config['admin']['manage'] ?? null);
 
 /** @var string $administratorsHistory */
-$administratorsHistory = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['admin']['history']]);
+$administratorsHistory = $route($config['admin']['history'] ?? null);
 
 /** @var string $fonts */
-$fonts = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['admin']['fonts']]);
+$fonts = $route($config['admin']['fonts'] ?? null);
+
+/** @var string $codes */
+$codes = $route($config['admin']['codes'] ?? null);
 ?>
 
 <div class="d-flex flex-column h-100">
@@ -91,38 +106,6 @@ $fonts = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['a
 
       <?php endforeach; ?>
     </div>
-
-    <div class="p-3 pt-0 overflow-hidden overflow-y-auto d-none">
-      <?php foreach ($menu as $subMenu) : ?>
-        <div class="nav-container mb-2">
-          <div
-            class="rounded-4 p-3 d-flex align-items-center justify-content-between bg-body-secondary transition-1"
-            role="button"
-            data-mdb-ripple-init
-          >
-            <h6 class="m-0 p-0 w-100">
-              <i class="fas fa-<?php echo $subMenu['icon']; ?> me-1"></i>
-              <?php echo $subMenu['title']; ?>
-            </h6>
-            <div class="d-flex h-100 w-25 align-items-center justify-content-end">
-              <i class="fas fa-chevron-up lh-1 transition-1" data-nav-icon></i>
-            </div>
-          </div>
-          <div class="transition-2 mt-2 overflow-hidden"
-               style="max-height: 0"
-               data-nav-submenu>
-            <?php foreach ($subMenu['items'] as $subMenuItems) : ?>
-              <a class="btn btn-link btn-block text-start btn-lg text-capitalize m-0"
-                 href="<?php echo $this->uri($subMenuItems['url'], [], true); ?>"
-                 data-mdb-ripple-init>
-                <i class="fas fa-<?php echo $subMenuItems['icon']; ?> me-1"></i>
-                <?php echo $subMenuItems['title']; ?>
-              </a>
-            <?php endforeach; ?>
-          </div>
-        </div>
-      <?php endforeach; ?>
-    </div>
   </div>
 
   <div class="card">
@@ -146,39 +129,57 @@ $fonts = $this->uri(['controller' => Front::getInstance()->getConfig()['air']['a
             </a>
           </li>
           <li class="dropdown-divider mt-0 pt-0"></li>
-          <li>
-            <a class="dropdown-item" href="<?php echo $storage; ?>">
-              <i class="fas fa-folder me-1"></i> File storage
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="<?php echo $fonts; ?>">
-              <i class="fas fa-font me-1"></i> Fonts
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="<?php echo $system; ?>">
-              <i class="fas fa-pie-chart me-1"></i> System monitor
-            </a>
-          </li>
-          <li class="dropdown-divider"></li>
-          <li>
-            <a class="dropdown-item" href="<?php echo $logs; ?>">
-              <i class="fas fa-list me-1"></i> Logs
-            </a>
-          </li>
-          <li class="dropdown-divider"></li>
-          <li>
-            <a class="dropdown-item" href="<?php echo $administrators; ?>">
-              <i class="fas fa-users me-1"></i> Administrators
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="<?php echo $administratorsHistory; ?>">
-              <i class="fas fa-clock me-1"></i> Administrator history
-            </a>
-          </li>
-          <li class="dropdown-divider"></li>
+          <?php if ($storage) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $storage; ?>">
+                <i class="fas fa-folder me-1"></i> File storage
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($fonts) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $fonts; ?>">
+                <i class="fas fa-font me-1"></i> Fonts
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($system) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $system; ?>">
+                <i class="fas fa-pie-chart me-1"></i> System monitor
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($logs) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $logs; ?>">
+                <i class="fas fa-list me-1"></i> Logs
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($administrators) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $administrators; ?>">
+                <i class="fas fa-users me-1"></i> Administrators
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $administratorsHistory; ?>">
+                <i class="fas fa-clock me-1"></i> Administrator history
+              </a>
+            </li>
+            <li class="dropdown-divider"></li>
+          <?php endif; ?>
+          <?php if ($codes) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $codes; ?>">
+                <i class="fas fa-code me-1"></i> Codes
+              </a>
+            </li>
+            <li class="dropdown-divider"></li>
+          <?php endif; ?>
           <li>
             <a class="dropdown-item text-danger-emphasis"
                href="<?php echo $logout; ?>"

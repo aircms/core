@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Core;
 
+use Air\Crud\Controller\Codes;
 use Error;
 use Throwable;
 use ReflectionClass;
@@ -459,26 +460,29 @@ final class Front
     $module = $router->getModule();
     $controller = $router->getController();
 
-    if (($this->getConfig()['air']['storage']['route'] ?? false) == $controller) {
+    if (($this->getConfig()['air']['storage']['route'] ?? false) === $controller) {
       return Storage::class;
 
-    } else if (($this->getConfig()['air']['admin']['auth']['route'] ?? false) == $controller) {
+    } else if (($this->getConfig()['air']['admin']['auth']['route'] ?? false) === $controller) {
       return Login::class;
 
-    } else if (($this->getConfig()['air']['admin']['system'] ?? false) == $controller) {
+    } else if (($this->getConfig()['air']['admin']['system'] ?? false) === $controller) {
       return System::class;
 
-    } else if (($this->getConfig()['air']['admin']['manage'] ?? false) == $controller) {
+    } else if (($this->getConfig()['air']['admin']['manage'] ?? false) === $controller) {
       return Admin::class;
 
-    } else if (($this->getConfig()['air']['admin']['history'] ?? false) == $controller) {
+    } else if (($this->getConfig()['air']['admin']['history'] ?? false) === $controller) {
       return History::class;
 
-    } else if (($this->getConfig()['air']['admin']['fonts'] ?? false) == $controller) {
+    } else if (($this->getConfig()['air']['admin']['fonts'] ?? false) === $controller) {
       return Font::class;
 
-    } else if (($this->getConfig()['air']['logs']['route'] ?? false) == $controller) {
+    } else if (($this->getConfig()['air']['logs']['route'] ?? false) === $controller) {
       return Log::class;
+
+    } else if (($this->getConfig()['air']['admin']['codes'] ?? false) === $controller) {
+      return Codes::class;
     }
 
     if ($this->config['air']['modules'] ?? false) {
