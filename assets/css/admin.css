@@ -196,3 +196,13 @@
 .admin-nav-section .fas {
   width: 16px;
 }
+
+.disable-overlay {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  z-index: 1;
+  cursor: not-allowed;
+}
