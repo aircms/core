@@ -165,7 +165,7 @@ class Meta
       if (!$data['image']) {
         $data['image'] = $this->getOgImage();
       }
-
+      $data['keywords'] = '';
       $data['ogTitle'] = $data['title'];
       $data['ogDescription'] = $data['description'];
 
