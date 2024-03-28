@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
+use Air\Model\ModelAbstract;
+
 class Meta
 {
   /**
@@ -37,18 +39,39 @@ class Meta
   public ?File $ogImage = null;
 
   /**
-   * @param array|null $quote
+   * @var bool
    */
-  public function __construct(?array $quote = [])
+  public bool $useModelData = false;
+
+  /**
+   * @var string
+   */
+  public string $modelClassName = '';
+
+  /**
+   * @var string
+   */
+  public string $modelObjectId = '';
+
+  /**
+   * @param array|null $meta
+   * @param ModelAbstract|null $model
+   */
+  public function __construct(?array $meta = [], ?ModelAbstract $model = null)
   {
     foreach (array_keys(get_class_vars(self::class)) as $var) {
-      if (!empty($quote[$var])) {
+      if (!empty($meta[$var])) {
         if ($var === 'ogImage') {
-          $this->{$var} = new File((array)$quote[$var]);
+          $this->{$var} = new File((array)$meta[$var]);
         } else {
-          $this->{$var} = $quote[$var];
+          $this->{$var} = $meta[$var];
         }
       }
+    }
+
+    if ($model) {
+      $this->modelClassName = $model::class;
+      $this->modelObjectId = $model->{$model->getMeta()->getPrimary()};
     }
   }
 
@@ -98,5 +121,177 @@ class Meta
   public function getOgImage(): ?File
   {
     return $this->ogImage;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isUseModelData(): bool
+  {
+    return $this->useModelData;
+  }
+
+  /**
+   * @return string
+   */
+  public function getModelClassName(): string
+  {
+    return $this->modelClassName;
+  }
+
+  /**
+   * @return string
+   */
+  public function getModelObjectId(): string
+  {
+    return $this->modelObjectId;
+  }
+
+  /**
+   * @return string
+   */
+  public function __toString(): string
+  {
+    $objectData = $this->getObjectData();
+
+    if ($this->isUseModelData()) {
+      $data = $objectData;
+      if (!$data['title']) {
+        $data['title'] = $this->getTitle();
+      }
+      if (!$data['description']) {
+        $data['description'] = $this->getDescription();
+      }
+      if (!$data['image']) {
+        $data['image'] = $this->getOgImage();
+      }
+
+      $data['ogTitle'] = $data['title'];
+      $data['ogDescription'] = $data['description'];
+
+    } else {
+      $data = [
+        'title' => $this->getTitle(),
+        'description' => $this->getDescription(),
+        'keywords' => '',
+        'ogTitle' => $this->getOgTitle(),
+        'ogDescription' => $this->getOgDescription(),
+        'image' => $this->getOgImage(),
+      ];
+
+      if (!$data['title']) {
+        $data['title'] = $objectData['title'];
+      }
+      if (!$data['description']) {
+        $data['description'] = $objectData['description'];
+      }
+      if (!$data['image']) {
+        $data['image'] = $objectData['image'];
+      }
+      if (!$data['ogTitle']) {
+        $data['ogTitle'] = $data['title'];
+      }
+      if (!$data['ogDescription']) {
+        $data['ogDescription'] = $data['description'];
+      }
+    }
+
+    $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'];
+    $canonical = $siteUrl . '/';
+    $ogUrl = $siteUrl . explode('?', $_SERVER['REQUEST_URI'])[0];
+
+    $ogType = 'website';
+    $ogLocale = 'en_US';
+
+    $tags = [
+      // Default Meta tags
+      "<title>{$data['title']}</title>",
+      "<meta name=\"description\" content=\"{$data['description']}\">",
+      "<meta name=\"keywords\" content=\"{$data['keywords']}\">",
+      "<link rel=\"canonical\" href=\"$canonical\">",
+
+      // OG Meta tags
+      "<meta name=\"og:type\" content=\"website\">",
+      "<meta name=\"og:url\" content=\"$ogUrl\">",
+      "<meta name=\"og:title\" content=\"{$data['ogTitle']}\" itemprop=\"title name\">",
+      "<meta name=\"og:description\" content=\"{$data['ogDescription']}\" itemprop=\"description\">",
+    ];
+
+    if ($data['image']) {
+      $tags[] = "<meta property=\"og:image\" content=\"{$data['image']->getSrc()}\" itemprop=\"image primaryImageOfPage\">";
+    }
+
+    return implode("\n", $tags);
+  }
+
+  /**
+   * @return array{title: string|null, description: string|null, image: File|null}
+   */
+  public function getObjectData(): array
+  {
+    /** @var ModelAbstract $model */
+    $model = $this->modelClassName;
+    $object = null;
+
+    if ($model) {
+      $object = $model::fetchOne([
+        (new $model)->getMeta()->getPrimary() => $this->modelObjectId
+      ]);
+    }
+
+    $defaults = [
+      'title' => null,
+      'description' => null,
+      'image' => null
+    ];
+
+    if ($object) {
+      if ($object->getMeta()->hasProperty('title')) {
+        $defaults['title'] = mb_substr($object->title, 0, 60);
+
+      } elseif ($object->getMeta()->hasProperty('subTitle')) {
+        $defaults['title'] = mb_substr($object->subTitle, 0, 60);
+      }
+
+      if ($object->getMeta()->hasProperty('description')) {
+        $defaults['description'] = mb_substr($object->description, 0, 60);
+
+      } elseif ($object->getMeta()->hasProperty('content')) {
+        $defaults['description'] = mb_substr(strip_tags($object->content), 0, 60);
+
+      } elseif ($object->getMeta()->hasProperty('richContent')) {
+        /** @var RichContent $richContent */
+        foreach (($object->richContent ?? []) as $richContent) {
+          if ($richContent->getType() === RichContent::TYPE_HTML) {
+            $defaults['description'] = strip_tags($richContent->getType());
+
+          } elseif ($richContent->getType() === RichContent::TYPE_TEXT) {
+            $defaults['description'] = $richContent->getValue();
+
+          } elseif ($richContent->getType() === RichContent::TYPE_QUOTE) {
+            $defaults['description'] = $richContent->getValue()['quote'] . '. Author: ' . $richContent->getValue()['author'];
+          }
+        }
+        $defaults['description'] = mb_substr($defaults['description'], 0, 60);
+      }
+
+      /**
+       * TODO: Maybe implement OpenAI for generating keywords
+       * Or implement OpenAi for all meta stuff
+       */
+      $keywords = '';
+
+      $defaults['image'] = null;
+
+      if ($object->getMeta()->hasProperty('image')
+        && $object->getMeta()->getPropertyWithName('image')->getType() === File::class) {
+        $defaults['image'] = $object->image;
+
+      } elseif ($object->getMeta()->hasProperty('images')
+        && $object->getMeta()->getPropertyWithName('images')->getType() === File::class . '[]') {
+        $defaults['image'] = $object->images[0] ?? null;
+      }
+    }
+    return $defaults;
   }
 }

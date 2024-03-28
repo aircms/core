@@ -22,17 +22,7 @@ class Meta extends ElementAbstract
       $value['ogImage'] = json_decode($value['ogImage'], true);
     }
 
-    if (
-      !$value ||
-      !strlen($value['title']) ||
-      !strlen($value['description']) ||
-      !strlen($value['keywords']) ||
-      !strlen($value['ogTitle']) ||
-      !strlen($value['ogDescription']) ||
-      !$value['ogImage']
-    ) {
-      return null;
-    }
+    $value['useModelData'] = isset($value['useModelData']) && $value['useModelData'];
 
     return new \Air\Type\Meta($value);
   }
