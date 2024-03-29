@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Air;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
-use Air\Crud\Log\Model;
 
 class Log
 {
@@ -13,6 +13,11 @@ class Log
    * @param string $title
    * @param array $data
    * @return int
+   * @throws ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
    */
   public static function info(string $title, array $data = []): int
   {
@@ -23,10 +28,15 @@ class Log
    * @param string $title
    * @param array $data
    * @return int
+   * @throws ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
    */
   public static function error(string $title, array $data = []): int
   {
-    return self::write($title, $data, Model::ERROR);
+    return self::write($title, $data, Crud\Model\Log::ERROR);
   }
 
   /**
@@ -34,13 +44,18 @@ class Log
    * @param array $data
    * @param string $level
    * @return int
+   * @throws ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
    */
-  public static function write(string $title, array $data = [], string $level = Model::INFO): int
+  public static function write(string $title, array $data = [], string $level = Crud\Model\Log::INFO): int
   {
     $logsEnabled = Front::getInstance()->getConfig()['ait']['admin']['logs']['enabled'] ?? false;
 
     if ($logsEnabled) {
-      $log = new Model();
+      $log = new Crud\Model\Log();
 
       $log->title = $title;
       $log->data = $data;
