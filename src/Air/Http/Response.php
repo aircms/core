@@ -26,10 +26,6 @@ class Response
    */
   public function __construct(?string $httpResponse = null)
   {
-    echo $httpResponse;
-    echo "\n---\n";
-
-
     if ($httpResponse) {
       $responseParts = explode("\r\n\r\n", $httpResponse);
       $headers = explode("\n", $responseParts[0]);
