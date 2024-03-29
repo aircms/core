@@ -53,4 +53,12 @@ class Response
       }
     }
   }
+
+  /**
+   * @return bool
+   */
+  public function isOk(): bool
+  {
+    return $this->code >= 200 && $this->code < 300;
+  }
 }
