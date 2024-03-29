@@ -47,6 +47,11 @@ class Request
   public mixed $body = null;
 
   /**
+   * @var int
+   */
+  public int $timeout = 30;
+
+  /**
    * @param string $url
    * @return $this
    */
@@ -133,7 +138,18 @@ class Request
   }
 
   /**
+   * @param int $timeout
+   * @return $this
+   */
+  public function timeout(int $timeout): self
+  {
+    $this->timeout = $timeout;
+    return $this;
+  }
+
+  /**
    * @return Response
+   * @throws Exception
    */
   public function do(): Response
   {
@@ -149,10 +165,16 @@ class Request
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 
     $headers = [];
     foreach ($this->headers as $key => $value) {
       $headers[] = $key . ": " . $value;
+    }
+
+    if ($this->bearer) {
+      $headers[] = 'Authorization: Bearer ' . $this->bearer;
     }
 
     if (count($headers)) {
@@ -169,6 +191,10 @@ class Request
 
     $response = curl_exec($ch);
     curl_close($ch);
+
+    if ($response === false) {
+      throw new Exception('Curl error: ' . curl_error($ch));
+    }
 
     return new Response($response);
   }
