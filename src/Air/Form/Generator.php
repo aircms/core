@@ -22,6 +22,7 @@ use Air\Form\Element\Storage;
 use Air\Form\Element\Text;
 use Air\Form\Element\Textarea;
 use Air\Form\Element\Tiny;
+use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\ModelAbstract;
 
 final class Generator
@@ -30,6 +31,7 @@ final class Generator
    * @param ModelAbstract|null $model
    * @param array $elements
    * @return Form
+   * @throws PropertyWasNotFound
    */
   public static function default(ModelAbstract $model = null, array $elements = []): Form
   {
@@ -40,67 +42,25 @@ final class Generator
    * @param ModelAbstract|null $model
    * @param array $elements
    * @return Form
+   * @throws PropertyWasNotFound
    */
   public static function full(ModelAbstract $model = null, array $elements = []): Form
   {
-    return new Form(['data' => $model], self::defaultElement($model, self::modelInputs($model, $elements)));
+    return new Form(['data' => $model], self::defaultElement($model, $elements, true));
   }
 
   /**
    * @param ModelAbstract|null $model
-   * @param array $elements
+   * @param array $userElements
+   * @param bool|null $includeReferences
    * @return array
+   * @throws PropertyWasNotFound
    */
-  public static function modelInputs(ModelAbstract $model = null, array $elements = []): array
-  {
-    $modelElements = ['References' => []];
-
-    foreach ($model->getMeta()->getProperties() as $property) {
-      $type = $property->getType();
-
-      if (class_exists($type) && is_subclass_of($type, ModelAbstract::class)) {
-
-        $modelName = explode('\\', $type);
-        $modelName = ucfirst(trim(strtolower(implode(' ', preg_split('/(?=[A-Z])/', end($modelName))))));
-        $fieldName = ucfirst(strtolower(implode(' ', preg_split('/(?=[A-Z])/', $property->getName()))));
-
-        $modelElements['References'][] = new Model($property->getName(), [
-          'value' => $model->{$property->getName()},
-          'label' => $fieldName,
-          'model' => $type,
-          'description' => 'Please select an entry from the ' . $modelName . ' collection',
-          'field' => 'title',
-          'allowNull' => true
-        ]);
-
-      } elseif (str_ends_with($type, '[]')) {
-        $type = substr($type, 0, strlen($type) - 2);
-
-        $modelName = explode('\\', $type);
-        $modelName = ucfirst(trim(strtolower(implode(' ', preg_split('/(?=[A-Z])/', end($modelName))))));
-        $fieldName = ucfirst(strtolower(implode(' ', preg_split('/(?=[A-Z])/', $property->getName()))));
-
-        if (class_exists($type) && is_subclass_of($type, ModelAbstract::class)) {
-          $modelElements['References'][] = new MultipleModel($property->getName(), [
-            'value' => $model->{$property->getName()},
-            'label' => $fieldName,
-            'model' => $type,
-            'description' => 'Please select an entries from the ' . $modelName . ' collection',
-            'field' => 'title',
-            'allowNull' => true
-          ]);
-        }
-      }
-    }
-    return array_merge_recursive(array_filter($modelElements), $elements);
-  }
-
-  /**
-   * @param ModelAbstract|null $model
-   * @param ElementAbstract[] $userElements
-   * @return array
-   */
-  public static function defaultElement(ModelAbstract $model = null, array $userElements = []): array
+  public static function defaultElement(
+    ModelAbstract $model = null,
+    array         $userElements = [],
+    ?bool         $includeReferences = false
+  ): array
   {
     $formElements = [
       'General' => [
@@ -133,7 +93,19 @@ final class Generator
       ],
     ];
 
-    $count = 0;
+    if ($includeReferences) {
+      $formElements['References'] = [];
+
+      foreach ($model->getMeta()->getProperties() as $property) {
+        $type = $property->getType();
+        if (str_ends_with($type, '[]')) {
+          $type = substr($type, 0, strlen($type) - 2);
+        }
+        if (class_exists($type) && is_subclass_of($type, ModelAbstract::class)) {
+          $formElements['References'][$property->getName()] = null;
+        }
+      }
+    }
 
     foreach ($userElements as $userGroupName => $userGroupElements) {
       foreach ($userGroupElements as $userGroupElement) {
@@ -149,20 +121,32 @@ final class Generator
           if ($formGroupName !== $userGroupName) {
             unset($formElements[$formGroupName][$userGroupElementName]);
           }
-          $count++;
         }
       }
     }
 
     foreach ($formElements as $groupName => $elements) {
       foreach ($elements as $elementName => $element) {
-        if ($completedElement = self::addElement($elementName, $model, $element)) {
-          $formElements[$groupName][$elementName] = $completedElement;
+
+        if ($model->getMeta()->hasProperty($elementName)) {
+          $property = $model->getMeta()->getPropertyWithName($elementName);
+          $type = $property->getType();
+          if (str_contains($type, '[]')) {
+            $type = substr($type, 0, strlen($type) - 2);
+          }
+
+          if (is_subclass_of($type, ModelAbstract::class)
+            && $completedElement = self::addModelElement($elementName, $model, $element)
+          ) {
+            $formElements[$groupName][$elementName] = $completedElement;
+
+          } elseif ($completedElement = self::addElement($elementName, $model, $element)) {
+            $formElements[$groupName][$elementName] = $completedElement;
+          }
         }
       }
       $formElements[$groupName] = array_values(array_filter($formElements[$groupName]));
     }
-
     return array_filter($formElements);
   }
 
@@ -172,55 +156,22 @@ final class Generator
    */
   private static function getElementClassName(string $name): ?string
   {
-    switch ($name) {
-      case 'url':
-      case 'title':
-      case 'subTitle':
-      case 'subTitle':
-        return Text::class;
-
-      case 'enabled':
-        return Checkbox::class;
-
-      case 'date':
-        return Date::class;
-
-      case 'dateTime':
-        return DateTime::class;
-
-      case 'description':
-        return Textarea::class;
-
-      case 'image':
-      case 'images':
-      case 'file':
-      case 'files':
-        return Storage::class;
-
-      case 'meta':
-        return Meta::class;
-
-      case 'quote':
-        return Quote::class;
-
-      case 'content':
-        return Tiny::class;
-
-      case 'embed':
-        return Embed::class;
-
-      case 'richContent':
-        return RichContent::class;
-
-      case 'page':
-        return Page::class;
-
-      case 'pages':
-        return MultiplePage::class;
-
-      default:
-        return null;
-    }
+    return match ($name) {
+      'url', 'title', 'subTitle' => Text::class,
+      'enabled' => Checkbox::class,
+      'date' => Date::class,
+      'dateTime' => DateTime::class,
+      'description' => Textarea::class,
+      'image', 'images', 'file', 'files' => Storage::class,
+      'meta' => Meta::class,
+      'quote' => Quote::class,
+      'content' => Tiny::class,
+      'embed' => Embed::class,
+      'richContent' => RichContent::class,
+      'page' => Page::class,
+      'pages' => MultiplePage::class,
+      default => null,
+    };
   }
 
   /**
@@ -230,7 +181,8 @@ final class Generator
    * @return ElementAbstract|null
    */
   private static function addElement(
-    string          $name, ModelAbstract $model,
+    string          $name,
+    ModelAbstract   $model,
     ElementAbstract $userElement = null
   ): ?ElementAbstract
   {
@@ -244,6 +196,49 @@ final class Generator
 
     $elementOptions = call_user_func([self::class, $name]);
     $elementOptions['allowNull'] = true;
+
+    if ($userElement) {
+      $elementClassName = $userElement::class;
+      $elementOptions = array_merge($elementOptions, $userElement->getUserOptions());
+    }
+
+    return new $elementClassName($name, $elementOptions);
+  }
+
+  /**
+   * @param string $name
+   * @param ModelAbstract $model
+   * @param ElementAbstract|null $userElement
+   * @return ElementAbstract|null
+   * @throws PropertyWasNotFound
+   */
+  private static function addModelElement(
+    string           $name,
+    ModelAbstract    $model,
+    ?ElementAbstract $userElement = null
+  ): ?ElementAbstract
+  {
+    $property = $model->getMeta()->getPropertyWithName($name);
+    $type = $property->getType();
+    $elementClassName = Model::class;
+
+    if (str_contains($type, '[]')) {
+      $type = substr($type, 0, strlen($type) - 2);
+      $elementClassName = MultipleModel::class;
+    }
+
+    $modelName = explode('\\', $type);
+    $modelName = ucfirst(trim(strtolower(implode(' ', preg_split('/(?=[A-Z])/', end($modelName))))));
+    $fieldName = ucfirst(strtolower(implode(' ', preg_split('/(?=[A-Z])/', $property->getName()))));
+
+    $elementOptions = [
+      'value' => $model->{$name},
+      'label' => $fieldName,
+      'model' => $type,
+      'description' => 'Please select an entry from the ' . $modelName . ' collection',
+      'field' => 'title',
+      'allowNull' => true
+    ];
 
     if ($userElement) {
       $elementClassName = $userElement::class;

@@ -52,6 +52,11 @@ class Request
   public int $timeout = 30;
 
   /**
+   * @var array
+   */
+  public array $files = [];
+
+  /**
    * @param string $url
    * @return $this
    */
@@ -133,7 +138,7 @@ class Request
       'xFormData' => 'application/x-www-form-urlencoded',
     ];
 
-    $this->headers['Content-type'] = $types[$type] ?? $type;
+    $this->headers['content-type'] = $types[$type] ?? $type;
     return $this;
   }
 
@@ -144,6 +149,29 @@ class Request
   public function timeout(int $timeout): self
   {
     $this->timeout = $timeout;
+    return $this;
+  }
+
+  /**
+   * @param string $name
+   * @param string|array $fileOrFiles
+   * @return $this
+   */
+  public function file(string $name, string|array $fileOrFiles): self
+  {
+    $this->files[$name] = $fileOrFiles;
+    return $this;
+  }
+
+  /**
+   * @param array $files
+   * @return self
+   */
+  public function files(array $files): self
+  {
+    foreach ($files as $key => $value) {
+      $this->file($key, $value);
+    }
     return $this;
   }
 
@@ -161,33 +189,52 @@ class Request
     }
 
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->method);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
     curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-    $headers = [];
-    foreach ($this->headers as $key => $value) {
-      $headers[] = $key . ": " . $value;
-    }
+    $headers = $this->headers;
 
     if ($this->bearer) {
-      $headers[] = 'Authorization: Bearer ' . $this->bearer;
+      $headers['Authorization'] = 'Bearer ' . $this->bearer;
+    }
+
+    if (count($this->files)) {
+      foreach ($this->files as $name => $fileOrFiles) {
+        if (is_array($fileOrFiles)) {
+          foreach ($fileOrFiles as $index => $file) {
+            $this->body[$name . '[' . $index . ']'] = curl_file_create($file);
+          }
+        } else {
+          $this->body[$name] = curl_file_create($fileOrFiles);
+        }
+      }
+      $this->method = self::POST;
+      $headers['content-type'] = 'multipart/form-data';
     }
 
     if (count($headers)) {
-      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+      $_headers = [];
+      foreach ($headers as $name => $header) {
+        $_headers[] = ucfirst($name) . ": " . $header;
+      }
+
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $_headers);
     }
 
     if ($this->method === self::POST) {
       $body = self::convertDataToContentType(
-        $this->headers['Content-type'] ?? '',
+        $headers['content-type'] ?? '',
         $this->body
       );
       curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
     }
+
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->method);
 
     $response = curl_exec($ch);
     curl_close($ch);
@@ -209,6 +256,7 @@ class Request
     return match ($contentType) {
       'application/json' => json_encode($data),
       'application/x-www-form-urlencoded' => http_build_query($data),
+      'multipart/form-data' => $data,
       default => http_build_query($data),
     };
   }

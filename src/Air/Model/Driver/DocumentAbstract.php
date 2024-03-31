@@ -138,7 +138,7 @@ abstract class DocumentAbstract implements ArrayAccess
    */
   protected function _castDataType(Property $property, $value, bool $isSet = true, bool $toArray = false): mixed
   {
-    if (in_array($property->getType(), ['integer', 'array', 'string', 'boolean', 'NULL'])) {
+    if (in_array($property->getType(), ['integer', 'float', 'double', 'array', 'string', 'boolean', 'NULL'])) {
       settype($value, $property->getType());
       return $value;
     }

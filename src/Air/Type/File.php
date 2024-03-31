@@ -119,6 +119,9 @@ class File extends TypeAbstract
    */
   public function getThumbnail(): string
   {
+    if (str_starts_with($this->thumbnail, 'http')) {
+      return $this->thumbnail;
+    }
     return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->thumbnail;
   }
 
@@ -128,6 +131,9 @@ class File extends TypeAbstract
    */
   public function getSrc(): string
   {
+    if (str_starts_with($this->src, 'http')) {
+      return $this->src;
+    }
     return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->src;
   }
 

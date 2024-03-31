@@ -74,8 +74,12 @@ class Model extends ElementAbstract
   {
     $value = parent::getValue();
 
-    if (!$value || !is_string($value)) {
+    if (!$value) {
       return null;
+    }
+
+    if ($value instanceof ModelAbstract) {
+      return $value;
     }
 
     /** @var ModelAbstract $model */

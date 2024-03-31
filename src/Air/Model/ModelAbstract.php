@@ -14,6 +14,7 @@ use Air\Model\Exception\CallUndefinedMethod;
 use Air\Model\Exception\ConfigWasNotProvided;
 use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
+use ReflectionException;
 
 /**
  * @method static int remove (array $cond = [], int $limit = null)
@@ -36,12 +37,13 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   private ?DocumentAbstract $document = null;
 
   /**
+   * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided
    * @throws Meta\Exception\CollectionCantBeWithoutPrimary
    * @throws Meta\Exception\CollectionCantBeWithoutProperties
    * @throws Meta\Exception\CollectionNameDoesNotExists
    * @throws Meta\Exception\PropertyIsSetIncorrectly
-   * @throws ClassWasNotFound
+   * @throws ReflectionException
    */
   public function __construct()
   {
@@ -235,7 +237,7 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
    * @param int|null $count
    * @param int|null $offset
    * @param array $map
-   * @return CursorAbstract|array
+   * @return CursorAbstract|array|static[]
    * @throws CallUndefinedMethod
    * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided
@@ -259,7 +261,7 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
    * @param int|null $count
    * @param int|null $offset
    * @param array $map
-   * @return CursorAbstract|array|ModelInterface[]
+   * @return CursorAbstract|array|ModelInterface[]|static[]
    * @throws CallUndefinedMethod
    * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided

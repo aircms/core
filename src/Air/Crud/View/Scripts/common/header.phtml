@@ -103,8 +103,8 @@ $controller = $this->controller;
           <?php $url = is_array($headerButton['url']) ? $this->uri($headerButton['url'], $headerButton['params'] ?? []) : $headerButton['url']; ?>
           <a class="btn btn-<?php echo $headerButton['style']['color'] ?? 'primary'; ?> ms-2 px-3"
             <?php if ($headerButton['confirm'] ?? false) : ?>
-              data-nav-href="<?php echo $url; ?>"
-              data-nav-confirm="<?php echo $headerButton['confirm']; ?>"
+              href="<?php echo $url; ?>"
+              data-confirm="<?php echo $headerButton['confirm']; ?>"
             <?php else: ?>
               href="<?php echo $url; ?>"
             <?php endif; ?>

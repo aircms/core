@@ -61,6 +61,11 @@ echo $this->partial('common/header');
                       ['id' => $row->id, 'returnUrl' => Front::getInstance()->getRequest()->getUri()],
                       true
                     ); ?>')"
+
+                  <?php elseif (count(($controls ?? []))) : ?>
+
+                  ondblclick='$("[data-admin-contextmenu-target=\"<?php echo $row->id; ?>\"] > li:first a").click()'
+
                   <?php endif; ?>
 
                   class="user-select-none"

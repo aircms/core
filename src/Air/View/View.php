@@ -281,7 +281,6 @@ class View
       $config = Front::getInstance()->getConfig();
 
       if ($config['air']['modules'] ?? false) {
-
         $modules = implode('/', array_slice(explode('\\', $config['air']['modules']), 2));
 
         $viewPath = realpath(implode('/', [
@@ -292,14 +291,13 @@ class View
         ]));
 
       } else {
-
         $viewPath = realpath(implode('/', [
           $config['air']['loader']['path'],
           'View'
         ]));
       }
 
-      $content = $this->_render($viewPath . '/' . ($template ?? $this->script) . '.phtml');
+      $content = $this->_render($viewPath . '/Scripts/' . ($template ?? $this->script) . '.phtml');
     }
 
     return $content;

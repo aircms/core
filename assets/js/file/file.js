@@ -55,6 +55,7 @@ class File {
 
     const fileJSON = $(selector).html();
     this.file = JSON.parse(fileJSON);
+
     this.id = parseInt(Math.random() * Date.now());
 
     this.render();
@@ -113,6 +114,16 @@ class File {
   }
 
   render() {
+    let thumbnail = this.file.thumbnail;
+    if (!thumbnail.startsWith('http')) {
+      thumbnail = this.storageUrl + this.file.thumbnail;
+    }
+
+    let src = this.file.src;
+    if (!src.startsWith('http')) {
+      src = this.storageUrl + this.file.src;
+    }
+
     this.element.replaceWith(
       File.template
         .replaceAll('{{alt}}', this.file.alt)
@@ -120,8 +131,8 @@ class File {
         .replaceAll('{{displayedTitle}}', this.file.title || '<p class="text-muted small">(no title)</p>')
         .replaceAll('{{mime}}', this.file.mime)
         .replaceAll('{{path}}', this.file.path)
-        .replaceAll('{{src}}', this.storageUrl + this.file.src)
-        .replaceAll('{{thumbnail}}', this.storageUrl + this.file.thumbnail)
+        .replaceAll('{{src}}', src)
+        .replaceAll('{{thumbnail}}', src)
         .replaceAll('{{id}}', this.id)
         .replaceAll('{{size}}', this.formatBytes(this.file.size))
         .replaceAll('{{width}}', this.file.dims.width)

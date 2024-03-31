@@ -49,7 +49,21 @@ $toJson = function ($row) {
     <?php if (!$isSelectControl) : ?>
 
       <?php foreach (($controls ?? []) as $control) : ?>
-        <?php if (($control['type'] ?? false) === 'edit') : ?>
+        <?php if (($control['type'] ?? false) === 'custom') : ?>
+          <?php $customControl = $control['source']($row); ?>
+          <?php if ($customControl) : ?>
+            <li>
+              <a class="dropdown-item"
+                <?php if (($customControl['confirm'] ?? false)) : ?>
+                  data-confirm="<?php echo $customControl['confirm']; ?>"
+                <?php endif; ?>
+                 href="<?php echo $customControl['url']; ?>">
+                <i class="fas fa-<?php echo $customControl['icon']; ?> me-1"></i> <?php echo $customControl['title']; ?>
+              </a>
+            </li>
+          <?php endif; ?>
+
+        <?php elseif (($control['type'] ?? false) === 'edit') : ?>
           <li>
             <a class="dropdown-item"
                href="<?php echo $this->uri(['controller' => $controller, 'action' => 'manage'], ['id' => $row->id, 'returnUrl' => $returnUrl]); ?>">
@@ -94,7 +108,7 @@ $toJson = function ($row) {
         <?php elseif ($control['url'] ?? false) : ?>
 
           <?php if (is_array($control['url'])) : ?>
-            <?php $control['url'] = urldecode($this->uri($control['url'], ['id' => '{id}'], true)); ?>
+            <?php $control['url'] = urldecode($this->uri($control['url'], ['id' => $row->id], true)); ?>
           <?php endif; ?>
 
           <li>

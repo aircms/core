@@ -1,6 +1,7 @@
 <?php
 
 use Air\Form\Element\MultipleModel;
+use Air\Type\File;
 
 /** @var MultipleModel $element */
 $element = $this->element;
@@ -46,7 +47,7 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
 
             <?php if ($hasImage) : ?>
               <div class="bg-image rounded-4 me-3"
-                   data-admin-async-image="<?php echo $item->image->getSrc(); ?>"></div>
+                   data-admin-async-image="<?php echo $item->image?->getSrc(); ?>"></div>
             <?php endif; ?>
 
 

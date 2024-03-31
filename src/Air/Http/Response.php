@@ -39,7 +39,7 @@ class Response
         unset($header[0]);
         $value = trim(implode(':', $header));
 
-        $this->header[$key] = $value;
+        $this->header[strtolower($key)] = $value;
       }
 
       $this->body = trim($responseParts[1]);
