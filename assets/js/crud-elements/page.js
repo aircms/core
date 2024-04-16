@@ -271,7 +271,13 @@ $(document).ready(() => {
       modal.file(url, key, false, (file) => {
         modal.hide();
 
-        page.css('background-image', "url('" + url + file.src + "')");
+        if (file.mime.search('video') !== -1) {
+          page.css('background-image', "url('" + url + file.thumbnail + "')");
+        }
+        else {
+          page.css('background-image', "url('" + url + file.src + "')");
+        }
+
         page.removeClass('transparent');
         button.css('display', 'none');
 

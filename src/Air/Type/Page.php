@@ -128,8 +128,17 @@ class Page
    */
   public function asCss(): string
   {
+    $imageSrc = null;
+    if ($file = $this->getBackgroundImage()) {
+      if (str_contains($file->getMime(), 'video')) {
+        $imageSrc = $file->getThumbnail();
+      } else {
+        $imageSrc = $file->getSrc();
+      }
+    }
+
     return
-      ($this->getBackgroundImage() ? "background-image: url('" . $this->getBackgroundImage()->getSrc() . "');" : '') .
+      ($imageSrc ? "background-image: url('" . $imageSrc . "');" : '') .
       ($this->getBackgroundColor() ? "background-color: " . $this->getBackgroundColor() . ";" : '') .
       ('width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px');
   }

@@ -258,6 +258,13 @@ const modal = new class {
 };
 
 $(document).ready(() => {
+
+  document.addEventListener('focusin', (e) => {
+    if (e.target.closest(".tox-tinymce-aux, .moxman-window, .tam-assetmanager-root") !== null) {
+      e.stopImmediatePropagation();
+    }
+  });
+
   wait.on('[data-admin-embed-modal]', (image) => {
     if ($(image).data('admin-embed-modal-initialized')) {
       return;

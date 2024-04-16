@@ -19,6 +19,10 @@ $fonts = $this->fonts;
     url('<?php echo $font->eotIe6Ie8->getSrc(); ?>?#iefix') format('embedded-opentype'),
   <?php endif; ?>
 
+  <?php if ($font->otf) : ?>
+    url('<?php echo $font->otf->getSrc(); ?>') format('opentype'),
+  <?php endif; ?>
+
   <?php if ($font->woff2) : ?>
     url('<?php echo $font->woff2->getSrc(); ?>') format('woff2'),
   <?php endif; ?>

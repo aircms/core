@@ -14,6 +14,7 @@ use Air\Model\Exception\CallUndefinedMethod;
 use Air\Model\Exception\ConfigWasNotProvided;
 use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
+use Air\View\View;
 
 /**
  * @mod-title Fonts
@@ -67,6 +68,12 @@ class Font extends Multiple
           'value' => $model->eotIe6Ie8,
           'description' => 'Embedded opentype',
           'label' => 'EOT',
+          'allowNull' => true,
+        ]),
+        new Storage('otf', [
+          'value' => $model->otf,
+          'description' => 'Opentype',
+          'label' => 'OTF',
           'allowNull' => true,
         ]),
         new Storage('woff2', [
@@ -133,5 +140,20 @@ class Font extends Multiple
       $fonts[] = $font->title . '=' . $font->title;
     }
     return implode('; ', $fonts);
+  }
+
+  /**
+   * @return string
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   */
+  public static function getFontFaces(): string
+  {
+    $view = new View();
+    $view->setPath(realpath(__DIR__ . '/../../Crud/View'));
+    return $view->render('fonts', ['fonts' => Air\Crud\Model\Font::all()]);
   }
 }
