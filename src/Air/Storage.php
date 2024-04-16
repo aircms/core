@@ -10,6 +10,7 @@ use Air\Http\Response;
 use Air\Http\Request;
 use Air\Type\File;
 use Exception;
+use http\Encoding\Stream;
 
 class Storage
 {
@@ -121,5 +122,44 @@ class Storage
       'body' => $params,
       'method' => Request::POST
     ]);
+  }
+
+  /**
+   * @param string $folder
+   * @param string $fileName
+   * @param string $title
+   * @param string $backColor
+   * @param string $frontColor
+   * @return File|null
+   * @throws Core\Exception\ClassWasNotFound
+   */
+  public static function annotation(
+    string $folder,
+    string $fileName,
+    string $title,
+    string $backColor,
+    string $frontColor
+  ): File|null
+  {
+    $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
+    $url = $storageConfig['url'] . '/api/annotation';
+
+    $params['key'] = $storageConfig['key'];
+    $params['folder'] = $folder;
+    $params['fileName'] = $fileName;
+    $params['title'] = $title;
+    $params['backColor'] = $backColor;
+    $params['frontColor'] = $frontColor;
+
+    $response = Request::run($url, [
+      'body' => $params,
+      'method' => Request::POST
+    ]);
+
+    if (!$response->isOk()) {
+      return null;
+    }
+
+    return new File($response->body);
   }
 }

@@ -32,18 +32,4 @@ class Select extends ElementAbstract
   {
     $this->options = $options;
   }
-
-  /**
-   * @return mixed
-   */
-  public function getValue(): mixed
-  {
-    $value = parent::getValue();
-
-    if (!$value || !strlen($value)) {
-      return null;
-    }
-
-    return $value;
-  }
 }

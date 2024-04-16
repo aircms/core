@@ -255,7 +255,6 @@ class Request
   {
     return match ($contentType) {
       'application/json' => json_encode($data),
-      'application/x-www-form-urlencoded' => http_build_query($data),
       'multipart/form-data' => $data,
       default => http_build_query($data),
     };

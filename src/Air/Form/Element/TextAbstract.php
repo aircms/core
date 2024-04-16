@@ -7,9 +7,9 @@ namespace Air\Form\Element;
 abstract class TextAbstract extends ElementAbstract
 {
   /**
-   * @return string
+   * @return mixed
    */
-  public function getValue(): string
+  public function getValue(): mixed
   {
     $value = parent::getValue();
 

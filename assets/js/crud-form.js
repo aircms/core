@@ -3,11 +3,15 @@ currentScriptDir.pop();
 currentScriptDir = currentScriptDir.join('/');
 
 $(document).ready(() => {
-  let activeTab = 0;
-  wait.on('[data-admin-tab]', (tab) => new Tab(tab, {
-    active: activeTab,
-    change: (index) => activeTab = index
-  }));
+  const activeTab = [];
+  wait.on('[data-admin-tab]', (tab) => {
+    new Tab(tab, {
+      active: activeTab[location.pathname] || 0,
+      change: (index) => {
+        activeTab[location.pathname] = index;
+      }
+    })
+  });
 
   $(document).on('submit', '[data-admin-from-manage]', (e) => {
     $.post(location.pathname, $(e.currentTarget).serialize())

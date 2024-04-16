@@ -10,6 +10,7 @@ use Air\Form\Element\Checkbox;
 use Air\Form\Element\Date;
 use Air\Form\Element\DateTime;
 use Air\Form\Element\ElementAbstract;
+use Air\Form\Element\Icon;
 use Air\Form\Element\MultiplePage;
 use Air\Form\Element\Page;
 use Air\Form\Element\Embed;
@@ -33,7 +34,7 @@ final class Generator
    * @return Form
    * @throws PropertyWasNotFound
    */
-  public static function default(ModelAbstract $model = null, array $elements = []): Form
+  public static function minimal(ModelAbstract $model = null, array $elements = []): Form
   {
     return new Form(['data' => $model], self::defaultElement($model, $elements));
   }
@@ -50,16 +51,29 @@ final class Generator
   }
 
   /**
+   * @param ModelAbstract $model
+   * @param array $elements
+   * @return Form
+   * @throws PropertyWasNotFound
+   */
+  public static function fullRequired(ModelAbstract $model, array $elements = []): Form
+  {
+    return new Form(['data' => $model], self::defaultElement($model, $elements, true, false));
+  }
+
+  /**
    * @param ModelAbstract|null $model
    * @param array $userElements
    * @param bool|null $includeReferences
+   * @param bool $allowNull
    * @return array
    * @throws PropertyWasNotFound
    */
   public static function defaultElement(
     ModelAbstract $model = null,
     array         $userElements = [],
-    ?bool         $includeReferences = false
+    ?bool         $includeReferences = false,
+    bool          $allowNull = true
   ): array
   {
     $formElements = [
@@ -72,6 +86,7 @@ final class Generator
         'subTitle' => null,
         'description' => null,
         'quote' => null,
+        'icon' => null,
       ],
       'Documents' => [
         'page' => null,
@@ -136,11 +151,11 @@ final class Generator
           }
 
           if (is_subclass_of($type, ModelAbstract::class)
-            && $completedElement = self::addModelElement($elementName, $model, $element)
+            && $completedElement = self::addModelElement($elementName, $model, $element, $allowNull)
           ) {
             $formElements[$groupName][$elementName] = $completedElement;
 
-          } elseif ($completedElement = self::addElement($elementName, $model, $element)) {
+          } elseif ($completedElement = self::addElement($elementName, $model, $element, $allowNull)) {
             $formElements[$groupName][$elementName] = $completedElement;
           }
         }
@@ -170,6 +185,7 @@ final class Generator
       'richContent' => RichContent::class,
       'page' => Page::class,
       'pages' => MultiplePage::class,
+      'icon' => Icon::class,
       default => null,
     };
   }
@@ -178,12 +194,14 @@ final class Generator
    * @param string $name
    * @param ModelAbstract $model
    * @param ElementAbstract|null $userElement
+   * @param bool $allowNull
    * @return ElementAbstract|null
    */
   private static function addElement(
     string          $name,
     ModelAbstract   $model,
-    ElementAbstract $userElement = null
+    ElementAbstract $userElement = null,
+    bool            $allowNull = true
   ): ?ElementAbstract
   {
     $hasProperty = $model->getMeta()->hasProperty($name);
@@ -195,7 +213,7 @@ final class Generator
     }
 
     $elementOptions = call_user_func([self::class, $name]);
-    $elementOptions['allowNull'] = true;
+    $elementOptions['allowNull'] = $allowNull;
 
     if ($userElement) {
       $elementClassName = $userElement::class;
@@ -209,13 +227,15 @@ final class Generator
    * @param string $name
    * @param ModelAbstract $model
    * @param ElementAbstract|null $userElement
+   * @param bool $allowNull
    * @return ElementAbstract|null
    * @throws PropertyWasNotFound
    */
   private static function addModelElement(
     string           $name,
     ModelAbstract    $model,
-    ?ElementAbstract $userElement = null
+    ?ElementAbstract $userElement = null,
+    bool             $allowNull = true
   ): ?ElementAbstract
   {
     $property = $model->getMeta()->getPropertyWithName($name);
@@ -237,7 +257,7 @@ final class Generator
       'model' => $type,
       'description' => 'Please select an entry from the ' . $modelName . ' collection',
       'field' => 'title',
-      'allowNull' => true
+      'allowNull' => $allowNull
     ];
 
     if ($userElement) {
@@ -448,5 +468,17 @@ final class Generator
     return [...self::page(), ...[
       'label' => 'Documents',
     ]];
+  }
+
+  /**
+   * @return string[]
+   */
+  private static function icon(): array
+  {
+    return [
+      'label' => 'Icon (Google Symbol)',
+      'description' => 'Use icons name from Google Symbols<br><a href="https://fonts.google.com/icons"' .
+        ' class="text-info text-decoration-underline" target="_blank">Google Symbols</a>'
+    ];
   }
 }

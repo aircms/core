@@ -72,17 +72,21 @@ class MultipleModel extends ElementAbstract
     if (!$this->isAllowNull()) {
       $value = $this->getValue();
       $count = !!count($value);
-      $this->errorMessages[] = 'Could not be empty';
-      return $count;
+
+      if (!$count) {
+        $this->errorMessages[] = 'Could not be empty';
+        return false;
+      }
+      return true;
     }
 
     return $isValid;
   }
 
   /**
-   * @return mixed
+   * @return array
    */
-  public function getValue(): mixed
+  public function getValue(): array
   {
     $value = parent::getValue();
 
@@ -90,8 +94,12 @@ class MultipleModel extends ElementAbstract
       return [];
     }
 
+    if (is_array($value)) {
+      return $value;
+    }
+
     if (is_string($value)) {
-      return json_decode($value, true);
+      $value = json_decode($value, true);
     }
 
     return $value;
@@ -103,11 +111,12 @@ class MultipleModel extends ElementAbstract
   public function getRawValue(): array
   {
     $ids = [];
-    foreach (($this->getValue() ?? []) as $item) {
-      if (is_string($item)) {
-        $ids[] = $item;
-      } else {
+    foreach ($this->getValue() as $item) {
+      if ($item instanceof ModelAbstract) {
         $ids[] = (string)$item->id;
+
+      } elseif (is_string($item)) {
+        $ids[] = $item;
       }
     }
     return $ids;

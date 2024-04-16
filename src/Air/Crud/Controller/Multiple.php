@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Crud\Model\History;
+use Air\Crud\Trait\Ui;
 use Exception;
 use ReflectionClass;
 use MongoDB\BSON\Regex;
@@ -26,6 +27,8 @@ use Air\Model\Paginator;
 
 abstract class Multiple extends AuthCrud
 {
+  use Ui;
+
   /**
    * @var ModelAbstract|null
    */

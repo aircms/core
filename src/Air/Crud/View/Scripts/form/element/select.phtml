@@ -43,7 +43,7 @@ $element = $this->element;
            role="button"
            data-value="<?php echo $option['value']; ?>"
            data-admin-select-option
-           <?php if ($element->getValue() === $option['value']) : ?>data-selected<?php endif; ?>>
+           <?php if ($element->getValue() == $option['value']) : ?>data-selected<?php endif; ?>>
           <?php echo $option['title']; ?>
         </a>
       </li>

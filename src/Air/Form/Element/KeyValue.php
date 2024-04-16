@@ -47,7 +47,9 @@ class KeyValue extends KeyValueAbstract
   {
     $value = parent::getValue();
 
-    if ($value === null || !strlen($value[$this->getKeyPropertyName()]) || !strlen($value[$this->getValuePropertyName()])) {
+    if ($value === null ||
+      !strlen(($value[$this->getKeyPropertyName()]) ?? '') ||
+      !strlen(($value[$this->getValuePropertyName()] ?? ''))) {
       return null;
     }
 

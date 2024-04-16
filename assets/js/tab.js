@@ -48,6 +48,10 @@ class Tab {
     const tabContent = this.tab.find(`[${Tab.tabContentSelector}] > *`);
     const tabNavigation = this.tab.find(`[${Tab.tabNavigationSelector}] > *`);
 
+    if (!$(tabContent[index]).length) {
+      index = 0;
+    }
+
     tabContent.addClass('d-none');
     $(tabContent[index]).removeClass('d-none');
 

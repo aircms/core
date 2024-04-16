@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
+use Air\Core\Exception\ClassWasNotFound;
+use Air\Model\Exception\CallUndefinedMethod;
+use Air\Model\Exception\ConfigWasNotProvided;
+use Air\Model\Exception\DriverClassDoesNotExists;
+use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
+use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\ModelAbstract;
 
 class Meta
@@ -149,6 +155,12 @@ class Meta
 
   /**
    * @return string
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws PropertyWasNotFound
    */
   public function __toString(): string
   {
@@ -201,7 +213,6 @@ class Meta
     $ogUrl = $siteUrl . explode('?', $_SERVER['REQUEST_URI'])[0];
 
     $ogType = 'website';
-    $ogLocale = 'en_US';
 
     $tags = [
       // Default Meta tags
@@ -211,7 +222,7 @@ class Meta
       "<link rel=\"canonical\" href=\"$canonical\">",
 
       // OG Meta tags
-      "<meta name=\"og:type\" content=\"website\">",
+      "<meta name=\"og:type\" content=\"$ogType\">",
       "<meta name=\"og:url\" content=\"$ogUrl\">",
       "<meta name=\"og:title\" content=\"{$data['ogTitle']}\" itemprop=\"title name\">",
       "<meta name=\"og:description\" content=\"{$data['ogDescription']}\" itemprop=\"description\">",
@@ -226,6 +237,12 @@ class Meta
 
   /**
    * @return array{title: string|null, description: string|null, image: File|null}
+   * @throws ClassWasNotFound
+   * @throws CallUndefinedMethod
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws PropertyWasNotFound
    */
   public function getObjectData(): array
   {

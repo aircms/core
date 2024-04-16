@@ -47,6 +47,13 @@ class OpenAi
    */
   public function message(string $question, ?bool $json = false): mixed
   {
+    if ($json) {
+      $this->messages[] = [
+        'role' => 'system',
+        'content' => 'You are a helpful assistant designed to output JSON.'
+      ];
+    }
+
     $this->messages[] = [
       'role' => 'user',
       'content' => $question

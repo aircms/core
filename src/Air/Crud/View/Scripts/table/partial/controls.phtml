@@ -34,7 +34,7 @@ $toJson = function ($row) {
       if (!$row->getMeta()->hasProperty('image')) {
         return null;
       }
-      return ['src' => $row->image->getSrc()];
+      return ['src' => $row->image?->getSrc()];
     },
   ]);
 
