@@ -87,4 +87,22 @@ class Model extends ElementAbstract
 
     return $model::fetchObject(['id' => $value]);
   }
+
+  /**
+   * @return mixed
+   */
+  public function getCleanValue(): mixed
+  {
+    $value = parent::getCleanValue();
+
+    if (!$value) {
+      return null;
+    }
+
+    if ($value instanceof ModelAbstract) {
+      return $value->id;
+    }
+
+    return $value;
+  }
 }

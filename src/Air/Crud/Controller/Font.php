@@ -116,9 +116,12 @@ class Font extends Multiple
   {
     $this->getView()->setPath(realpath(__DIR__ . '/../View'));
     $this->getResponse()->setHeader('Content-type', 'text/css');
-    return $this->getView()->render('fonts', [
-      'fonts' => \Air\Crud\Model\Font::all()
-    ]);
+
+    $css = "";
+    foreach (\Air\Crud\Model\Font::all() as $font) {
+      $css .= $font->asCss();
+    }
+    return $css;
   }
 
   /**
@@ -140,20 +143,5 @@ class Font extends Multiple
       $fonts[] = $font->title . '=' . $font->title;
     }
     return implode('; ', $fonts);
-  }
-
-  /**
-   * @return string
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
-  public static function getFontFaces(): string
-  {
-    $view = new View();
-    $view->setPath(realpath(__DIR__ . '/../../Crud/View'));
-    return $view->render('fonts', ['fonts' => Air\Crud\Model\Font::all()]);
   }
 }

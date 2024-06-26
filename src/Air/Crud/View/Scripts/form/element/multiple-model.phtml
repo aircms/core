@@ -51,7 +51,7 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
             <?php endif; ?>
 
 
-            <div class="h6 m-0 max-lines-2"><?php echo $item->title; ?></div>
+            <div class="h6 m-0 max-lines-3 small"><?php echo $item->{$element->getField()}; ?></div>
 
             <a class="btn btn-danger btn-lg px-3 py-3 d-flex align-items-center ms-3"
                data-admin-form-multiple-model-item-delete>
@@ -88,7 +88,7 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
     <?php endif; ?>
 
 
-    <div class="h6 m-0 max-lines-2">{{title}}</div>
+    <div class="h6 m-0 max-lines-2 small">{{<?php echo $element->getField(); ?>}}</div>
 
     <a class="btn btn-danger btn-lg px-3 py-3 d-flex align-items-center ms-3"
        data-admin-form-multiple-model-item-delete>

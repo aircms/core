@@ -166,6 +166,20 @@ class Form
   }
 
   /**
+   * @return array
+   */
+  public function getCleanValues(): array
+  {
+    $values = [];
+    foreach ($this->getElements() as $name => $element) {
+      if (get_class($element) != 'Air\Form\Element\Tab') {
+        $values[$name] = $element->getCleanValue();
+      }
+    }
+    return $values;
+  }
+
+  /**
    * @return string
    */
   public function getSubmit(): string

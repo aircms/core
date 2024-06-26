@@ -2,6 +2,7 @@
 
 namespace Air\Model;
 
+use Air\Crud\Model\Language;
 use ArrayAccess;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Model\Driver\CursorAbstract;
@@ -215,6 +216,11 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     if ($model->getMeta()->hasProperty('enabled') && !isset($cond['enabled'])) {
       $cond['enabled'] = true;
     }
+
+    if ($model->getMeta()->hasProperty('language') && !isset($cond['language'])) {
+      $cond['language'] = Language::getLanguage();
+    }
+
     return $cond;
   }
 
@@ -247,8 +253,8 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   public static function all(
     array $cond = [],
     array $sort = [],
-    int $count = null,
-    int $offset = null,
+    int   $count = null,
+    int   $offset = null,
     array $map = []
   ): CursorAbstract|array
   {
@@ -271,8 +277,8 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   public static function fetchAll(
     array $cond = [],
     array $sort = [],
-    int $count = null,
-    int $offset = null,
+    int   $count = null,
+    int   $offset = null,
     array $map = []
   ): CursorAbstract|array
   {

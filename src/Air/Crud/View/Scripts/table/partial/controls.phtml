@@ -30,6 +30,7 @@ $toJson = function ($row) {
     'id',
     'title',
     'enabled',
+    'systemTitle',
     'image' => function ($row) {
       if (!$row->getMeta()->hasProperty('image')) {
         return null;

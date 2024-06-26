@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Air\Core;
 
 use Air\Crud\Controller\Codes;
+use Air\Crud\Controller\Language;
+use Air\Crud\Controller\Phrase;
 use Error;
 use Throwable;
 use ReflectionClass;
@@ -483,6 +485,12 @@ final class Front
 
     } else if (($this->getConfig()['air']['admin']['codes'] ?? false) === $controller) {
       return Codes::class;
+
+    } else if (($this->getConfig()['air']['admin']['languages'] ?? false) === $controller) {
+      return Language::class;
+
+    } else if (($this->getConfig()['air']['admin']['phrases'] ?? false) === $controller) {
+      return Phrase::class;
     }
 
     if ($this->config['air']['modules'] ?? false) {

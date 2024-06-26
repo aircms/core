@@ -136,6 +136,14 @@ abstract class ElementAbstract
   }
 
   /**
+   * @return mixed
+   */
+  public function getCleanValue(): mixed
+  {
+    return $this->getValue();
+  }
+
+  /**
    * @param mixed $value
    */
   public function setValue(mixed $value): void

@@ -142,6 +142,14 @@ class File extends TypeAbstract
    */
   public function isImage(): bool
   {
-    return str_contains($this->getMime(), '/image');
+    return str_contains($this->getMime(), 'image');
+  }
+
+  /**
+   * @return self
+   */
+  public static function fromArray(?array $file): self
+  {
+    return new self($file);
   }
 }

@@ -134,4 +134,22 @@ class Group extends ElementAbstract
 
     return $value;
   }
+
+  /**
+   * @return mixed
+   */
+  public function getCleanValue(): mixed
+  {
+    $value = [];
+
+    foreach ($this->getElements() as $index => $element) {
+      $value[$this->originalElementNames[$index]] = $element->getCleanValue();
+    }
+
+    if (!count($value)) {
+      return [];
+    }
+
+    return $value;
+  }
 }

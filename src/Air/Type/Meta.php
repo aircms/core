@@ -263,17 +263,21 @@ class Meta
     ];
 
     if ($object) {
-      if ($object->getMeta()->hasProperty('title')) {
+      if ($object->getMeta()->hasProperty('title')
+        && $object->getMeta()->getPropertyWithName('title')->getType() === 'string') {
         $defaults['title'] = mb_substr($object->title, 0, 60);
 
-      } elseif ($object->getMeta()->hasProperty('subTitle')) {
+      } elseif ($object->getMeta()->hasProperty('subTitle')
+        && $object->getMeta()->getPropertyWithName('subTitle')->getType() === 'string') {
         $defaults['title'] = mb_substr($object->subTitle, 0, 60);
       }
 
-      if ($object->getMeta()->hasProperty('description')) {
+      if ($object->getMeta()->hasProperty('description')
+        && $object->getMeta()->getPropertyWithName('description')->getType() === 'string') {
         $defaults['description'] = mb_substr($object->description, 0, 60);
 
-      } elseif ($object->getMeta()->hasProperty('content')) {
+      } elseif ($object->getMeta()->hasProperty('content')
+        && $object->getMeta()->getPropertyWithName('content')->getType() === 'string') {
         $defaults['description'] = mb_substr(strip_tags($object->content), 0, 60);
 
       } elseif ($object->getMeta()->hasProperty('richContent')) {
@@ -284,9 +288,6 @@ class Meta
 
           } elseif ($richContent->getType() === RichContent::TYPE_TEXT) {
             $defaults['description'] = $richContent->getValue();
-
-          } elseif ($richContent->getType() === RichContent::TYPE_QUOTE) {
-            $defaults['description'] = $richContent->getValue()['quote'] . '. Author: ' . $richContent->getValue()['author'];
           }
         }
         $defaults['description'] = mb_substr($defaults['description'], 0, 60);

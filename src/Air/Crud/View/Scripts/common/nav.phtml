@@ -53,6 +53,12 @@ $fonts = $route($config['admin']['fonts'] ?? null);
 
 /** @var string $codes */
 $codes = $route($config['admin']['codes'] ?? null);
+
+/** @var string $languages */
+$languages = $route($config['admin']['languages'] ?? null);
+
+/** @var string $phrases */
+$phrases = $route($config['admin']['phrases'] ?? null);
 ?>
 
 <div class="d-flex flex-column h-100">
@@ -147,6 +153,19 @@ $codes = $route($config['admin']['codes'] ?? null);
             <li>
               <a class="dropdown-item" href="<?php echo $system; ?>">
                 <i class="fas fa-pie-chart me-1"></i> System monitor
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($languages && $phrases) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $languages; ?>">
+                <i class="fas fa-globe me-1"></i> Languages
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $phrases; ?>">
+                <i class="fas fa-language me-1"></i> Phrases
               </a>
             </li>
           <?php endif; ?>

@@ -585,6 +585,15 @@ abstract class Multiple extends AuthCrud
   }
 
   /**
+   * @param ModelAbstract $oldRecord
+   * @param ModelAbstract $newRecord
+   * @return void
+   */
+  protected function didCopied(ModelAbstract $oldRecord, ModelAbstract $newRecord)
+  {
+  }
+
+  /**
    * @return string|void
    * @throws ClassWasNotFound
    * @throws DomainMustBeProvided
@@ -664,6 +673,8 @@ abstract class Multiple extends AuthCrud
     $newRecord = new $modelClassName();
     $newRecord->populateWithoutQuerying($data);
     $newRecord->save();
+
+    $this->didCopied($record, $newRecord);
   }
 
   /**
@@ -741,7 +752,7 @@ abstract class Multiple extends AuthCrud
     /** @var ModelAbstract $modelClassName */
     $modelClassName = $this->getModelClassName();
 
-    /** @var ModelAbstract  $table */
+    /** @var ModelAbstract $table */
     $table = $modelClassName::fetchAll(
       $this->getConditions(),
       $this->getSorting()
@@ -786,7 +797,7 @@ abstract class Multiple extends AuthCrud
 
         $oldData = [];
 
-        $formData = $form->getValues();
+        $formData = $form->getCleanValues();
 
         foreach ($formData as $key => $value) {
           if ($model->{$key} instanceof ModelInterface) {
@@ -818,12 +829,12 @@ abstract class Multiple extends AuthCrud
         if ($isCreating) {
           $this->didChanged($model, $formData);
         } else {
-          $this->didCreated($model, $formData);
-
           if ($model->getMeta()->hasProperty('createdAt') && !isset($formData['createdAt'])) {
             $model->createdAt = time();
             $model->save();
           }
+
+          $this->didCreated($model, $formData);
         }
 
         $this->didSaved($model, $formData);

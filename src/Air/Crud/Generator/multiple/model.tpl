@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace {namespace};
 
+use Air\Crud\Model\Language;
 use Air\Model\ModelAbstract;
 use Air\Type\File;
 use Air\Type\Meta;
@@ -43,6 +46,8 @@ use Air\Type\RichContent;
  *
  * @property {name} $singleModelRef
  * @property {name}[] $multipleModelRef
+ *
+ * @property Language $language
  */
 class {name} extends ModelAbstract
 {

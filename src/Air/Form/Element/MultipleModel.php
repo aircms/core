@@ -121,4 +121,12 @@ class MultipleModel extends ElementAbstract
     }
     return $ids;
   }
+
+  /**
+   * @return mixed
+   */
+  public function getCleanValue(): mixed
+  {
+    return $this->getRawValue();
+  }
 }

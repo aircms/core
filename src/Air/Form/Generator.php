@@ -78,6 +78,7 @@ final class Generator
   {
     $formElements = [
       'General' => [
+        'language' => null,
         'enabled' => null,
         'url' => null,
         'date' => null,
@@ -172,6 +173,7 @@ final class Generator
   private static function getElementClassName(string $name): ?string
   {
     return match ($name) {
+      'language' => Model::class,
       'url', 'title', 'subTitle' => Text::class,
       'enabled' => Checkbox::class,
       'date' => Date::class,
@@ -271,11 +273,21 @@ final class Generator
   /**
    * @return array
    */
+  private static function language(): array
+  {
+    return [
+      'label' => 'Language',
+    ];
+  }
+
+  /**
+   * @return array
+   */
   private static function enabled(): array
   {
     return [
       'label' => 'Enabled',
-      'description' => 'If the option is disabled, the recording will not be available to users.'
+      'description' => 'If the option is disabled, the recording will not be available to users'
     ];
   }
 

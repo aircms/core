@@ -229,4 +229,26 @@ class MultipleGroup extends ElementAbstract
 
     return $value;
   }
+
+  /**
+   * @return mixed
+   */
+  public function getCleanValue(): mixed
+  {
+    $value = parent::getCleanValue();
+
+    if (!$value) {
+      return [];
+    }
+
+    $this->initGroups($value);
+
+    $value = [];
+
+    foreach ($this->getGroups() as $group) {
+      $value[] = $group->getCleanValue();
+    }
+
+    return $value;
+  }
 }

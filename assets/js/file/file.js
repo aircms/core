@@ -132,7 +132,7 @@ class File {
         .replaceAll('{{mime}}', this.file.mime)
         .replaceAll('{{path}}', this.file.path)
         .replaceAll('{{src}}', src)
-        .replaceAll('{{thumbnail}}', src)
+        .replaceAll('{{thumbnail}}', thumbnail)
         .replaceAll('{{id}}', this.id)
         .replaceAll('{{size}}', this.formatBytes(this.file.size))
         .replaceAll('{{width}}', this.file.dims.width)
