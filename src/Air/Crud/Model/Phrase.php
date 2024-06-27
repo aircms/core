@@ -39,9 +39,8 @@ class Phrase extends ModelAbstract
         $phrase->value = $key;
         $phrase->language = $language;
         $phrase->save();
-
-        return $key;
       }
+      return $key;
     }
     return $phrase->value;
   }

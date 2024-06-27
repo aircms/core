@@ -52,7 +52,7 @@ class Log
    */
   public static function write(string $title, array $data = [], string $level = Crud\Model\Log::INFO): int
   {
-    $logsEnabled = Front::getInstance()->getConfig()['ait']['admin']['logs']['enabled'] ?? false;
+    $logsEnabled = Front::getInstance()->getConfig()['air']['logs']['enabled'] ?? false;
 
     if ($logsEnabled) {
       $log = new Crud\Model\Log();
