@@ -33,7 +33,7 @@ class Asset extends HelperAbstract
    * @param string|null $type
    * @return string
    */
-  public function call(mixed $assets, string $type = null): string
+  public function call(mixed $assets, string $type = null)
   {
     $assetsHtml = [];
     $assetsType = $type;
@@ -49,7 +49,9 @@ class Asset extends HelperAbstract
       };
     }
 
-    return implode("\n", $assetsHtml);
+    if ($this->getView()->isAssetsEnabled()) {
+      return implode("\n", $assetsHtml);
+    }
   }
 
   /**

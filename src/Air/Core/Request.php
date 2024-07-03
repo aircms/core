@@ -133,9 +133,13 @@ class Request
    */
   public function fillRequestFromServer()
   {
-    $this->_getParams = $_GET;
-    $this->_postParams = $_POST;
-    $this->_params = $_REQUEST;
+    $this->_getParams = $_GET ?? [];
+    $this->_postParams = $_POST ?? [];
+    $this->_params = $_REQUEST ?? [];
+
+    if (($_SERVER['CONTENT_TYPE'] ?? '') === 'application/json') {
+      $this->_postParams = json_decode(file_get_contents('php://input'), true) ?? [];
+    }
 
     foreach (getallheaders() as $key => $value) {
       $this->_headers[strtolower($key)] = $value;

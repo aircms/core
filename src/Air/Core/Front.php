@@ -288,7 +288,7 @@ final class Front
 
       $this->_view = new View();
 
-      $this->_view->setMinify($this->config['air']['view']['minify'] ?? false);
+      $this->_view->setIsMinifyHtml($this->config['air']['view']['minify'] ?? false);
 
       $modules = null;
 

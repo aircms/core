@@ -2,6 +2,7 @@
 
 namespace Air\View;
 
+use Air\Type\Meta;
 use Exception;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Exception\ViewTemplateWasNotFound;
@@ -49,7 +50,32 @@ class View
   /**
    * @var bool
    */
-  protected bool $minify = false;
+  protected bool $isMinifyHtml = false;
+
+  /**
+   * @var bool
+   */
+  protected bool $isAssetsEnabled = true;
+
+  /**
+   * @var bool
+   */
+  protected bool $isCleanHtml = false;
+
+  /**
+   * @var bool
+   */
+  protected bool $isInjectCrawlerCss = false;
+
+  /**
+   * @var Meta|null
+   */
+  protected ?Meta $meta = null;
+
+  /**
+   * @var \Closure|null
+   */
+  protected ?\Closure $defaultMeta = null;
 
   /**
    * @var array
@@ -126,6 +152,102 @@ class View
   public function setLayoutEnabled(bool $layoutEnabled): void
   {
     $this->layoutEnabled = $layoutEnabled;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isAssetsEnabled(): bool
+  {
+    return $this->isAssetsEnabled;
+  }
+
+  /**
+   * @param bool $isAssetsEnabled
+   */
+  public function setIsAssetsEnabled(bool $isAssetsEnabled): void
+  {
+    $this->isAssetsEnabled = $isAssetsEnabled;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isCleanHtml(): bool
+  {
+    return $this->isCleanHtml;
+  }
+
+  /**
+   * @param bool $isCleanHtml
+   */
+  public function setIsCleanHtml(bool $isCleanHtml): void
+  {
+    $this->isCleanHtml = $isCleanHtml;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isMinifyHtml(): bool
+  {
+    return $this->isMinifyHtml;
+  }
+
+  /**
+   * @param bool $isMinifyHtml
+   */
+  public function setIsMinifyHtml(bool $isMinifyHtml): void
+  {
+    $this->isMinifyHtml = $isMinifyHtml;
+  }
+
+  /**
+   * @param bool $isInjectCrawlerCss
+   */
+  public function setIsInjectCrawlerCss(bool $isInjectCrawlerCss): void
+  {
+    $this->isInjectCrawlerCss = $isInjectCrawlerCss;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isInjectCrawlerCss(): bool
+  {
+    return $this->isInjectCrawlerCss;
+  }
+
+  /**
+   * @param Meta|null $meta
+   */
+  public function setMeta(?Meta $meta): void
+  {
+    $this->meta = $meta;
+  }
+
+  /**
+   * @return Meta|null
+   */
+  public function getMeta(): ?Meta
+  {
+    return $this->meta;
+  }
+
+  /**
+   * @param \Closure|null $defaultMeta
+   */
+  public function setDefaultMeta(\Closure $defaultMeta): void
+  {
+    $this->defaultMeta = $defaultMeta;
+  }
+
+  /**
+   * @return \Closure|null
+   */
+  public function getDefaultMeta(): ?\Closure
+  {
+    return $this->defaultMeta;
   }
 
   /**
@@ -269,7 +391,7 @@ class View
     try {
 
       $_template = $this->path . '/Scripts/' . ($template ?? $this->script) . '.phtml';
-      
+
       if (!file_exists($_template)) {
         throw new ViewTemplateWasNotFound($_template);
       }
@@ -328,34 +450,47 @@ class View
       throw $exception;
     }
 
-    if ($this->isMinify()) {
+    if ($this->isMinifyHtml()) {
       $search = [
-        '/\>[^\S ]+/s',     // strip whitespaces after tags, except space
-        '/[^\S ]+\</s',     // strip whitespaces before tags, except space
-        '/(\s)+/s',         // shorten multiple whitespace sequences
-        '/<!--(.|\s)*?-->/' // Remove HTML comments
+        // strip whitespaces after tags, except space
+        '/\>[^\S ]+/s',
+
+        // strip whitespaces before tags, except space
+        '/[^\S ]+\</s',
+
+        // shorten multiple whitespace sequences
+        '/(\s)+/s',
+
+        // Remove HTML comments
+        '/<!--(.|\s)*?-->/'
       ];
       $replace = ['>', '<', '\\1', ''];
       $content = preg_replace($search, $replace, $content);
     }
 
+    if ($this->isCleanHtml()) {
+      $search = [
+        // removing "class" attributes
+        '/\s*class\s*=\s*(".*?"|\'.*?\'|[^>\s]*)/',
+
+        // removing "data" attributes
+        '/\s*data-[a-zA-Z0-9-]+=".*?"|\s*data-[a-zA-Z0-9-]+=\'.*?\'|\s*data-[a-zA-Z0-9-]+=[^>\s]*/',
+
+        // removing "button" elements
+        '/<button\b[^>]*>(.*?)<\/button>/is',
+
+        // Removing all empty elements
+        '/<([a-z][a-z0-9]*)\b[^>]*>\s*<\/\1>/i',
+      ];
+      $content = preg_replace($search, '', $content);
+    }
+
+    if ($this->isInjectCrawlerCss()) {
+      $css = '<style>[no-rush]{display:none}img{width: 100%}a,input,select{display:inline-block;padding:10px;font-size:20px}</style></head>';
+      $content = str_replace('</head>', $css, $content);
+    }
+
     return $content;
-  }
-
-  /**
-   * @return bool
-   */
-  public function isMinify(): bool
-  {
-    return $this->minify;
-  }
-
-  /**
-   * @param bool $minify
-   */
-  public function setMinify(bool $minify): void
-  {
-    $this->minify = $minify;
   }
 
   /**
