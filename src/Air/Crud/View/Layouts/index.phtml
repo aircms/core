@@ -74,6 +74,7 @@ $isSelectControl = $this->isSelectControl ?? false;
     'js/file/file.js',
     'js/datepicker.js',
     'js/bg-image.js',
+    'js/crud-locale.js',
 
     'js/crud-table.js',
     'js/crud-form.js',
@@ -93,6 +94,17 @@ $isSelectControl = $this->isSelectControl ?? false;
 
   ]); ?>
   <link href="/<?php echo $fonts; ?>/css" rel="stylesheet"/>
+  <script>
+    const locale = (key) => {
+      const value = (<?php echo json_encode(\Air\Crud\Locale::phrases(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); ?>)[key];
+      if (!value) {
+        const ph = JSON.parse(localStorage.getItem('phrases')) || {};
+        ph[key] = key;
+        localStorage.setItem('phrases', JSON.stringify(ph));
+      }
+      return value || key;
+    };
+  </script>
 </head>
 <body data-mdb-theme="<?php echo $theme; ?>" class="overflow-hidden">
 <main class="vh-100 vw-100 d-flex">

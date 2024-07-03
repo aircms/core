@@ -128,7 +128,7 @@ class File {
       File.template
         .replaceAll('{{alt}}', this.file.alt)
         .replaceAll('{{title}}', this.file.title)
-        .replaceAll('{{displayedTitle}}', this.file.title || '<p class="text-muted small">(no title)</p>')
+        .replaceAll('{{displayedTitle}}', this.file.title || '<p class="text-muted small" data-locale="(no title)"></p>')
         .replaceAll('{{mime}}', this.file.mime)
         .replaceAll('{{path}}', this.file.path)
         .replaceAll('{{src}}', src)

@@ -10,7 +10,7 @@ $(document).ready(() => {
     });
     wait.on('[data-admin-form-embed-add]', (addEmbedBtn) => {
       $(addEmbedBtn).click(() => {
-        modal.prompt('Enter embed URL', 'URL').then((url) => {
+        modal.prompt(locale('Enter embed URL'), 'URL').then((url) => {
           const container = $(addEmbedBtn).closest('[data-admin-form-embed-container]')
           const name = container.data('admin-form-embed-container');
 

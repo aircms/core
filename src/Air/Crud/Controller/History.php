@@ -91,19 +91,30 @@ class History extends Multiple
       'type' => [
         'title' => Locale::t('Action'),
         'source' => function (\Air\Crud\Model\History $adminHistory) {
-          return match ($adminHistory->type) {
-            \Air\Crud\Model\History::TYPE_READ_TABLE => "<span class='badge badge-info'>" . Locale::t('Table view') . "</span>",
-            \Air\Crud\Model\History::TYPE_READ_ENTITY => "<span class='badge badge-info'>" . Locale::t('Record details') . "</span>",
-            \Air\Crud\Model\History::TYPE_WRITE_ENTITY => "<span class='badge badge-warning'>" . Locale::t('Edit record') . "</span>",
-            \Air\Crud\Model\History::TYPE_CREATE_ENTITY => "<span class='badge badge-warning'>" . Locale::t('Creating record') . "</span>",
-            default => "<span class='badge badge-danger'>" . Locale::t('Unknown') . "</span>",
+
+          $label = match ($adminHistory->type) {
+            \Air\Crud\Model\History::TYPE_READ_TABLE => Locale::t('Table view'),
+            \Air\Crud\Model\History::TYPE_READ_ENTITY => Locale::t('Record details'),
+            \Air\Crud\Model\History::TYPE_WRITE_ENTITY => Locale::t('Edit record'),
+            \Air\Crud\Model\History::TYPE_CREATE_ENTITY => Locale::t('Creating record'),
+            default => Locale::t('Unknown'),
           };
+
+          $style = match ($adminHistory->type) {
+            \Air\Crud\Model\History::TYPE_READ_TABLE => self::INFO,
+            \Air\Crud\Model\History::TYPE_READ_ENTITY => self::INFO,
+            \Air\Crud\Model\History::TYPE_WRITE_ENTITY => self::WARNING,
+            \Air\Crud\Model\History::TYPE_CREATE_ENTITY => self::WARNING,
+            default => self::DANGER,
+          };
+
+          return self::badge($label, $style);
         }
       ],
       'section' => [
         'title' => Locale::t('Section'),
         'source' => function (\Air\Crud\Model\History $adminHistory) {
-          $content = "<b>{$adminHistory->section}</b>";
+          $content = [self::label($adminHistory->section)];
           try {
             $fields = [];
             foreach ($adminHistory->entity as $values) {
@@ -111,10 +122,10 @@ class History extends Multiple
                 $fields[] = $values;
               }
             }
-            $content .= '<br>' . implode(', ', $fields);
+            $content[] .= implode(', ', $fields);
           } catch (Throwable) {
           }
-          return $content;
+          return self::multiple($content);
         }
       ],
     ];

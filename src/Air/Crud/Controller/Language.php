@@ -6,6 +6,7 @@ namespace Air\Crud\Controller;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
+use Air\Crud\Locale;
 use Air\Form\Element\Checkbox;
 use Air\Form\Form;
 use Air\Form\Generator;
@@ -14,16 +15,33 @@ use Air\Form\Element\Textarea;
 use Air\Form\Element\Storage;
 
 /**
- * @mod-title Languages
  * @mod-manageable true
- *
- * @mod-header {"title": "Image", "by": "image", "type": "image"}
- * @mod-header {"title": "Title", "by": "title"}
- * @mod-header {"title": "Activity", "type": "bool", "by": "enabled"}
- * @mod-header {"title": "Default", "type": "bool", "by": "isDefault"}
  */
 class Language extends Multiple
 {
+  /**
+   * @return string
+   * @throws ClassWasNotFound
+   */
+  protected function getTitle(): string
+  {
+    return Locale::t('Languages');
+  }
+
+  /**
+   * @return array[]
+   * @throws ClassWasNotFound
+   */
+  protected function getHeader(): array
+  {
+    return [
+      'image' => ['title' => Locale::t('Image'), 'by' => 'image', 'type' => 'image'],
+      'title' => ['title' => Locale::t('Title'), 'by' => 'title'],
+      'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
+      'default' => ['title' => Locale::t('Default'), 'by' => 'isDefault', 'type' => 'bool'],
+    ];
+  }
+
   /**
    * @return string
    */
@@ -58,19 +76,19 @@ class Language extends Multiple
     return Generator::full($model, [
       'General' => [
         new Checkbox('isDefault', [
-          'label' => 'Is default',
+          'label' => Locale::t('Is default'),
         ]),
         new Text('title', [
-          'label' => 'Title',
+          'label' => Locale::t('Title'),
           'allowNull' => false,
         ]),
         new Storage('image', [
-          'label' => 'Flag',
+          'label' => Locale::t('Flag'),
           'allowNull' => false,
         ]),
         new Text('key', [
-          'label' => 'Key',
-          'description' => '2 symbols, lowercase'
+          'label' => Locale::t('Key'),
+          'description' => Locale::t('2 symbols, lowercase')
         ])
       ]
     ]);

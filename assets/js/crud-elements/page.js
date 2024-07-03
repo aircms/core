@@ -291,7 +291,7 @@ $(document).ready(() => {
   $(document).on('click', '[data-admin-form-doc-toolbar-clear-background-image]', (e) => {
     const button = $(e.currentTarget);
     context(button, ({page, container, name}) => {
-      modal.question('Remove background image?').then(() => {
+      modal.question(locale('Remove background image?')).then(() => {
         button.hide();
 
         container.find('[data-admin-form-doc-toolbar-set-background-image]').show();
@@ -310,7 +310,7 @@ $(document).ready(() => {
     const button = $(e.currentTarget);
     context(button, ({page, container, name}) => {
       const colorInput = $('[data-admin-form-doc-background-color-form-template]').html();
-      modal.html('Select color', colorInput).then(() => {
+      modal.html(locale('Select color'), colorInput).then(() => {
         $(modal.selector).find('[data-admin-form-doc-background-color-form-apply]').click(() => {
 
           const color = $(modal.selector).find('[data-admin-form-doc-background-color-form-input]').val();
@@ -331,7 +331,7 @@ $(document).ready(() => {
   $(document).on('click', '[data-admin-form-doc-toolbar-clear-background-color]', (e) => {
     const button = $(e.currentTarget);
     context(button, ({page, container, name}) => {
-      modal.question('Remove background color?').then(() => {
+      modal.question(locale('Remove background color?')).then(() => {
         button.css('display', 'none');
         container.find('[data-admin-form-doc-toolbar-set-background-color]').css('display', '');
         page.css('background-color', '');
@@ -350,7 +350,7 @@ $(document).ready(() => {
     const el = $('[data-admin-form-doc-page-item="' + id + '"]');
 
     context(el, ({name, item, itemIndex}) => {
-      modal.question('Remove item?').then(() => {
+      modal.question(locale('Remove item?')).then(() => {
         item.remove();
         const items = getPage(name).items || [];
         items.splice(itemIndex, 1);
@@ -503,7 +503,7 @@ $(document).ready(() => {
 
   $(document).on('click', '[data-admin-form-doc-toolbar-add-embed]', (e) => {
     context(e.currentTarget, ({page, name}) => {
-      modal.prompt('Type embed URL', 'URL').then((src) => {
+      modal.prompt(locale('Type embed URL'), 'URL').then((src) => {
         const template = $('[data-admin-form-doc-page-item-embed-template]').html()
           .replaceAll('{{src}}', src);
 

@@ -112,11 +112,11 @@ const modal = new class {
   }
 
   image(src, alt, title) {
-    return this.html('Image', this.replace(this.embedTemplates.image, {src, alt, title}), {size: 'xLarge'});
+    return this.html(locale('Image'), this.replace(this.embedTemplates.image, {src, alt, title}), {size: 'xLarge'});
   }
 
   video(src, alt, title) {
-    return this.html('Video', this.replace(this.embedTemplates.video, {src, alt, title}), {size: 'xLarge'});
+    return this.html(locale('Video'), this.replace(this.embedTemplates.video, {src, alt, title}), {size: 'xLarge'});
   }
 
   pdf(src, alt, title) {
@@ -126,13 +126,13 @@ const modal = new class {
   text(src, alt, title) {
     return new Promise(() => {
       $.get(src, (content) => {
-        this.html('Text', this.replace(this.embedTemplates.text, {content, alt, title}), {size: 'xLarge'});
+        this.html(locale('Text'), this.replace(this.embedTemplates.text, {content, alt, title}), {size: 'xLarge'});
       });
     });
   }
 
   iframe(src) {
-    this.html('Embed', this.replace(this.embedTemplates.iframe, {src}), {size: 'xxLarge'}).then(() => {
+    this.html(locale('Embed'), this.replace(this.embedTemplates.iframe, {src}), {size: 'xxLarge'}).then(() => {
       $(this.selector).find('iframe').on('load', (e) => {
         setTimeout(() => $(e.currentTarget).addClass('show'), 300);
       });
@@ -140,7 +140,7 @@ const modal = new class {
   }
 
   any(src, alt, title, mime) {
-    return this.html('Any', this.replace(this.embedTemplates.any, {src, alt, title, mime}), {size: 'xLarge'});
+    return this.html(locale('Any'), this.replace(this.embedTemplates.any, {src, alt, title, mime}), {size: 'xLarge'});
   }
 
   embed(src, alt, title, mime) {
@@ -170,7 +170,7 @@ const modal = new class {
       .replaceAll('{{theme}}', theme.theme)
       .replaceAll('{{isMultiple}}', isMultiple ? '1' : '0');
 
-    modal.html('Select file', modalHtml, {size: 'xxLarge'}).then(() => {
+    modal.html(locale('Select file'), modalHtml, {size: 'xxLarge'}).then(() => {
       $('[data-admin-file-modal]').on('load', (e) => {
         $(e.currentTarget).addClass('show');
         $(window).off('message').on('message', (message) => {
@@ -184,7 +184,7 @@ const modal = new class {
 
   model(model, cb) {
     const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/select`);
-    modal.html('Select row', modalHtml, {size: 'xxLarge'}).then(() => {
+    modal.html(locale('Select row'), modalHtml, {size: 'xxLarge'}).then(() => {
       $('[data-admin-model-modal]').on('load', (e) => {
         $(e.currentTarget).addClass('show');
         $(window).off('message').on('message', (message) => {

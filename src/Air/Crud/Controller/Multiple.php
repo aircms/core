@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Crud\Locale;
 use Air\Crud\Model\History;
 use Air\Crud\Trait\Ui;
 use Exception;
@@ -250,13 +251,13 @@ abstract class Multiple extends AuthCrud
         $model = new $modelClassName;
 
         if ($model->getMeta()->hasProperty('image')) {
-          $headers['image'] = ['title' => 'Image', 'type' => 'image', 'static' => true];
+          $headers['image'] = ['title' => Locale::t('Image'), 'type' => 'image', 'static' => true];
         }
         if ($model->getMeta()->hasProperty('title')) {
-          $headers['title'] = ['title' => 'Title', 'static' => true];
+          $headers['title'] = ['title' => Locale::t('Title'), 'static' => true];
         }
         if ($model->getMeta()->hasProperty('enabled')) {
-          $headers['enabled'] = ['title' => 'Activity', 'type' => 'bool'];
+          $headers['enabled'] = ['title' => Locale::t('Activity'), 'type' => 'bool'];
         }
       }
     }

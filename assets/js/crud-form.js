@@ -30,11 +30,11 @@ $(document).ready(() => {
         } else {
           nav.nav(response.url);
         }
-        notify.success('Saved!');
+        notify.success(locale('Saved!'));
       })
       .fail((e) => {
         $(nav.layoutSelector).html(e.responseText);
-        notify.show('Error! Check input values.', {style: 'danger', dismissDelay: 2000});
+        notify.show(locale('Error! Check input values.'), {style: 'danger', dismissDelay: 2000});
       });
     return false;
   });

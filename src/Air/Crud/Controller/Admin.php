@@ -26,9 +26,9 @@ class Admin extends Multiple
   protected function getHeader(): array
   {
     return [
-      'name' => ['title' => 'Name', 'by' => 'name'],
-      'login' => ['title' => 'Login', 'by' => 'login'],
-      'enabled' => ['title' => 'Activity', 'by' => 'enabled', 'type' => 'bool'],
+      'name' => ['title' => Locale::t('Name'), 'by' => 'name'],
+      'login' => ['title' => Locale::t('Login'), 'by' => 'login'],
+      'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
     ];
   }
 

@@ -34,7 +34,7 @@ $(document).ready(() => {
     const data = $(e.currentTarget).serialize();
 
     $.post(url, data, (url) => {
-      notify.success('Record position saved');
+      notify.success(locale('Record position saved'));
       nav.nav(url);
     });
 

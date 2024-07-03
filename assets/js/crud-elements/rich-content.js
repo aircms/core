@@ -22,7 +22,7 @@ $(document).ready(() => {
       const container = $(e.currentTarget).closest('[data-admin-form-rich-content-element-container]');
       const toolbar = $(e.currentTarget).closest('[data-admin-form-rich-content-element-container]').next();
 
-      modal.question('Are sure want to remove?').then(() => {
+      modal.question(locale('Are sure want to remove?')).then(() => {
         container.remove();
         toolbar.remove();
       });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Crud\Locale;
 use Exception;
 use Air\Filter\FilterAbstract;
 use Air\Form\Exception\FilterClassWasNotFound;
@@ -320,7 +321,7 @@ abstract class ElementAbstract
     $this->value = $value;
 
     if (empty($value) && !$this->isAllowNull()) {
-      $this->errorMessages[] = 'Could not be empty';
+      $this->errorMessages[] = Locale::t('Could not be empty');
     }
 
     if (!count($this->errorMessages)) {

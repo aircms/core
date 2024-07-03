@@ -44,7 +44,7 @@ class Embed {
       this.element.find('[data-admin-embed-item-remove]')
         .removeClass('d-none')
         .click(() => {
-          modal.question('Remove embed?').then(() => {
+          modal.question(locale('Remove embed?')).then(() => {
             if (this.options.remove) {
               this.options.remove(this.element);
             }

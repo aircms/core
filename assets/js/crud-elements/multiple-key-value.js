@@ -15,7 +15,7 @@ $(document).ready(() => {
     const container = $(e.currentTarget).closest('[data-admin-form-multiple-key-value-item]');
     const sortableContainer = $(e.currentTarget).closest('[data-admin-form-multiple-key-value-sortable-container]');
 
-    modal.question('Are you sure want to remove?').then(() => {
+    modal.question(locale('Are you sure want to remove?')).then(() => {
       container.remove();
       if (!sortableContainer.find('[data-admin-form-multiple-key-value-item]').length) {
         sortableContainer.addClass('d-none');

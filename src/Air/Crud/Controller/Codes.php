@@ -6,20 +6,38 @@ namespace Air\Crud\Controller;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
+use Air\Crud\Locale;
 use Air\Form\Element\Textarea;
 use Air\Form\Form;
 use Air\Form\Generator;
 
 /**
- * @mod-title Codes
  * @mod-manageable true
  * @mod-sortable title
- *
- * @mod-header {"title": "Title", "by": "title"}
- * @mod-header {"title": "Activity", "type": "bool", "by": "enabled"}
  */
 class Codes extends Multiple
 {
+  /**
+   * @return string
+   * @throws ClassWasNotFound
+   */
+  protected function getTitle(): string
+  {
+    return Locale::t('Codes');
+  }
+
+  /**
+   * @return array[]
+   * @throws ClassWasNotFound
+   */
+  protected function getHeader(): array
+  {
+    return [
+      'title' => ['title' => Locale::t('Title'), 'by' => 'title'],
+      'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
+    ];
+  }
+
   /**
    * @return string
    */
@@ -55,8 +73,8 @@ class Codes extends Multiple
       'General' => [
         new Textarea('description', [
           'value' => $model->description,
-          'label' => 'Code',
-          'description' => 'Code will be used in HEAD section',
+          'label' => Locale::t('Code'),
+          'description' => Locale::t('Code will be used in HEAD section'),
           'allowNull' => false,
         ]),
       ],

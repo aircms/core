@@ -35,7 +35,7 @@ $(document).ready(() => {
     const sortableContainer = $(e.currentTarget)
       .closest('[data-admin-form-multiple-text-sortable-container]');
 
-    modal.question('Are you sure want to remove?').then(() => {
+    modal.question(locale('Are you sure want to remove?')).then(() => {
       item.remove();
 
       if (!sortableContainer.find('[data-admin-form-multiple-text-item]').length) {

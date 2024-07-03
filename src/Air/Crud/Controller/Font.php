@@ -19,9 +19,6 @@ use Air\View\View;
 
 /**
  * @mod-manageable true
- *
- * @mod-header {"title": "Title", "by": "title"}
- * @mod-header {"title": "Activity", "type": "bool", "by": "enabled"}
  */
 class Font extends Multiple
 {
@@ -32,6 +29,18 @@ class Font extends Multiple
   protected function getTitle(): string
   {
     return Locale::t('Fonts');
+  }
+
+  /**
+   * @return array[]
+   * @throws ClassWasNotFound
+   */
+  protected function getHeader(): array
+  {
+    return [
+      'title' => ['title' => Locale::t('Title'), 'by' => 'title'],
+      'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
+    ];
   }
 
   /**

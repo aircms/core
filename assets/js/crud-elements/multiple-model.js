@@ -26,7 +26,7 @@ $(document).ready(() => {
       .closest('[data-admin-form-multiple-model]')
       .data('admin-form-multiple-model');
 
-    modal.question('Are you sure want to remove?').then(() => {
+    modal.question(locale('Are you sure want to remove?')).then(() => {
       container.remove();
       updateValue(name);
     });

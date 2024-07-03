@@ -27,9 +27,9 @@ $(document).ready(() => {
       $.post($(this).data('admin-table-row-copy'))
         .done(() => {
           nav.reload();
-          notify.success('Yeah! Record has been copied.');
+          notify.success(locale('Yeah! Record has been copied.'));
         })
-        .fail(() => notify.danger('Something went wrong. Can\'t copy record'));
+        .fail(() => notify.danger(locale('Something went wrong. Can not copy record')));
     });
   });
 
@@ -38,9 +38,9 @@ $(document).ready(() => {
       $.post($(this).data('admin-table-row-activity'))
         .done(() => {
           nav.reload();
-          notify.success('Yeah! Visibility has been changed');
+          notify.success(locale('Yeah! Visibility has been changed'));
         })
-        .fail(() => notify.danger('Something went wrong. Can\'t set visibility'));
+        .fail(() => notify.danger(locale('Something went wrong. Can not set visibility')));
     });
   });
 

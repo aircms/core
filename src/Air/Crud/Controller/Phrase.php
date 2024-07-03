@@ -6,24 +6,49 @@ namespace Air\Crud\Controller;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
+use Air\Crud\Locale;
 use Air\Form\Element\Text;
 use Air\Form\Element\Textarea;
 use Air\Form\Form;
 use Air\Form\Generator;
 
 /**
- * @mod-title Phrases
  * @mod-manageable true
- *
- * @mod-header {"title": "Key", "by": "key"}
- * @mod-header {"title": "Value", "by": "value"}
- * @mod-header {"title": "Language", "by": "language", "type": "model", "field": "title"}
- *
- * @mod-filter {"type": "search", "by": ["key", "value"]}
- * @mod-filter {"type": "model", "by": "language", "field": "title", "model": "\\Air\\Crud\\Model\\Language"}
  */
 class Phrase extends Multiple
 {
+  /**
+   * @return string
+   * @throws ClassWasNotFound
+   */
+  protected function getTitle(): string
+  {
+    return Locale::t('Phrases');
+  }
+
+  /**
+   * @return array
+   */
+  protected function getHeader(): array
+  {
+    return [
+      'key' => ['title' => Locale::t('Key'), 'by' => 'key'],
+      'value' => ['title' => Locale::t('Value'), 'by' => 'value'],
+      'language' => ['title' => Locale::t('Language'), 'by' => 'language', 'type' => 'model', 'field' => 'title'],
+    ];
+  }
+
+  /**
+   * @return array
+   */
+  protected function getFilter(): array
+  {
+    return [
+      ['type' => 'search', 'by' => ['key', 'value']],
+      ['type' => 'model', 'by' => 'language', 'field' => 'title', 'model' => \Air\Crud\Model\Language::class]
+    ];
+  }
+
   /**
    * @return string
    */
@@ -58,10 +83,10 @@ class Phrase extends Multiple
     return Generator::full($model, [
       'General' => [
         new Text('key', [
-          'label' => 'Key',
+          'label' => Locale::t('Key'),
         ]),
         new Text('value', [
-          'label' => 'Value',
+          'label' => Locale::t('Value'),
         ]),
       ],
     ]);

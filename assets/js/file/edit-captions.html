@@ -2,11 +2,11 @@
   <div class="p-3">
     <div class="form-outline mb-3" data-mdb-input-init>
       <input type="text" id="alt" class="form-control form-control-lg" name="alt" value="{{alt}}"/>
-      <label class="form-label" for="alt">Alt</label>
+      <label class="form-label" for="alt" data-locale="Alt"></label>
     </div>
     <div class="form-outline" data-mdb-input-init>
       <textarea class="form-control form-control-lg" name="title" id="title" rows="3">{{title}}</textarea>
-      <label class="form-label" for="title">Title</label>
+      <label class="form-label" for="title" data-locale="Title"></label>
     </div>
   </div>
   <div class="modal-footer">
@@ -15,17 +15,17 @@
       <div class="flex-grow-1">
         <a class="btn btn-secondary px-3 d-none" data-admin-file-edit-captions-form-automarically>
           <i class="fa-solid fa-wand-magic-sparkles me-1"></i>
-          Fill automatically
+          <span data-locale="Fill automatically"></span>
         </a>
       </div>
       <div class="">
         <button type="submit" class="btn btn-primary me-2 px-3">
           <i class="fas fa-check me-1"></i>
-          Save
+          <span data-locale="Save"></span>
         </button>
         <a class="btn btn-secondary px-3" data-mdb-dismiss="modal">
           <i class="fas fa-ban me-1"></i>
-          Cancel
+          <span data-locale="Cancel"></span>
         </a>
       </div>
     </div>

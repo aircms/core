@@ -33,7 +33,7 @@ $(document).ready(() => {
 
         modal.file(storageUrl, storageKey, isMultiple, (file) => {
           if (!file.alt) {
-            file.alt = 'Untitled';
+            file.alt = locale('Untitled');
           }
 
           if (!file.title) {
@@ -44,7 +44,7 @@ $(document).ready(() => {
 
           if (isMultiple) {
             storageList.append(html);
-            notify.success('File added');
+            notify.success(locale('File added'));
 
           } else {
             storageList.html(html);

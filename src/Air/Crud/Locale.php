@@ -21,19 +21,20 @@ class Locale
   public static function t(string $key): string
   {
     if (!self::$keys) {
-      $filename = __DIR__ . '/../../../locale/' . Front::getInstance()->getConfig()['air']['admin']['locale'] . '.json';
-      self::$keys = json_decode(file_get_contents(realpath($filename)), true) ?? [];
+      self::$keys = self::phrases();
     }
 
-    if (!isset(self::$keys[$key])) {
-      self::$keys[$key] = $key;
+    return self::$keys[$key] ?? $key;
+  }
 
-      $filename = __DIR__ . '/../../../locale/ua.json';
-      file_put_contents($filename, json_encode(self::$keys, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-
-      $filename = __DIR__ . '/../../../locale/en.json';
-      file_put_contents($filename, json_encode(self::$keys, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    }
-    return self::$keys[$key];
+  /**
+   * @return array
+   */
+  public static function phrases(): array
+  {
+    $lang = Front::getInstance()->getConfig()['air']['admin']['locale'];
+    $filename = realpath(__DIR__ . '/../../../locale/' . $lang . '.php');
+    $phrases = require $filename;
+    return $phrases;
   }
 }
