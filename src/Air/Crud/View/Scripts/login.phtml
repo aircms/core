@@ -37,15 +37,21 @@ $theme = Cookie::get('theme') ?? 'dark';
           <form method="post">
             <div data-mdb-input-init class="form-outline mb-4">
               <input type="text" id="login" class="form-control" name="login" required/>
-              <label class="form-label" for="login">Login</label>
+              <label class="form-label" for="login">
+                <?php echo \Air\Crud\Locale::t('Login'); ?>
+              </label>
             </div>
             <div data-mdb-input-init class="form-outline mb-4">
               <input type="password" id="password" class="form-control" required name="password"/>
-              <label class="form-label" for="password">Password</label>
+              <label class="form-label" for="password">
+                <?php echo \Air\Crud\Locale::t('Password'); ?>
+              </label>
             </div>
-            <button data-mdb-ripple-init type="submit" class="btn btn-primary btn-block">Sign in</button>
+            <button data-mdb-ripple-init type="submit" class="btn btn-primary btn-block">
+              <?php echo \Air\Crud\Locale::t('Sign in'); ?>
+            </button>
             <div class="text-danger bg-danger-subtle rounded-4 mt-4 p-4 py-3 d-none" data-error>
-              Login or password are incorrect
+              <?php echo \Air\Crud\Locale::t('Login or password are incorrect'); ?>
             </div>
           </form>
         </div>

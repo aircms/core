@@ -16,10 +16,13 @@ $title = Front::getInstance()->getConfig()['air']['admin']['title'];
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
+/** @var string $title */
+$lang = Front::getInstance()->getConfig()['air']['admin']['locale'];
+
 $isSelectControl = $this->isSelectControl ?? false;
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo $lang; ?>">
 <head>
   <?php
   echo $this->partial('common/head');

@@ -23,7 +23,7 @@ $filter = $this->filter;
   <ul class="dropdown-menu w-100">
     <li>
       <a class="dropdown-item" role="button" data-admin-select-option>
-        All
+        <?php echo \Air\Crud\Locale::t('All'); ?>
       </a>
     </li>
     <?php foreach ($filter['options'] as $option) : ?>

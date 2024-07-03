@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
+use Air\Crud\Locale;
 use Air\Filter\Lowercase;
 use Air\Filter\Trim;
 use Air\Form\Element\Checkbox;
@@ -276,7 +277,7 @@ final class Generator
   private static function language(): array
   {
     return [
-      'label' => 'Language',
+      'label' => Locale::t('Language'),
     ];
   }
 
@@ -286,8 +287,8 @@ final class Generator
   private static function enabled(): array
   {
     return [
-      'label' => 'Enabled',
-      'description' => 'If the option is disabled, the recording will not be available to users'
+      'label' => Locale::t('Enabled'),
+      'description' => Locale::t('If the option is disabled, the recording will not be available to users')
     ];
   }
 
@@ -300,7 +301,7 @@ final class Generator
       'label' => 'URL',
       'filters' => [Trim::class, Lowercase::class],
       'hint' => 'URL',
-      'description' => 'Use only lower-case letters a-z and digits 0-9'
+      'description' => Locale::t('Use only lower-case letters a-z and digits 0-9')
     ];
   }
 
@@ -310,7 +311,7 @@ final class Generator
   private static function date(): array
   {
     return [
-      'label' => 'Date',
+      'label' => Locale::t('Date'),
     ];
   }
 
@@ -320,7 +321,7 @@ final class Generator
   private static function dateTime(): array
   {
     return [
-      'label' => 'Date/Time',
+      'label' => Locale::t('Date/Time'),
     ];
   }
 
@@ -330,10 +331,10 @@ final class Generator
   private static function title(): array
   {
     return [
-      'label' => 'Title',
+      'label' => Locale::t('Title'),
       'filters' => [Trim::class],
       'allowNull' => false,
-      'description' => 'Enter no more than 255 characters'
+      'description' => Locale::t('Enter no more than 255 characters')
     ];
   }
 
@@ -343,9 +344,9 @@ final class Generator
   private static function subTitle(): array
   {
     return [
-      'label' => 'Sub title',
+      'label' => Locale::t('Sub title'),
       'filters' => [Trim::class],
-      'description' => 'This is a slightly expanded version of the title'
+      'description' => Locale::t('This is a slightly expanded version of the title')
     ];
   }
 
@@ -355,9 +356,9 @@ final class Generator
   private static function description(): array
   {
     return [
-      'label' => 'Description',
+      'label' => Locale::t('Description'),
       'filters' => [Trim::class],
-      'description' => 'Come up with a concise description'
+      'description' => Locale::t('Come up with a concise description')
     ];
   }
 
@@ -367,7 +368,7 @@ final class Generator
   private static function image(): array
   {
     return [
-      'label' => 'Image',
+      'label' => Locale::t('Image'),
     ];
   }
 
@@ -377,7 +378,7 @@ final class Generator
   private static function images(): array
   {
     return [
-      'label' => 'Images',
+      'label' => Locale::t('Images'),
       'multiple' => true,
     ];
   }
@@ -388,7 +389,7 @@ final class Generator
   private static function file(): array
   {
     return [
-      'label' => 'File',
+      'label' => Locale::t('File'),
     ];
   }
 
@@ -398,7 +399,7 @@ final class Generator
   private static function files(): array
   {
     return [
-      'label' => 'Files',
+      'label' => Locale::t('Files'),
       'multiple' => true,
     ];
   }
@@ -409,9 +410,9 @@ final class Generator
   private static function meta(): array
   {
     return [
-      'label' => 'Meta',
-      'description' => 'Complete your web page\'s meta tags, including title, description, and keywords, to enhance ' .
-        'visibility on search engines and attract your target audience.'
+      'label' => Locale::t('Meta'),
+      'description' => Locale::t('Complete your web page meta tags, including title, description, and keywords, to enhance ' .
+        'visibility on search engines and attract your target audience.')
     ];
   }
 
@@ -421,7 +422,7 @@ final class Generator
   private static function quote(): array
   {
     return [
-      'label' => 'Quote',
+      'label' => Locale::t('Quote'),
       'allowNull' => true,
     ];
   }
@@ -432,9 +433,9 @@ final class Generator
   private static function content(): array
   {
     return [
-      'label' => 'Content',
-      'description' => 'Input and edit text with diverse styles, sizes, along with intuitive formatting options such' .
-        ' as bold, italic, and underline, as well as support for various data types like links.'
+      'label' => Locale::t('Content'),
+      'description' => Locale::t('Input and edit text with diverse styles, sizes, along with intuitive formatting options such' .
+        ' as bold, italic, and underline, as well as support for various data types like links.')
     ];
   }
 
@@ -444,8 +445,8 @@ final class Generator
   private static function embed(): array
   {
     return [
-      'label' => 'Embed',
-      'description' => 'YouTube, Vimeo, Google Maps or other embed url'
+      'label' => Locale::t('Embed'),
+      'description' => Locale::t('YouTube, Vimeo, Google Maps or other embed url')
     ];
   }
 
@@ -455,8 +456,8 @@ final class Generator
   private static function richContent(): array
   {
     return [
-      'label' => 'Rich content',
-      'description' => 'Input and edit a different content types, such as Html, Text, Images, Quote and Code snippets.'
+      'label' => Locale::t('Rich content'),
+      'description' => Locale::t('Input and edit a different content types, such as Html, Text, Images, Quote and Code snippets.')
     ];
   }
 
@@ -466,9 +467,9 @@ final class Generator
   private static function page(): array
   {
     return [
-      'label' => 'Document',
-      'description' => 'Pdf driven similar block.<br>You can resize the canvas and add elements such as:<br><ul><li>' .
-        'Image</li><li>Video</li><li>Document</li><li>Rich text</li><li>Embed</li></ul>'
+      'label' => Locale::t('Document'),
+      'description' => Locale::t('Pdf driven similar block.<br>You can resize the canvas and add elements such as:<br><ul><li>' .
+        'Image</li><li>Video</li><li>Document</li><li>Rich text</li><li>Embed</li></ul>')
     ];
   }
 
@@ -478,7 +479,7 @@ final class Generator
   private static function pages(): array
   {
     return [...self::page(), ...[
-      'label' => 'Documents',
+      'label' => Locale::t('Documents'),
     ]];
   }
 
@@ -488,9 +489,9 @@ final class Generator
   private static function icon(): array
   {
     return [
-      'label' => 'Icon (Google Symbol)',
-      'description' => 'Use icons name from Google Symbols<br><a href="https://fonts.google.com/icons"' .
-        ' class="text-info text-decoration-underline" target="_blank">Google Symbols</a>'
+      'label' => Locale::t('Icon (Google Symbol)'),
+      'description' => Locale::t('Use icons name from Google Symbols<br><a href="https://fonts.google.com/icons"' .
+        ' class="text-info text-decoration-underline" target="_blank">Google Symbols</a>')
     ];
   }
 }

@@ -46,14 +46,14 @@ $controller = $this->controller;
         <?php if ($mode === 'manage') : ?>
           <a class="btn btn-primary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-save>
             <i class="fa fa-save me-1"></i>
-            Save (CTRL+S)
+            <?php echo \Air\Crud\Locale::t('Save (CTRL+S)'); ?>
           </a>
         <?php endif; ?>
 
         <?php if (count($filter)) : ?>
           <a href="?" class="btn btn-danger ms-2 px-3" data-mdb-ripple-init>
             <i class="fa fa-filter me-1"></i>
-            Clear filter
+            <?php echo \Air\Crud\Locale::t('Clear filter'); ?>
           </a>
         <?php endif; ?>
 
@@ -62,7 +62,7 @@ $controller = $this->controller;
              class="btn btn-primary ms-2 px-3"
              data-mdb-ripple-init>
             <i class="fas fa-plus me-1"></i>
-            Add
+            <?php echo \Air\Crud\Locale::t('Add'); ?>
           </a>
         <?php endif; ?>
 
@@ -71,7 +71,7 @@ $controller = $this->controller;
              href="<?php echo $this->uri(['controller' => $controller, 'action' => 'position'], $request->getParams()); ?>"
              data-mdb-ripple-init>
             <i class="fas fa-sort me-1"></i>
-            Sort
+            <?php echo \Air\Crud\Locale::t('Sort'); ?>
           </a>
         <?php endif; ?>
 
@@ -79,12 +79,12 @@ $controller = $this->controller;
 
           <a class="btn btn-danger ms-2 px-3" data-mdb-ripple-init data-admin-from-positioning-reset>
             <i class="fa fa-power-off me-1"></i>
-            Reset
+            <?php echo \Air\Crud\Locale::t('Reset'); ?>
           </a>
 
           <a class="btn btn-primary ms-2 px-3" data-mdb-ripple-init data-admin-from-positioning-save>
             <i class="fa fa-save me-1"></i>
-            Save (CTRL+S)
+            <?php echo \Air\Crud\Locale::t('Save (CTRL+S)'); ?>
           </a>
 
         <?php endif; ?>
@@ -95,7 +95,7 @@ $controller = $this->controller;
              data-mdb-ripple-init
              data-force="true">
             <i class="fas fa-download me-1"></i>
-            Export
+            <?php echo \Air\Crud\Locale::t('Export'); ?>
           </a>
         <?php endif; ?>
 

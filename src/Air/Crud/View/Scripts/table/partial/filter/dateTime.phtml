@@ -16,7 +16,9 @@ $filter = $this->filter;
              readonly
              role="button"
              data-admin-datetimepicker>
-      <label class="form-label" for="filter[<?php echo $filter['by']; ?>][from]">From</label>
+      <label class="form-label" for="filter[<?php echo $filter['by']; ?>][from]">
+        <?php echo \Air\Crud\Locale::t('From'); ?>
+      </label>
     </div>
   </div>
   <div class="col">
@@ -31,7 +33,9 @@ $filter = $this->filter;
              readonly
              role="button"
              data-admin-datetimepicker>
-      <label class="form-label" for="filter[<?php echo $filter['by']; ?>][to]">Till</label>
+      <label class="form-label" for="filter[<?php echo $filter['by']; ?>][to]">
+        <?php echo \Air\Crud\Locale::t('Till'); ?>
+      </label>
     </div>
   </div>
   <div class="col flex-grow-0">

@@ -6,6 +6,7 @@ namespace Air\Crud\Controller;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
+use Air\Crud\Locale;
 use Air\Form\Element\Storage;
 use Air\Form\Form;
 use Air\Form\Generator;
@@ -17,7 +18,6 @@ use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\View\View;
 
 /**
- * @mod-title Fonts
  * @mod-manageable true
  *
  * @mod-header {"title": "Title", "by": "title"}
@@ -25,6 +25,15 @@ use Air\View\View;
  */
 class Font extends Multiple
 {
+  /**
+   * @return string
+   * @throws ClassWasNotFound
+   */
+  protected function getTitle(): string
+  {
+    return Locale::t('Fonts');
+  }
+
   /**
    * @return string
    */

@@ -68,15 +68,16 @@ $toJson = function ($row) {
           <li>
             <a class="dropdown-item"
                href="<?php echo $this->uri(['controller' => $controller, 'action' => 'manage'], ['id' => $row->id, 'returnUrl' => $returnUrl]); ?>">
-              <i class="fas fa-edit me-1"></i> Manage
+              <i class="fas fa-edit me-1"></i> <?php echo \Air\Crud\Locale::t('Manage'); ?>
             </a>
           </li>
 
         <?php elseif (($control['type'] ?? false) === 'copy') : ?>
           <li>
-            <a class="dropdown-item" role="button"
+            <a class="dropdown-item"
+               role="button"
                data-admin-table-row-copy="<?php echo $this->uri(['controller' => $controller, 'action' => 'copy'], ['id' => $row->id]); ?>">
-              <i class="fas fa-copy me-1"></i> Copy?
+              <i class="fas fa-copy me-1"></i> <?php echo \Air\Crud\Locale::t('Copy?'); ?>
             </a>
           </li>
 
@@ -86,9 +87,9 @@ $toJson = function ($row) {
             <li>
               <a class="dropdown-item"
                  role="button"
-                 data-confirm="Disable record?"
+                 data-confirm="<?php echo \Air\Crud\Locale::t('Disable record?'); ?>"
                  data-admin-table-row-activity="<?php echo $this->uri(['controller' => $controller, 'action' => 'setEnabled'], ['enabled' => 0, 'id' => $row->id]); ?>">
-                <i class="fas fa-ban me-1"></i> Disable?
+                <i class="fas fa-ban me-1"></i> <?php echo \Air\Crud\Locale::t('Disable?'); ?>
               </a>
             </li>
 
@@ -96,9 +97,9 @@ $toJson = function ($row) {
             <li>
               <a class="dropdown-item"
                  role="button"
-                 data-confirm="Enable record?"
+                 data-confirm="<?php echo \Air\Crud\Locale::t('Enable record?'); ?>"
                  data-admin-table-row-activity="<?php echo $this->uri(['controller' => $controller, 'action' => 'setEnabled'], ['enabled' => 1, 'id' => $row->id]); ?>">
-                <i class="fas fa-check me-1"></i> Enable?
+                <i class="fas fa-check me-1"></i> <?php echo \Air\Crud\Locale::t('Enable?'); ?>
               </a>
             </li>
           <?php endif; ?>
@@ -135,9 +136,11 @@ $toJson = function ($row) {
     <?php elseif ($isSelectControl) : ?>
 
       <li>
-        <a class="dropdown-item" role="button" data-admin-table-row-select="<?php echo $row->id; ?>">
+        <a class="dropdown-item"
+           role="button"
+           data-admin-table-row-select="<?php echo $row->id; ?>">
           <div class="d-none" data-admin-table-row-object><?php echo $toJson($row); ?></div>
-          <i class="fas fa-check me-1"></i> Select
+          <i class="fas fa-check me-1"></i> <?php echo \Air\Crud\Locale::t('Select'); ?>
         </a>
       </li>
 

@@ -20,9 +20,11 @@ class Storage extends Multiple
   {
     $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
     $theme = Cookie::get('theme') ?? 'dark';
+    $lang = Front::getInstance()->getConfig()['air']['admin']['locale'] ?? 'en';
 
     $this->getView()->assign('storageConfig', $storageConfig);
     $this->getView()->assign('theme', $theme);
+    $this->getView()->assign('lang', $lang);
 
     $this->getView()->setScript('storage');
   }

@@ -38,13 +38,13 @@ $hasEnabled = $model->getMeta()->hasProperty('enabled');
   <ul class="dropdown-menu w-100 admin-select-searchable overflow-y-auto">
     <li>
       <a class="dropdown-item" role="button" data-admin-select-option>
-        All
+        <?php echo \Air\Crud\Locale::t('All'); ?>
       </a>
     </li>
     <li class="p-2">
       <div class="form-outline" data-mdb-input-init>
         <input type="text" class="form-control" data-admin-select-search/>
-        <label class="form-label">Search</label>
+        <label class="form-label"><?php echo \Air\Crud\Locale::t('Search'); ?></label>
       </div>
     </li>
     <?php foreach ($model::fetchAll() as $rec) : ?>
