@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Air;
+namespace Air\ThirdParty;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;

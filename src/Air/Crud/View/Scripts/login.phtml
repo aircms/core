@@ -15,16 +15,16 @@ $theme = Cookie::get('theme') ?? 'dark';
   echo $this->partial('common/head');
   echo $this->asset([
     'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap',
-    'air/vendor/mdb/light.css',
-    'air/vendor/mdb/mdb.js',
-    'air/vendor/jq.js',
-    'air/css/blur.css',
-    'air/css/scrollbar.css',
-    'air/css/transition.css',
-    'air/js/mdb.js',
-    'air/js/wait.js',
-    'air/js/loader.js',
-    'air/js/login.js'
+    'vendor/mdb/light.css',
+    'vendor/mdb/mdb.js',
+    'vendor/jq.js',
+    'css/blur.css',
+    'css/scrollbar.css',
+    'css/transition.css',
+    'js/mdb.js',
+    'js/wait.js',
+    'js/loader.js',
+    'js/login.js'
   ]); ?>
 </head>
 <body data-mdb-theme="<?php echo Cookie::get('theme') ?? 'dark'; ?>">

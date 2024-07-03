@@ -321,7 +321,7 @@ class Router
 
     if (!isset($routes['routes'])) {
 
-      if (isset($routes['strict']) && $routes['strict'] === true) {
+      if (($routes['strict'] ?? false) === true) {
         throw new RouterWasNotFound($uri);
       }
 
