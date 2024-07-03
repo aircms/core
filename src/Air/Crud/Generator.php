@@ -82,8 +82,9 @@ class Generator
     $namespace = $this->config['air']['loader']['namespace'] . '\Module\Admin\Controller';
     $name = ucfirst(str_replace(' ', '', $this->name));
     $title = $this->name;
+    $subject = 'controller-' . $this->config['air']['admin']['locale'];
 
-    return !!$this->gen($namespace, $name, $title, 'controller', 'Module/Admin/Controller');
+    return !!$this->gen($namespace, $name, $title, $subject, 'Module/Admin/Controller');
   }
 
   /**
@@ -120,7 +121,7 @@ class Generator
     $nav = '<' . '?php' . "\n\nreturn " . str_replace(
         ['{', '}', '":', '"', '    '],
         ['[', ']', '" =>', "'", '  '],
-        json_encode($nav, JSON_PRETTY_PRINT)
+        json_encode($nav, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
       ) . ';';
 
     return !!file_put_contents('config/nav.php', $nav);
