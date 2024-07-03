@@ -17,7 +17,7 @@ $quote = $this->quote;
          id="<?php echo $name; ?>[value][author]"
          name="<?php echo $name; ?>[value][author]"
          value="<?php echo htmlspecialchars($quote->author); ?>">
-  <label class="form-label" for="<?php echo $name; ?>[value][author]">Author</label>
+  <label class="form-label" for="<?php echo $name; ?>[value][author]"><?php echo \Air\Crud\Locale::t('Author'); ?></label>
 </div>
 
 <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
@@ -25,5 +25,5 @@ $quote = $this->quote;
             rows="5"
             id="<?php echo $name; ?>[value][quote]"
             name="<?php echo $name; ?>[value][quote]"><?php echo $quote->quote; ?></textarea>
-  <label class="form-label" for="<?php echo $name; ?>[value][quote]">Quote</label>
+  <label class="form-label" for="<?php echo $name; ?>[value][quote]"><?php echo \Air\Crud\Locale::t('Quote'); ?></label>
 </div>

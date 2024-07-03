@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
+use Air\Crud\Locale;
 use Air\Form\Element\ElementAbstract;
 use Air\Form\Element\Hidden;
 use Air\Form\Element\Tab;
@@ -22,7 +23,7 @@ class Form
   /**
    * @var string
    */
-  public string $firstTabLabel = 'General';
+  public string $firstTabLabel = '';
 
   /**
    * @var string
@@ -316,13 +317,14 @@ class Form
   }
 
   /**
-   * Form constructor.
-   *
    * @param array $options
    * @param array $elements
+   * @throws \Air\Core\Exception\ClassWasNotFound
    */
   public function __construct(array $options = [], array $elements = [])
   {
+    $this->firstTabLabel = Locale::t('General');
+
     foreach ($options as $name => $value) {
 
       if (is_callable([$this, 'set' . ucfirst($name)])) {

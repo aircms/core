@@ -17,7 +17,9 @@ $name = $element->getName();
            class="form-control form-control-lg"
            id="<?php echo $name; ?>[{{name}}][value][author]"
            name="<?php echo $name; ?>[{{name}}][value][author]">
-    <label class="form-label" for="<?php echo $name; ?>[{{name}}][value][author]">Author</label>
+    <label class="form-label" for="<?php echo $name; ?>[{{name}}][value][author]">
+      <?php echo \Air\Crud\Locale::t('Author'); ?>
+    </label>
   </div>
 
   <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
@@ -25,7 +27,9 @@ $name = $element->getName();
               rows="5"
               id="<?php echo $name; ?>[{{name}}][value][quote]"
               name="<?php echo $name; ?>[{{name}}][value][quote]"></textarea>
-    <label class="form-label" for="<?php echo $name; ?>[{{name}}][value][quote]">Quote</label>
+    <label class="form-label" for="<?php echo $name; ?>[{{name}}][value][quote]">
+      <?php echo \Air\Crud\Locale::t('Quote'); ?>
+    </label>
   </div>
 
 </template>

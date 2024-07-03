@@ -78,7 +78,7 @@ final class Generator
   ): array
   {
     $formElements = [
-      'General' => [
+      Locale::t('General') => [
         'language' => null,
         'enabled' => null,
         'url' => null,
@@ -90,28 +90,28 @@ final class Generator
         'quote' => null,
         'icon' => null,
       ],
-      'Documents' => [
+      Locale::t('Documents') => [
         'page' => null,
         'pages' => null,
       ],
-      'Images' => [
+      Locale::t('Images') => [
         'image' => null,
         'images' => null,
         'file' => null,
         'files' => null,
       ],
-      'Content' => [
+      Locale::t('Content') => [
         'content' => null,
         'richContent' => null,
         'embed' => null,
       ],
-      'META settings' => [
+      Locale::t('META settings') => [
         'meta' => null,
       ],
     ];
 
     if ($includeReferences) {
-      $formElements['References'] = [];
+      $formElements[Locale::t('References')] = [];
 
       foreach ($model->getMeta()->getProperties() as $property) {
         $type = $property->getType();
@@ -119,7 +119,7 @@ final class Generator
           $type = substr($type, 0, strlen($type) - 2);
         }
         if (class_exists($type) && is_subclass_of($type, ModelAbstract::class)) {
-          $formElements['References'][$property->getName()] = null;
+          $formElements[Locale::t('References')][$property->getName()] = null;
         }
       }
     }
@@ -258,7 +258,6 @@ final class Generator
       'value' => $model->{$name},
       'label' => $fieldName,
       'model' => $type,
-      'description' => 'Please select an entry from the ' . $modelName . ' collection',
       'field' => 'title',
       'allowNull' => $allowNull
     ];

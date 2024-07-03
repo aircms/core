@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Crud\Locale;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 use Throwable;
@@ -26,7 +27,7 @@ class RichContent extends ElementAbstract
     $isValid = parent::isValid($value);
 
     if (!$isValid) {
-      $this->errorMessages = ['Could not be empty'];
+      $this->errorMessages = [Locale::t('Could not be empty')];
       return false;
     }
 

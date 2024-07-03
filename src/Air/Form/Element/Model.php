@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Form\Element;
 
 use Air\Core\Exception\ClassWasNotFound;
+use Air\Crud\Locale;
 use Air\Model\Exception\CallUndefinedMethod;
 use Air\Model\Exception\ConfigWasNotProvided;
 use Air\Model\Exception\DriverClassDoesNotExists;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Crud\Locale;
 use Exception;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
@@ -106,7 +107,7 @@ class MultiplePage extends PageAbstract
     $isValid = parent::isValid($value);
 
     if (!$isValid) {
-      $this->errorMessages = ['Could not be empty'];
+      $this->errorMessages = [Locale::t('Could not be empty')];
       return false;
     }
 
@@ -115,7 +116,7 @@ class MultiplePage extends PageAbstract
     }
 
     if ((!$value || !count($value)) && !$this->isAllowNull()) {
-      $this->errorMessages = ['Could not be empty'];
+      $this->errorMessages = [Locale::t('Could not be empty')];
       return false;
     }
 

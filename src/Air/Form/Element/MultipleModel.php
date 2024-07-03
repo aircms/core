@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Crud\Locale;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Model\ModelAbstract;
@@ -74,7 +75,7 @@ class MultipleModel extends ElementAbstract
       $count = !!count($value);
 
       if (!$count) {
-        $this->errorMessages[] = 'Could not be empty';
+        $this->errorMessages[] = Locale::t('Could not be empty');
         return false;
       }
       return true;

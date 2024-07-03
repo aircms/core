@@ -37,13 +37,13 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
                      class="form-control form-control-lg"
                      value="<?php echo $width; ?>"
                      data-admin-form-doc-toolbar-size="width">
-              <label class="form-label" for="width">Width (px)</label>
+              <label class="form-label" for="width"><?php echo \Air\Crud\Locale::t('Width (px)'); ?></label>
             </div>
             <div class="form-outline bg-body-tertiary" data-mdb-input-init>
               <input type="text" class="form-control form-control-lg"
                      value="<?php echo $height; ?>"
                      data-admin-form-doc-toolbar-size="height">
-              <label class="form-label" for="width">Height (px)</label>
+              <label class="form-label" for="width"><?php echo \Air\Crud\Locale::t('Height (px)'); ?></label>
             </div>
           </div>
         </li>
@@ -68,7 +68,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
         data-mdb-dropdown-init
         data-mdb-ripple-init
         aria-expanded="false">
-        Gutter: <span data-admin-form-doc-toolbar-gutter-label><?php echo $gutter; ?></span> px
+        <?php echo \Air\Crud\Locale::t('Gutter'); ?>: <span data-admin-form-doc-toolbar-gutter-label><?php echo $gutter; ?></span> <?php echo \Air\Crud\Locale::t('px'); ?>
       </button>
 
       <ul class="dropdown-menu">
@@ -78,7 +78,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
               <input type="text" class="form-control form-control-lg"
                      value="<?php echo $gutter; ?>"
                      data-admin-form-doc-toolbar-gutter>
-              <label class="form-label" for="width">Gutter (px)</label>
+              <label class="form-label" for="width"><?php echo \Air\Crud\Locale::t('Gutter (px)'); ?></label>
             </div>
           </div>
         </li>
@@ -88,7 +88,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
             <a class="dropdown-item d-flex align-items-center justify-content-between"
                data-admin-form-doc-toolbar-set-gutter="<?php echo $gutter; ?>"
                role="button">
-              <?php echo $gutter; ?> px
+              <?php echo $gutter; ?> <?php echo \Air\Crud\Locale::t('px'); ?>
             </a>
           </li>
         <?php endforeach; ?>
@@ -100,7 +100,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
        data-mdb-ripple-init
        data-mdb-tooltip-init
        data-mdb-placement="bottom"
-       title="Set background image"
+       title="<?php echo \Air\Crud\Locale::t('Set background image'); ?>"
        <?php if (!$isSetBackgroundImageVisible) : ?>style="display: none"<?php endif; ?>>
       <i class="fas fa-image"></i>
     </a>
@@ -110,7 +110,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
        data-mdb-ripple-init
        data-mdb-tooltip-init
        data-mdb-placement="bottom"
-       title="Remove background image?"
+       title="<?php echo \Air\Crud\Locale::t('Remove background image?'); ?>"
        <?php if (!$isClearBackgroundImageVisible) : ?>style="display: none"<?php endif; ?>>
       <i class="fas fa-image"></i>
     </a>
@@ -120,7 +120,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
        data-mdb-ripple-init
        data-mdb-tooltip-init
        data-mdb-placement="bottom"
-       title="Set background color"
+       title="<?php echo \Air\Crud\Locale::t('Set background color'); ?>"
        <?php if (!$isSetBackgroundColorVisible) : ?>style="display: none"<?php endif; ?>>
       <i class="fas fa-palette"></i>
     </a>
@@ -130,7 +130,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
        data-mdb-ripple-init
        data-mdb-tooltip-init
        data-mdb-placement="bottom"
-       title="Remove background color?"
+       title="<?php echo \Air\Crud\Locale::t('Remove background color?'); ?>"
        <?php if (!$isClearBackgroundColorVisible) : ?>style="display: none"<?php endif; ?>>
       <i class="fas fa-palette"></i>
     </a>
@@ -140,7 +140,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
        data-mdb-ripple-init
        data-mdb-tooltip-init
        data-mdb-placement="bottom"
-       title="Add file">
+       title="<?php echo \Air\Crud\Locale::t('Add file'); ?>">
       <i class="fas fa-file"></i>
     </a>
     <a class="btn btn-primary px-3 me-1"
@@ -148,7 +148,7 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
        data-mdb-ripple-init
        data-mdb-tooltip-init
        data-mdb-placement="bottom"
-       title="Add formatted text">
+       title="<?php echo \Air\Crud\Locale::t('Add formatted text'); ?>">
       <i class="fas fa-code"></i>
     </a>
     <a class="btn btn-primary px-3"
@@ -156,11 +156,11 @@ $gutter = $value?->getGutter() ?? Page::GUTTER;
        data-mdb-ripple-init
        data-mdb-tooltip-init
        data-mdb-placement="bottom"
-       title="Add embed">
+       title="<?php echo \Air\Crud\Locale::t('Add embed'); ?>">
       <i class="fas fa-anchor"></i>
     </a>
     <div class="text-end flex-fill">
-      <span class="badge badge-primary">Page #<span data-admin-form-doc-toolbar-page-number></span></span>
+      <span class="badge badge-primary"><?php echo \Air\Crud\Locale::t('Page'); ?> #<span data-admin-form-doc-toolbar-page-number></span></span>
     </div>
   </div>
 </div>

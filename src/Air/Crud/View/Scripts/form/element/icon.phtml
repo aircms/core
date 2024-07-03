@@ -14,7 +14,7 @@ $element = $this->element;
       <i class="fs-6 material-symbols-outlined me-1"><?php echo $value; ?></i>
       <span><?php echo ucfirst(strtolower(str_replace('_', ' ', $value))); ?></span>
     <?php else: ?>
-      Choose an icon
+      <?php echo \Air\Crud\Locale::t('Choose an icon'); ?>
     <?php endif; ?>
   </button>
   <button
@@ -32,7 +32,7 @@ $element = $this->element;
     <li class="p-3 pb-0">
       <div class="form-outline" data-mdb-input-init>
         <input type="text" class="form-control" data-admin-icon-search-input/>
-        <label class="form-label">Search</label>
+        <label class="form-label"><?php echo \Air\Crud\Locale::t('Search'); ?></label>
       </div>
     </li>
     <li class="admin-form-icons overflow-y-scroll overflow-x-hidden d-flex flex-wrap gap-3 p-3">

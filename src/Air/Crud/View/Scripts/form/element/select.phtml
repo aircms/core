@@ -26,7 +26,9 @@ $element = $this->element;
 
     <?php if ($element->isAllowNull()) : ?>
       <li>
-        <a class="dropdown-item" role="button" data-admin-select-option>All</a>
+        <a class="dropdown-item" role="button" data-admin-select-option>
+          <?php echo \Air\Crud\Locale::t('All'); ?>
+        </a>
       </li>
     <?php endif; ?>
 

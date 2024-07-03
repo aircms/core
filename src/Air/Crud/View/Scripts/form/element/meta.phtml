@@ -15,7 +15,7 @@ $name = $element->getName();
 <div data-admin-meta="<?php echo $name; ?>">
   <div class="form-check form-switch">
     <label for="<?php echo $name; ?>[useModelData]" class="ms-1">
-      Use automatic data
+      <?php echo \Air\Crud\Locale::t('Use automatic data'); ?>
     </label>
     <input class="form-check-input"
            type="checkbox"
@@ -36,7 +36,7 @@ $name = $element->getName();
              name="<?php echo $name; ?>[title]"
              value="<?php echo htmlspecialchars($value->getTitle()); ?>"
              <?php if ($element->isAllowNull()) : ?>required<?php endif; ?>>
-      <label class="form-label" for="<?php echo $name; ?>">Title</label>
+      <label class="form-label" for="<?php echo $name; ?>"><?php echo \Air\Crud\Locale::t('Title'); ?></label>
     </div>
 
     <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
@@ -45,7 +45,9 @@ $name = $element->getName();
             id="<?php echo $name; ?>[description]"
             name="<?php echo $name; ?>[description]"><?php echo $value->getDescription(); ?></textarea>
 
-      <label class="form-label" for="<?php echo $name; ?>[description]">Description</label>
+      <label class="form-label" for="<?php echo $name; ?>[description]">
+        <?php echo \Air\Crud\Locale::t('Description'); ?>
+      </label>
     </div>
 
     <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
@@ -55,7 +57,7 @@ $name = $element->getName();
              name="<?php echo $name; ?>[keywords]"
              value="<?php echo htmlspecialchars($value->getKeywords()); ?>"
              <?php if ($element->isAllowNull()) : ?>required<?php endif; ?>>
-      <label class="form-label" for="<?php echo $name; ?>">Keywords</label>
+      <label class="form-label" for="<?php echo $name; ?>"><?php echo \Air\Crud\Locale::t('Keywords'); ?></label>
     </div>
 
     <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
@@ -65,7 +67,7 @@ $name = $element->getName();
              name="<?php echo $name; ?>[ogTitle]"
              value="<?php echo htmlspecialchars($value->getOgTitle()); ?>"
              <?php if ($element->isAllowNull()) : ?>required<?php endif; ?>>
-      <label class="form-label" for="<?php echo $name; ?>">OG title</label>
+      <label class="form-label" for="<?php echo $name; ?>"><?php echo \Air\Crud\Locale::t('OG title'); ?></label>
     </div>
 
     <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
@@ -74,7 +76,9 @@ $name = $element->getName();
             id="<?php echo $name; ?>[ogDescription]"
             name="<?php echo $name; ?>[ogDescription]"><?php echo $value->getOgDescription(); ?></textarea>
 
-      <label class="form-label" for="<?php echo $name; ?>[ogDescription]">OG description</label>
+      <label class="form-label" for="<?php echo $name; ?>[ogDescription]">
+        <?php echo \Air\Crud\Locale::t('OG description'); ?>
+      </label>
     </div>
 
     <div data-admin-form-storage="<?php echo $name; ?>[ogImage]" class="mt-3">
@@ -89,7 +93,7 @@ $name = $element->getName();
          data-admin-form-storage-add
          data-admin-form-storage-add-key="<?php echo $storageConfig['key']; ?>"
          data-admin-form-storage-add-url="<?php echo $storageConfig['url']; ?>">
-        <i class="fas fa-plus"></i> Select file
+        <i class="fas fa-plus"></i> <?php echo \Air\Crud\Locale::t('Select file'); ?>
       </a>
 
       <div class="d-flex flex-wrap" data-admin-form-storage-list>

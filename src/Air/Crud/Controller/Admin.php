@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Crud\Locale;
 use Air\Form\Element\Checkbox;
 use Air\Form\Form;
 use Exception;
@@ -15,15 +16,31 @@ use Air\Form\Element\Text;
 use Air\Form\Generator;
 
 /**
- * @mod-title Users
  * @mod-manageable true
- *
- * @mod-header {"title": "Name", "by": "name"}
- * @mod-header {"title": "Login", "by": "login"}
- * @mod-header {"title": "Activity", "type": "bool", "by": "enabled"}
  */
 class Admin extends Multiple
 {
+  /**
+   * @return array[]
+   */
+  protected function getHeader(): array
+  {
+    return [
+      'name' => ['title' => 'Name', 'by' => 'name'],
+      'login' => ['title' => 'Login', 'by' => 'login'],
+      'enabled' => ['title' => 'Activity', 'by' => 'enabled', 'type' => 'bool'],
+    ];
+  }
+
+  /**
+   * @return string
+   * @throws \Air\Core\Exception\ClassWasNotFound
+   */
+  protected function getTitle(): string
+  {
+    return Locale::t('Users');
+  }
+
   /**
    * @return string[]
    */
@@ -49,17 +66,17 @@ class Admin extends Multiple
     return new Form(['data' => $model], [
       'Credentials' => [
         new Checkbox('enabled', [
-          'label' => 'Enabled',
+          'label' => Locale::t('Enabled'),
         ]),
         new Text('name', [
-          'label' => 'Name',
+          'label' => Locale::t('Name'),
         ]),
         new Text('login', [
-          'label' => 'Login',
+          'label' => Locale::t('Login'),
         ]),
         new Text('password', [
           'value' => '',
-          'label' => 'Password',
+          'label' => Locale::t('Password'),
           'allowNull' => true,
         ]),
       ]

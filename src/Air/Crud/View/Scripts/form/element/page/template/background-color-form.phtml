@@ -6,15 +6,15 @@
              value="#ffffff"
              data-admin-form-doc-background-color-form-input
              required>
-      <label class="form-label" for="color">Background color</label>
+      <label class="form-label" for="color"><?php echo \Air\Crud\Locale::t('Background color'); ?></label>
     </div>
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary btn-lg px-3" data-mdb-ripple-init data-admin-form-doc-background-color-form-apply>
-      <i class="fas fa-check me-1"></i> Apply
+      <i class="fas fa-check me-1"></i> <?php echo \Air\Crud\Locale::t('Apply'); ?>
     </button>
     <button class="btn btn-secondary btn-lg px-3" data-mdb-ripple-init data-mdb-dismiss="modal">
-      <i class="fas fa-ban me-1"></i> Cancel
+      <i class="fas fa-ban me-1"></i> <?php echo \Air\Crud\Locale::t('Cancel'); ?>
     </button>
   </div>
 </template>

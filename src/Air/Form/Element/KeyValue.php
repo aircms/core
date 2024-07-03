@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Crud\Locale;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 
@@ -32,7 +33,7 @@ class KeyValue extends KeyValueAbstract
       $value = $this->getValue();
 
       if (!strlen($value[$this->getKeyPropertyName()]) || !strlen($value[$this->getValuePropertyName()])) {
-        $this->errorMessages[] = 'Could not be empty';
+        $this->errorMessages[] = Locale::t('Could not be empty');
         return false;
       }
     }

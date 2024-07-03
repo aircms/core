@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Crud\Locale;
+
 abstract class KeyValueAbstract extends ElementAbstract
 {
   /**
@@ -25,6 +27,18 @@ abstract class KeyValueAbstract extends ElementAbstract
    * @var string
    */
   public string $valuePropertyName = 'value';
+
+  /**
+   * @param string $name
+   * @param array $userOptions
+   */
+  public function __construct(string $name, array $userOptions = [])
+  {
+    $this->keyLabel = Locale::t('Key');
+    $this->valueLabel = Locale::t('Label');
+
+    parent::__construct($name, $userOptions);
+  }
 
   /**
    * @return string

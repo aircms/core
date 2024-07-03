@@ -25,9 +25,9 @@ $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
     <i class="fas fa-plus"></i>
 
     <?php if ($element->isMultiple()) : ?>
-      Add file
+      <?php echo \Air\Crud\Locale::t('Add file'); ?>
     <?php else: ?>
-      Select file
+      <?php echo \Air\Crud\Locale::t('Select file'); ?>
     <?php endif; ?>
   </a>
 

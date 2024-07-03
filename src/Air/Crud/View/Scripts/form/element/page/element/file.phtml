@@ -21,7 +21,7 @@ $id = uniqid();
 
 <ul class="dropdown-menu shadow-5-strong overflow-hidden" data-admin-contextmenu-target="<?php echo $id; ?>">
   <li class="p-3 pb-0">
-    Transparent
+    <?php echo \Air\Crud\Locale::t('Transparent'); ?>
     <div class="range" data-mdb-range-init>
       <input type="range"
              class="form-range"
@@ -33,12 +33,12 @@ $id = uniqid();
     <a class="dropdown-item"
        role="button"
        onclick="modal.embed('<?php echo $item->getValue()->getSrc(); ?>', '', '', '<?php echo $item->getValue()->getMime(); ?>')">
-      <i class="fas fa-eye me-1"></i> View
+      <i class="fas fa-eye me-1"></i> <?php echo \Air\Crud\Locale::t('View'); ?>
     </a>
   </li>
   <li>
     <a class="dropdown-item" role="button" data-admin-form-doc-page-item-remove="<?php echo $id; ?>">
-      <i class="fas fa-ban me-1"></i> Remove?
+      <i class="fas fa-ban me-1"></i> <?php echo \Air\Crud\Locale::t('Remove?'); ?>
     </a>
   </li>
 </ul>

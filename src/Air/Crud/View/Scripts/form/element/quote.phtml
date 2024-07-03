@@ -13,7 +13,9 @@ $value = $element->getValue() ?? new \Air\Type\Quote();
          name="<?php echo $element->getName(); ?>[author]"
          value="<?php echo htmlspecialchars($value->author); ?>"
          <?php if ($element->isAllowNull()) : ?>required<?php endif; ?>>
-  <label class="form-label" for="<?php echo $element->getName(); ?>[author]">Author</label>
+  <label class="form-label" for="<?php echo $element->getName(); ?>[author]">
+    <?php echo \Air\Crud\Locale::t('Author'); ?>
+  </label>
 </div>
 
 <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
@@ -21,5 +23,7 @@ $value = $element->getValue() ?? new \Air\Type\Quote();
             rows="5"
             id="<?php echo $element->getName(); ?>[quote]"
             name="<?php echo $element->getName(); ?>[quote]"><?php echo $value->quote; ?></textarea>
-  <label class="form-label" for="<?php echo $element->getName(); ?>[quote]">Quote</label>
+  <label class="form-label" for="<?php echo $element->getName(); ?>[quote]">
+    <?php echo \Air\Crud\Locale::t('Quote'); ?>
+  </label>
 </div>

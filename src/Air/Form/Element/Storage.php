@@ -6,6 +6,7 @@ namespace Air\Form\Element;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
+use Air\Crud\Locale;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Type\File;
@@ -82,7 +83,7 @@ class Storage extends ElementAbstract
     $isValid = parent::isValid($value);
 
     if (!$isValid) {
-      $this->errorMessages = ['Could not be empty'];
+      $this->errorMessages = [Locale::t('Could not be empty')];
       return false;
     }
 
@@ -91,7 +92,7 @@ class Storage extends ElementAbstract
     }
 
     if ((!is_array($value) || !count($value)) && !$this->isAllowNull()) {
-      $this->errorMessages = ['Could not be empty'];
+      $this->errorMessages = [Locale::t('Could not be empty')];
       return false;
     }
 

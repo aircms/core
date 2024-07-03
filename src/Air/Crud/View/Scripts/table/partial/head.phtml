@@ -9,7 +9,7 @@ $isSelectControl = $this->isSelectControl;
 <thead>
 <tr class="rounded-4 overflow-hidden">
   <?php foreach ($header as $name => $headerRow) :
-    $title = str_replace(' ', '&nbsp;', \Air\Crud\Locale::t($headerRow['title']));
+    $title = str_replace(' ', '&nbsp;', $headerRow['title']);
     $type = $headerRow['type'] ?? 'text';
     $static = $headerRow['static'] ?? false;
     $size = $headerRow['size'] ?? false;

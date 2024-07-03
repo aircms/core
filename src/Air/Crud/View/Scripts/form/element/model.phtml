@@ -33,7 +33,7 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
     <li class="p-2">
       <div class="form-outline" data-mdb-input-init>
         <input type="text" class="form-control" data-admin-select-search/>
-        <label class="form-label">Search</label>
+        <label class="form-label"><?php echo \Air\Crud\Locale::t('Search'); ?></label>
       </div>
     </li>
     <?php foreach ($element->getModel()::fetchAll() as $rec) : ?>
