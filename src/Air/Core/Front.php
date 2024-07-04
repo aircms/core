@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Core;
 
+use Air\Crud\Controller\Asset;
 use Air\Crud\Controller\Codes;
 use Air\Crud\Controller\Language;
 use Air\Crud\Controller\Phrase;
@@ -491,6 +492,9 @@ final class Front
 
     } else if (($this->getConfig()['air']['admin']['phrases'] ?? false) === $controller) {
       return Phrase::class;
+
+    } else if (($this->getConfig()['air']['asset']['minify'] ?? false) === $controller) {
+      return Asset::class;
     }
 
     if ($this->config['air']['modules'] ?? false) {

@@ -10,76 +10,136 @@ use Air\Core\Front;
 class Asset extends HelperAbstract
 {
   /**
+   * @var array|null
+   */
+  public static ?array $config = null;
+
+  /**
    * @var array
    */
-  public mixed $config = [
-    'underscore' => false,
-    'prefix' => '',
-    'defer' => false,
-    'async' => false
-  ];
+  public static array $css = [];
 
   /**
-   * Config initialization
+   * @var array
+   */
+  public static array $js = [];
+
+  /**
+   * @var array
+   */
+  public static array $thirdPartyCss = [];
+
+  /**
+   * @var array
+   */
+  public static array $thirdPartyJs = [];
+
+  /**
+   * @return self
    * @throws ClassWasNotFound
    */
-  public function __construct()
+  public function call(): self
   {
-    $this->config = Front::getInstance()->getConfig()['air']['asset'] ?? $this->config;
+    if (!self::$config) {
+      self::$config = array_merge(
+        [
+          'minify' => false,
+          'underscore' => false,
+          'prefix' => '',
+        ],
+        Front::getInstance()->getConfig()['air']['asset'] ?? []
+      );
+    }
+
+    return $this;
   }
 
   /**
-   * @param mixed $assets
-   * @param string|null $type
    * @return string
+   * @throws ClassWasNotFound
    */
-  public function call(mixed $assets, string $type = null)
+  public function base(): string
   {
-    $assetsHtml = [];
-    $assetsType = $type;
+    return '<base href="' . self::$config['prefix'] . '/">';
+  }
 
+  /**
+   * @param array|string|null $assets
+   * @return self
+   */
+  public function css(array|string $assets = null): self
+  {
     foreach ((array)$assets as $asset) {
-      $assetParts = explode('.', explode('?', $asset)[0]);
-      $type = $assetsType ?: $assetParts[count($assetParts) - 1];
-
-      $assetsHtml[] = match ($type) {
-        'js' => $this->js($asset),
-        'svg', 'jpg', 'jpeg', 'png', 'webp', 'json' => $this->filter($asset),
-        default => $this->css($asset),
-      };
+      if (str_starts_with($asset, 'http')) {
+        self::$thirdPartyCss[$asset] = $asset;
+        continue;
+      }
+      self::$css[$asset] = $this->filter($asset);
     }
-
-    if ($this->getView()->isAssetsEnabled()) {
-      return implode("\n", $assetsHtml);
-    }
+    return $this;
   }
 
   /**
-   * @param string $uri
-   * @return string
+   * @param array|string $asset
+   * @param bool $defer
+   * @param bool $async
+   * @return self
    */
-  public function js(string $uri): string
+  public function js(array|string $assets, bool $defer = false, bool $async = false): self
   {
-    $defer = $this->config['defer'] ?? false ? 'defer' : '';
-    $async = $this->config['async'] ?? false ? 'async' : '';
-
-    $settings = implode(' ', [$defer, $async]);
-
-    return '<script src="' . $this->filter($uri) . '" ' . $settings . '></script>';
+    foreach ((array)$assets as $asset) {
+      if (str_starts_with($asset, 'http')) {
+        self::$thirdPartyJs[$asset] = $asset;
+        continue;
+      }
+      self::$js[$asset] = $this->filter($asset);
+    }
+    return $this;
   }
 
   /**
-   * @param string $uri
    * @return string
    */
-  public function css(string $uri): string
+  public function toCss(): string
   {
-    $defer = $this->config['defer'] ?? false ? 'defer' : '';
-    $async = $this->config['async'] ?? false ? 'async' : '';
+    $rendered = null;
+    foreach (self::$thirdPartyCss as $css) {
+      $rendered .= '<link href="' . $css . '" rel="stylesheet" />';
+    }
 
-    $settings = implode(' ', [$defer, $async]);
+    if (!self::$config['minify']) {
+      foreach (self::$css as $css) {
+        $rendered .= '<link href="' . $css . '" rel="stylesheet" />';
+      }
+    } else {
+      $css = base64_encode(implode('|', array_keys(self::$css)));
+      $rendered .= '<link href="/' . self::$config['minify'] . '/css?s=' . $css . '" rel="stylesheet" />';
+    }
 
-    return '<link href="' . $this->filter($uri) . '" ' . $settings . ' rel="stylesheet" />';
+    return $rendered;
+  }
+
+  /**
+   * @return string
+   */
+  public function toJs(): string
+  {
+    $rendered = null;
+
+    foreach (self::$thirdPartyJs as $js) {
+      $rendered .= '<script src="' . $js . '" defer></script>';
+    }
+
+    if (!self::$config['minify']) {
+      foreach (self::$css as $css) {
+        $rendered .= '<link href="' . $css . '" rel="stylesheet" />';
+      }
+    } else {
+      $css = base64_encode(implode('|', array_keys(self::$js)));
+      $rendered .= '<script src="/' . self::$config['minify'] . '/js?s=' . $css . '" defer></script>';
+    }
+
+    return $rendered;
   }
 
   /**

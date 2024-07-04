@@ -81,7 +81,7 @@ class Phrase extends Multiple
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      'General' => [
+      Locale::t('General') => [
         new Text('key', [
           'label' => Locale::t('Key'),
         ]),

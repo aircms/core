@@ -60,7 +60,7 @@ class Codes extends Multiple
    */
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['fonts'];
+    return Front::getInstance()->getConfig()['air']['admin']['codes'];
   }
 
   /**
@@ -70,7 +70,7 @@ class Codes extends Multiple
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      'General' => [
+      Locale::t('General') => [
         new Textarea('description', [
           'value' => $model->description,
           'label' => Locale::t('Code'),

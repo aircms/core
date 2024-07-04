@@ -38,7 +38,7 @@ class Language extends Multiple
       'image' => ['title' => Locale::t('Image'), 'by' => 'image', 'type' => 'image'],
       'title' => ['title' => Locale::t('Title'), 'by' => 'title'],
       'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
-      'default' => ['title' => Locale::t('Default'), 'by' => 'isDefault', 'type' => 'bool'],
+      'isDefault' => ['title' => Locale::t('Default'), 'by' => 'isDefault', 'type' => 'bool'],
     ];
   }
 
@@ -74,7 +74,7 @@ class Language extends Multiple
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      'General' => [
+      Locale::t('General') => [
         new Checkbox('isDefault', [
           'label' => Locale::t('Is default'),
         ]),

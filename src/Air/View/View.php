@@ -53,21 +53,6 @@ class View
   protected bool $isMinifyHtml = false;
 
   /**
-   * @var bool
-   */
-  protected bool $isAssetsEnabled = true;
-
-  /**
-   * @var bool
-   */
-  protected bool $isCleanHtml = false;
-
-  /**
-   * @var bool
-   */
-  protected bool $isInjectCrawlerCss = false;
-
-  /**
    * @var Meta|null
    */
   protected ?Meta $meta = null;
@@ -157,38 +142,6 @@ class View
   /**
    * @return bool
    */
-  public function isAssetsEnabled(): bool
-  {
-    return $this->isAssetsEnabled;
-  }
-
-  /**
-   * @param bool $isAssetsEnabled
-   */
-  public function setIsAssetsEnabled(bool $isAssetsEnabled): void
-  {
-    $this->isAssetsEnabled = $isAssetsEnabled;
-  }
-
-  /**
-   * @return bool
-   */
-  public function isCleanHtml(): bool
-  {
-    return $this->isCleanHtml;
-  }
-
-  /**
-   * @param bool $isCleanHtml
-   */
-  public function setIsCleanHtml(bool $isCleanHtml): void
-  {
-    $this->isCleanHtml = $isCleanHtml;
-  }
-
-  /**
-   * @return bool
-   */
   public function isMinifyHtml(): bool
   {
     return $this->isMinifyHtml;
@@ -200,22 +153,6 @@ class View
   public function setIsMinifyHtml(bool $isMinifyHtml): void
   {
     $this->isMinifyHtml = $isMinifyHtml;
-  }
-
-  /**
-   * @param bool $isInjectCrawlerCss
-   */
-  public function setIsInjectCrawlerCss(bool $isInjectCrawlerCss): void
-  {
-    $this->isInjectCrawlerCss = $isInjectCrawlerCss;
-  }
-
-  /**
-   * @return bool
-   */
-  public function isInjectCrawlerCss(): bool
-  {
-    return $this->isInjectCrawlerCss;
   }
 
   /**
@@ -466,28 +403,6 @@ class View
       ];
       $replace = ['>', '<', '\\1', ''];
       $content = preg_replace($search, $replace, $content);
-    }
-
-    if ($this->isCleanHtml()) {
-      $search = [
-        // removing "class" attributes
-        '/\s*class\s*=\s*(".*?"|\'.*?\'|[^>\s]*)/',
-
-        // removing "data" attributes
-        '/\s*data-[a-zA-Z0-9-]+=".*?"|\s*data-[a-zA-Z0-9-]+=\'.*?\'|\s*data-[a-zA-Z0-9-]+=[^>\s]*/',
-
-        // removing "button" elements
-        '/<button\b[^>]*>(.*?)<\/button>/is',
-
-        // Removing all empty elements
-        '/<([a-z][a-z0-9]*)\b[^>]*>\s*<\/\1>/i',
-      ];
-      $content = preg_replace($search, '', $content);
-    }
-
-    if ($this->isInjectCrawlerCss()) {
-      $css = '<style>[no-rush]{display:none}img{width: 100%}a,input,select{display:inline-block;padding:10px;font-size:20px}</style></head>';
-      $content = str_replace('</head>', $css, $content);
     }
 
     return $content;
