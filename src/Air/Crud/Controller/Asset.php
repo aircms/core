@@ -6,6 +6,8 @@ namespace Air\Crud\Controller;
 
 use Air\Core\Controller;
 use Air\Core\Front;
+use MatthiasMullie\Minify\CSS;
+use MatthiasMullie\Minify\JS;
 
 class Asset extends Controller
 {
@@ -14,6 +16,10 @@ class Asset extends Controller
    */
   private array $files = [];
 
+  /**
+   * @return void
+   * @throws \Air\Core\Exception\ClassWasNotFound
+   */
   public function init(): void
   {
     parent::init();
@@ -31,13 +37,11 @@ class Asset extends Controller
    */
   public function css(): string
   {
-    $files = null;
-    foreach ($this->files as $file) {
-      $files .= $this->minify_css(file_get_contents($file));
-    }
+    $minifier = new CSS();
+    $minifier->addFile($this->files);
 
     $this->getResponse()->setHeader('Content-Type', 'text/css');
-    return $files;
+    return $minifier->minify();
   }
 
   /**
@@ -45,27 +49,10 @@ class Asset extends Controller
    */
   public function js(): string
   {
-    $files = null;
-    foreach ($this->files as $file) {
-      $files .= $this->minimizeJavascriptSimple(file_get_contents($file));
-    }
+    $minifier = new JS();
+    $minifier->addFile($this->files);
 
     $this->getResponse()->setHeader('Content-Type', 'application/javascript');
-    return $files;
-  }
-
-  function minify_css($css) {
-    // Remove comments
-    $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
-    // Remove spaces before and after selectors, braces, and colons
-    $css = preg_replace('/\s*([{}|:;,])\s+/', '$1', $css);
-    // Remove remaining spaces and line breaks
-    $css = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '',$css);
-
-    return $css;
-  }
-
-  function minimizeJavascriptSimple($javascript){
-    return preg_replace(array("/\s+\n/", "/\n\s+/", "/ +/"), array("\n", "\n ", " "), $javascript);
+    return $minifier->minify();
   }
 }
