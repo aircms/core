@@ -434,10 +434,7 @@ class Router
       }
     }
 
-    if (isset($routes['strict'])
-      && $routes['strict'] === true
-      && ($this->_config['asset']['minify'] ?? false) !== $parts[0]
-    ) {
+    if (isset($routes['strict']) && $routes['strict'] === true) {
       throw new RouterWasNotFound($uri);
     }
 
