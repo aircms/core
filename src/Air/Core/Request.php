@@ -15,10 +15,10 @@ class Request
   /**
    * Supported request method
    */
-  const METHOD_GET = 'get';
-  const METHOD_POST = 'post';
-  const METHOD_PUT = 'put';
-  const METHOD_DELETE = 'delete';
+  const string METHOD_GET = 'get';
+  const string METHOD_POST = 'post';
+  const string METHOD_PUT = 'put';
+  const string METHOD_DELETE = 'delete';
 
   /**
    * @var \Air\Type\File[]
@@ -317,9 +317,9 @@ class Request
 
   /**
    * @param string $key
-   * @return string
+   * @return string|null
    */
-  public function getHeader(string $key)
+  public function getHeader(string $key): ?string
   {
     return $this->_headers[$key] ?? null;
   }
@@ -328,7 +328,7 @@ class Request
    * @param string $key
    * @param string $value
    */
-  public function setHeader(string $key, string $value)
+  public function setHeader(string $key, string $value): void
   {
     $this->_headers[$key] = $value;
   }

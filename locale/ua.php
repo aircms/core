@@ -183,5 +183,12 @@ return [
   'Message' => 'Повідомлення',
   'Got it' => 'Зрозумів',
   'Confirm' => 'Підтвердити',
-  'Cancel' => 'Скасувати'
+  'Cancel' => 'Скасувати',
+  'Rich content' => 'Розширений контент',
+  'Input and edit a different content types, such as Html, Text, Images, Quote and Code snippets.' => 'Вводьте та редагуйте різні типи вмісту, як-от Html, текст, зображення, цитати та фрагменти коду.',
+  'Sub title' => 'Підзаголовок',
+  'This is a slightly expanded version of the title' => 'Це трохи розширена версія назви',
+  'Quote' => 'Цитата',
+  'Author' => 'Автор',
+  'Date/Time' => 'Дата, час'
 ];

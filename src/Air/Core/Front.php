@@ -6,8 +6,11 @@ namespace Air\Core;
 
 use Air\Crud\Controller\Asset;
 use Air\Crud\Controller\Codes;
+use Air\Crud\Controller\FontsUi;
 use Air\Crud\Controller\Language;
 use Air\Crud\Controller\Phrase;
+use Air\Crud\Controller\RobotsTxt;
+use Air\Crud\Controller\RobotsTxtUi;
 use Error;
 use Throwable;
 use ReflectionClass;
@@ -493,8 +496,14 @@ final class Front
     } else if (($this->getConfig()['air']['admin']['phrases'] ?? false) === $controller) {
       return Phrase::class;
 
-    } else if (($this->getConfig()['air']['asset']['minify'] ?? false) === $controller) {
-      return Asset::class;
+    } else if (($this->getConfig()['air']['admin']['robotsTxt'] ?? false) === $controller) {
+      return RobotsTxt::class;
+
+    } else if ('robots.txt' === $controller) {
+      return RobotsTxtUi::class;
+
+    } else if ('fonts' === $controller) {
+      return FontsUi::class;
     }
 
     if ($this->config['air']['modules'] ?? false) {

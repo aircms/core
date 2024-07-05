@@ -46,7 +46,6 @@ class Paginator
   public function __construct(ModelAbstract $model, array $cond = null, array $sort = null)
   {
     $this->model = $model;
-
     $this->cond = $cond;
     $this->sort = $sort;
   }

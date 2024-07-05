@@ -15,6 +15,7 @@ use Air\Model\Exception\CallUndefinedMethod;
 use Air\Model\Exception\ConfigWasNotProvided;
 use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
+use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\View\View;
 
 /**
@@ -69,8 +70,9 @@ class Font extends Multiple
   }
 
   /**
-   * @param \Air\Crud\AddOn\Font\Model\Font $model
+   * @param \Air\Crud\Model\Font $model
    * @return Form
+   * @throws PropertyWasNotFound
    */
   protected function getForm($model = null): Form
   {

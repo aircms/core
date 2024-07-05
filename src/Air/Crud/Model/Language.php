@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Air\Crud\Model;
 
+use Air\Core\Exception\ClassWasNotFound;
+use Air\Model\Exception\CallUndefinedMethod;
+use Air\Model\Exception\ConfigWasNotProvided;
+use Air\Model\Exception\DriverClassDoesNotExists;
+use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\ModelAbstract;
 use Air\Type\File;
 
@@ -23,7 +28,7 @@ class Language extends ModelAbstract
   /**
    * @var Language|null
    */
-  private static self|null $defaulLanguage = null;
+  private static self|null $defaultLanguage = null;
 
   /**
    * @param Language $language
@@ -31,27 +36,25 @@ class Language extends ModelAbstract
    */
   public static function setDefaultLanguage(self $language): void
   {
-    self::$defaulLanguage = $language;
+    self::$defaultLanguage = $language;
   }
 
   /**
    * @return mixed|self|null
-   * @throws \Air\Core\Exception\ClassWasNotFound
-   * @throws \Air\Model\Exception\CallUndefinedMethod
-   * @throws \Air\Model\Exception\ConfigWasNotProvided
-   * @throws \Air\Model\Exception\DriverClassDoesNotExists
-   * @throws \Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ClassWasNotFound
+   * @throws CallUndefinedMethod
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    */
   public static function getLanguage(): mixed
   {
-    if (self::$defaulLanguage) {
-      return self::$defaulLanguage;
+    if (self::$defaultLanguage) {
+      return self::$defaultLanguage;
     }
-
-    self::$defaulLanguage = self::one([
+    self::$defaultLanguage = self::one([
       'isDefault' => true
     ]);
-
-    return self::$defaulLanguage;
+    return self::$defaultLanguage;
   }
 }

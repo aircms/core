@@ -11,7 +11,7 @@ class Paging
    * @param int $currentPage
    * @param int $itemsPerPage
    * @param int $range
-   * @return string
+   * @return array|bool
    */
   public static function paging(
     int $totalCount,

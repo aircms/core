@@ -59,6 +59,9 @@ $languages = $route($config['admin']['languages'] ?? null);
 
 /** @var string $phrases */
 $phrases = $route($config['admin']['phrases'] ?? null);
+
+/** @var string $robotsTxt */
+$robotsTxt = $route($config['admin']['robotsTxt'] ?? null);
 ?>
 
 <div class="d-flex flex-column h-100">
@@ -197,6 +200,13 @@ $phrases = $route($config['admin']['phrases'] ?? null);
                 <i class="fas fa-code me-1"></i> <?php echo \Air\Crud\Locale::t('Codes'); ?>
               </a>
             </li>
+            <?php if ($robotsTxt) : ?>
+              <li>
+                <a class="dropdown-item" href="<?php echo $robotsTxt; ?>">
+                  <i class="fas fa-robot me-1"></i> <?php echo \Air\Crud\Locale::t('Robots.txt'); ?>
+                </a>
+              </li>
+            <?php endif; ?>
             <li class="dropdown-divider"></li>
           <?php endif; ?>
           <li>

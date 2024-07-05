@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Core;
 
 use Air\Core\Exception\DomainMustBeProvided;
 use Air\Core\Exception\RouterDomainWasNotFound;
-use Air\Core\Exception\RouterVarMustBeProvided;
 use Air\Core\Exception\RouterWasNotFound;
 
 /**
@@ -14,59 +15,59 @@ use Air\Core\Exception\RouterWasNotFound;
 class Router
 {
   /**
-   * @var Request
+   * @var Request|null
    */
-  private $_request = null;
+  private ?Request $request = null;
 
   /**
    * @var string
    */
-  private $_module = '';
+  private string $module = '';
 
   /**
    * @var string
    */
-  private $_controller = '';
+  private string $controller = '';
 
   /**
    * @var string
    */
-  private $_action = '';
+  private string $action = '';
 
   /**
    * @var array
    */
-  private $_routes = [];
+  private array $routes = [];
 
   /**
    * @var array
    */
-  private $_urlParams = [];
+  private array $urlParams = [];
 
   /**
    * @var array
    */
-  private $_injector = [];
+  private array $injector = [];
 
   /**
    * @var array
    */
-  private $_config = [];
+  private array $config = [];
 
   /**
    * @return string
    */
   public function getModule(): string
   {
-    return $this->_module;
+    return $this->module;
   }
 
   /**
    * @param string $module
    */
-  public function setModule(string $module)
+  public function setModule(string $module): void
   {
-    $this->_module = $module;
+    $this->module = $module;
   }
 
   /**
@@ -74,7 +75,7 @@ class Router
    */
   public function getController(): string
   {
-    return $this->_controller;
+    return $this->controller;
   }
 
   /**
@@ -82,7 +83,7 @@ class Router
    */
   public function setController(string $controller)
   {
-    $this->_controller = $controller;
+    $this->controller = $controller;
   }
 
   /**
@@ -90,31 +91,31 @@ class Router
    */
   public function getAction(): string
   {
-    return $this->_action;
+    return $this->action;
   }
 
   /**
    * @param string $action
    */
-  public function setAction(string $action)
+  public function setAction(string $action): void
   {
-    $this->_action = $action;
+    $this->action = $action;
   }
 
   /**
    * @return array
    */
-  public function getRoutes()
+  public function getRoutes(): array
   {
-    return $this->_routes;
+    return $this->routes;
   }
 
   /**
    * @param array $routes
    */
-  public function setRoutes(array $routes)
+  public function setRoutes(array $routes): void
   {
-    $this->_routes = $routes;
+    $this->routes = $routes;
   }
 
   /**
@@ -122,7 +123,7 @@ class Router
    */
   public function getUrlParams(): array
   {
-    return $this->_urlParams;
+    return $this->urlParams;
   }
 
   /**
@@ -130,7 +131,7 @@ class Router
    */
   public function setUrlParams(array $urlParams): void
   {
-    $this->_urlParams = $urlParams;
+    $this->urlParams = $urlParams;
   }
 
   /**
@@ -138,7 +139,7 @@ class Router
    */
   public function getInjector(): array
   {
-    return $this->_injector;
+    return $this->injector;
   }
 
   /**
@@ -146,7 +147,7 @@ class Router
    */
   public function setInjector(array $injector): void
   {
-    $this->_injector = $injector;
+    $this->injector = $injector;
   }
 
   /**
@@ -154,7 +155,7 @@ class Router
    */
   public function getConfig(): array
   {
-    return $this->_config;
+    return $this->config;
   }
 
   /**
@@ -162,33 +163,30 @@ class Router
    */
   public function setConfig(array $config): void
   {
-    $this->_config = $config;
+    $this->config = $config;
   }
 
   /**
    * @param array $requestedRoute
    * @param array $params
    * @param bool $reset
-   *
    * @return string
-   *
    * @throws DomainMustBeProvided
-   * @throws RouterVarMustBeProvided
    */
-  public function assemble(array $requestedRoute = [], array $params = [], bool $reset = false)
+  public function assemble(array $requestedRoute = [], array $params = [], bool $reset = false): string
   {
-    $module = $requestedRoute['module'] ?? $this->_module;
-    $controller = $requestedRoute['controller'] ?? ($reset ? '' : $this->_controller);
-    $action = $requestedRoute['action'] ?? ($reset ? '' : $this->_action);
+    $module = $requestedRoute['module'] ?? $this->module;
+    $controller = $requestedRoute['controller'] ?? ($reset ? '' : $this->controller);
+    $action = $requestedRoute['action'] ?? ($reset ? '' : $this->action);
 
     if (!$reset) {
-      $params = array_merge($this->_urlParams, $params);
+      $params = array_merge($this->urlParams, $params);
     }
 
     $uri = null;
     $selectedDomain = null;
 
-    foreach ($this->_routes as $domain => $router) {
+    foreach ($this->routes as $domain => $router) {
 
       if (($router['module'] ?? null) == $module) {
 
@@ -221,11 +219,9 @@ class Router
 
             foreach (explode('/', $routeUri) as $part) {
 
-              if (substr($part, 0, 1) == ':') {
+              if (str_starts_with($part, ':')) {
 
                 $var = substr($part, 1);
-
-                $val = $params[$var] ?? null;
 
                 if ($params[$var] ?? null) {
                   $releaseParts[] = $params[$var];
@@ -272,29 +268,30 @@ class Router
    */
   public function getRequest(): Request
   {
-    return $this->_request;
+    return $this->request;
   }
 
   /**
    * @param Request $request
    */
-  public function setRequest(Request $request)
+  public function setRequest(Request $request): void
   {
-    $this->_request = $request;
+    $this->request = $request;
   }
 
   /**
+   * @return void
    * @throws RouterDomainWasNotFound
    * @throws RouterWasNotFound
    */
-  public function parse()
+  public function parse(): void
   {
     $domain = $this->getRequest()->getDomain();
 
-    if (!isset($this->_routes[$domain]) && count($this->_routes)) {
+    if (!isset($this->routes[$domain]) && count($this->routes)) {
 
       $isSet = false;
-      foreach ($this->_routes as $route => $settings) {
+      foreach ($this->routes as $route => $settings) {
         if (str_contains($domain, str_replace('*', '', $route))) {
           $domain = $route;
           $isSet = true;
@@ -302,18 +299,18 @@ class Router
         }
       }
 
-      if (!$isSet && !isset($this->_routes['*'])) {
+      if (!$isSet && !isset($this->routes['*'])) {
         throw new RouterDomainWasNotFound($domain);
       }
 
-    } else if (!isset($this->_routes[$domain])) {
+    } else if (!isset($this->routes[$domain])) {
       $domain = '*';
     }
 
-    $this->setConfig($this->_routes[$domain]['air'] ?? []);
+    $this->setConfig($this->routes[$domain]['air'] ?? []);
 
-    $routes = $this->_routes[$domain] ?? [];
-    $this->_module = $routes['module'] ?? '';
+    $routes = $this->routes[$domain] ?? [];
+    $this->module = $routes['module'] ?? '';
 
     $uri = explode('?', $this->getRequest()->getUri())[0];
 
@@ -325,15 +322,15 @@ class Router
         throw new RouterWasNotFound($uri);
       }
 
-      $this->_controller = $parts[0] ?? 'index';
-      $this->_action = $parts[1] ?? 'index';
+      $this->controller = $parts[0] ?? 'index';
+      $this->action = $parts[1] ?? 'index';
 
       return;
     }
 
     $prefix = $routes['prefix'] ?? '';
 
-    if ($uri != '/' && substr($uri, -1) == '/') {
+    if ($uri != '/' && str_ends_with($uri, '/')) {
       $uri = $uri . '/';
     }
 
@@ -342,7 +339,7 @@ class Router
 
     foreach ($routes['routes'] as $routerUri => $settings) {
 
-      if (substr($uri, -2) == '//' && $routerUri != '/') {
+      if (str_ends_with($uri, '//') && $routerUri != '/') {
         $routerUri = $routerUri . '/';
       }
 
@@ -363,11 +360,16 @@ class Router
 
       foreach ($routes['routes'] as $routerUri => $settings) {
 
-        if (substr($uri, -2) == '//' && $routerUri != '/') {
+        if (str_ends_with($uri, '//') && $routerUri != '/') {
           $routerUri = $routerUri . '/';
         }
 
-        $patternPrefix = preg_replace('/\\\:[А-Яа-яЁёa-zA-Z0-9\_\-]+/', '([А-Яа-яЁёa-zA-Z0-9\-\_]+)', preg_quote($prefix . $routerUri, '@'));
+        $patternPrefix = preg_replace(
+          '/\\\:[А-Яа-яЁёa-zA-Z0-9\_\-]+/',
+          '([А-Яа-яЁёa-zA-Z0-9\-\_]+)',
+          preg_quote($prefix . $routerUri, '@')
+        );
+
         $patternPrefix = "@^$patternPrefix/?$@uD";
 
         if (preg_match($patternPrefix, $uri, $matches)) {
@@ -381,9 +383,9 @@ class Router
 
       array_shift($matches);
 
-      $this->_controller = $settings['controller'] ?? 'index';
-      $this->_action = $settings['action'] ?? 'index';
-      $this->_urlParams = $settings['params'] ?? [];
+      $this->controller = $settings['controller'] ?? 'index';
+      $this->action = $settings['action'] ?? 'index';
+      $this->urlParams = $settings['params'] ?? [];
 
       $paramIndex = 0;
 
@@ -393,22 +395,22 @@ class Router
 
       foreach (explode('/', $routerUri) as $routerUriPart) {
 
-        if (substr($routerUriPart, 0, 1) == ':') {
+        if (str_starts_with($routerUriPart, ':')) {
 
           $this->getRequest()->setGetParam(
             substr($routerUriPart, 1),
             $matches[$paramIndex] ?? null
           );
 
-          $this->_urlParams[substr($routerUriPart, 1)] = $matches[$paramIndex] ?? null;
+          $this->urlParams[substr($routerUriPart, 1)] = $matches[$paramIndex] ?? null;
 
           $paramIndex++;
         }
       }
 
-      $this->_injector = array_merge($settings['injector'] ?? [], $routes['prefixInjector'] ?? []);
+      $this->injector = array_merge($settings['injector'] ?? [], $routes['prefixInjector'] ?? []);
 
-      foreach ($this->_urlParams as $key => $value) {
+      foreach ($this->urlParams as $key => $value) {
         $this->getRequest()->setGetParam($key, $value);
       }
 
@@ -421,12 +423,12 @@ class Router
 
       if (is_array($route)) {
 
-        $this->_controller = $route['controller'] ?? 'index';
-        $this->_action = $route['action'] ?? 'index';
-        $this->_urlParams = $route['params'] ?? [];
-        $this->_injector = $route['injector'] ?? [];
+        $this->controller = $route['controller'] ?? 'index';
+        $this->action = $route['action'] ?? 'index';
+        $this->urlParams = $route['params'] ?? [];
+        $this->injector = $route['injector'] ?? [];
 
-        foreach ($this->_urlParams as $key => $value) {
+        foreach ($this->urlParams as $key => $value) {
           $this->getRequest()->setGetParam($key, $value);
         }
 
@@ -434,12 +436,23 @@ class Router
       }
     }
 
-    if (isset($routes['strict']) && $routes['strict'] === true) {
+    if (
+      isset($routes['strict'])
+      && $routes['strict'] === true
+      && $parts[0] !== 'robots.txt'
+      && !($parts[0] === 'fonts' && $parts[1] === 'css')
+    ) {
       throw new RouterWasNotFound($uri);
     }
 
-    $this->_controller = $parts[0] ?? 'index';
-    $this->_action = $parts[1] ?? 'index';
+    if ($parts[0] === 'fonts' && $parts[1] === 'css') {
+      $this->controller = 'fonts';
+      $this->action = 'index';
+
+    } else {
+      $this->controller = $parts[0] ?? 'index';
+      $this->action = $parts[1] ?? 'index';
+    }
 
     $parts = array_slice($parts, 2);
 
@@ -447,7 +460,7 @@ class Router
 
       if (isset($parts[$i + 1])) {
         $this->getRequest()->setGetParam($parts[$i], $parts[$i + 1]);
-        $this->_urlParams[$parts[$i]] = $parts[$i + 1];
+        $this->urlParams[$parts[$i]] = $parts[$i + 1];
       }
     }
   }

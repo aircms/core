@@ -168,6 +168,11 @@ class View
    */
   public function getMeta(): ?Meta
   {
+    if (!$this->meta) {
+      if ($defaultMeta = $this->getDefaultMeta()) {
+        $this->meta = $defaultMeta();
+      }
+    }
     return $this->meta;
   }
 

@@ -82,7 +82,12 @@ class Generator
     $namespace = $this->config['air']['loader']['namespace'] . '\Module\Admin\Controller';
     $name = ucfirst(str_replace(' ', '', $this->name));
     $title = $this->name;
-    $subject = 'controller-' . $this->config['air']['admin']['locale'];
+
+    if ($this->type === 'multiple') {
+      $subject = 'controller-' . $this->config['air']['admin']['locale'];
+    } else {
+      $subject = 'controller';
+    }
 
     return !!$this->gen($namespace, $name, $title, $subject, 'Module/Admin/Controller');
   }
