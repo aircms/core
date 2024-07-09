@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Air\Form\Element\ElementAbstract;
 use Air\Form\Element\Hidden;
@@ -12,6 +13,7 @@ use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Model\ModelAbstract;
 use Air\View\View;
+use Exception;
 
 class Form
 {
@@ -297,7 +299,7 @@ class Form
    * @param array $data
    * @return bool
    * @throws FilterClassWasNotFound
-   * @throws ValidatorClassWasNotFound
+   * @throws ValidatorClassWasNotFound|ClassWasNotFound
    */
   public function isValid(array $data = []): bool
   {
@@ -319,7 +321,7 @@ class Form
   /**
    * @param array $options
    * @param array $elements
-   * @throws \Air\Core\Exception\ClassWasNotFound
+   * @throws ClassWasNotFound
    */
   public function __construct(array $options = [], array $elements = [])
   {
@@ -332,12 +334,12 @@ class Form
       }
     }
 
-    $this->init($this->data, $elements);
+    $this->init($this->data ?? [], $elements);
   }
 
   /**
    * @return string
-   * @throws \Exception
+   * @throws Exception
    */
   public function __toString(): string
   {
@@ -373,7 +375,7 @@ class Form
 
     foreach ($this->getElements() as $element) {
       if (!($element instanceof Tab)) {
-        $element->setValue($model[$element->getName()]);
+        $element->setValue($model[$element->getName()] ?? null);
       }
       $element->init();
     }

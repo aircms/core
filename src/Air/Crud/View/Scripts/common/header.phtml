@@ -44,6 +44,10 @@ $controller = $this->controller;
 
       <div class="d-flex">
         <?php if ($mode === 'manage') : ?>
+          <a class="btn btn-secondary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-back>
+            <i class="fa fa-arrow-left me-1"></i>
+            <?php echo \Air\Crud\Locale::t('Go back'); ?>
+          </a>
           <a class="btn btn-primary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-save>
             <i class="fa fa-save me-1"></i>
             <?php echo \Air\Crud\Locale::t('Save (CTRL+S)'); ?>
@@ -51,7 +55,7 @@ $controller = $this->controller;
         <?php endif; ?>
 
         <?php if (count($filter)) : ?>
-          <a href="?" class="btn btn-danger ms-2 px-3" data-mdb-ripple-init>
+          <a href="<?php echo $this->uri(['controller' => $controller]); ?>" class="btn btn-danger ms-2 px-3" data-mdb-ripple-init>
             <i class="fa fa-filter me-1"></i>
             <?php echo \Air\Crud\Locale::t('Clear filter'); ?>
           </a>

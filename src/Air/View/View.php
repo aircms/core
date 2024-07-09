@@ -3,11 +3,12 @@
 namespace Air\View;
 
 use Air\Type\Meta;
+use Air\View\Helper\HelperAbstract;
+use Closure;
 use Exception;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Exception\ViewTemplateWasNotFound;
 use Air\Core\Front;
-use Air\View\ViewHelper\HelperAbstract;
 use ReflectionClass;
 
 class View
@@ -58,9 +59,9 @@ class View
   protected ?Meta $meta = null;
 
   /**
-   * @var \Closure|null
+   * @var Closure|null
    */
-  protected ?\Closure $defaultMeta = null;
+  protected ?Closure $defaultMeta = null;
 
   /**
    * @var array
@@ -99,6 +100,8 @@ class View
 
   /**
    * @param array $vars
+   * @return void
+   * @throws Exception
    */
   public function setVars(array $vars): void
   {
@@ -177,17 +180,17 @@ class View
   }
 
   /**
-   * @param \Closure|null $defaultMeta
+   * @param Closure $defaultMeta
    */
-  public function setDefaultMeta(\Closure $defaultMeta): void
+  public function setDefaultMeta(Closure $defaultMeta): void
   {
     $this->defaultMeta = $defaultMeta;
   }
 
   /**
-   * @return \Closure|null
+   * @return Closure|null
    */
-  public function getDefaultMeta(): ?\Closure
+  public function getDefaultMeta(): ?Closure
   {
     return $this->defaultMeta;
   }

@@ -53,6 +53,25 @@ $(document).ready(() => {
     }
   });
 
+  $(document).on('click', '[data-admin-from-manage-back]', () => {
+    if (nav.history.length < 2) {
+      nav.nav('/' + location.pathname.replaceAll('/', ' ').trim().split(' ')[0]);
+    } else {
+      let url = '';
+      try {
+        url = nav.history[nav.history.length - 2];
+      } catch {
+        url = nav.history[nav.history.length - 1];
+      }
+
+      if (url.search('/manage') === -1) {
+        nav.nav(url);
+      } else {
+        nav.nav('/' + location.pathname.replaceAll('/', ' ').trim().split(' ')[0]);
+      }
+    }
+  });
+
   $(document).on('keydown', (e) => {
     const form = $('[data-admin-from-manage]');
     if (form.length && e.key === 's' && e.ctrlKey) {

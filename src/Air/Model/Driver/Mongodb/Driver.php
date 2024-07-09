@@ -47,10 +47,23 @@ class Driver extends DriverAbstract
 
     $data = $this->normalizeDataTypes($data);
 
+    if ($this->getModel()->getMeta()->hasProperty('updatedAt')) {
+      $updatedAtProperty = $this->getModel()->getMeta()->getPropertyWithName('updatedAt');
+      if ($updatedAtProperty->getType() === 'integer') {
+        $data['updatedAt'] = time();
+      }
+    }
+
     if ($this->getModel()->id) {
       $cond = $this->replaceIdToObjectId(['id' => $this->getModel()->id]);
       $bulk->update($cond, ['$set' => $data], ['multi' => true, 'upsert' => false]);
     } else {
+      if ($this->getModel()->getMeta()->hasProperty('createdAt')) {
+        $createdAtProperty = $this->getModel()->getMeta()->getPropertyWithName('createdAt');
+        if ($createdAtProperty->getType() === 'integer') {
+          $data['createdAt'] = time();
+        }
+      }
       $this->getModel()->id = (string)$bulk->insert($data);
     }
 

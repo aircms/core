@@ -22,6 +22,7 @@ use Air\Type\File;
  * @property File $image
  * @property boolean $isDefault
  * @property boolean $enabled
+ * @property integer $position
  */
 class Language extends ModelAbstract
 {

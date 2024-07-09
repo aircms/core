@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Exception;
 use Air\Filter\FilterAbstract;
@@ -11,6 +12,7 @@ use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Validator\ValidatorAbstract;
 use Air\View\View;
+use Throwable;
 
 abstract class ElementAbstract
 {
@@ -106,6 +108,19 @@ abstract class ElementAbstract
     foreach ($userOptions as $name => $value) {
       if (is_callable([$this, 'set' . ucfirst($name)])) {
         call_user_func_array([$this, 'set' . ucfirst($name)], [$value]);
+      }
+    }
+
+    if (!$this->getLabel() &&
+      $this->getElementType() !== 'hidden' &&
+      $this->getElementType() !== 'tab') {
+      try {
+        $this->setLabel(
+          ucfirst(
+            strtolower(
+              implode(' ',
+                preg_split('/(?=[A-Z])/', $this->getName())))));
+      } catch (Throwable) {
       }
     }
 
@@ -276,7 +291,9 @@ abstract class ElementAbstract
   /**
    * @param $value
    * @return bool
-   * @throws ValidatorClassWasNotFound|FilterClassWasNotFound
+   * @throws FilterClassWasNotFound
+   * @throws ValidatorClassWasNotFound
+   * @throws ClassWasNotFound
    */
   public function isValid($value): bool
   {
@@ -339,7 +356,7 @@ abstract class ElementAbstract
 
           $this->value = $filter->filter($this->value);
 
-        } catch (\Throwable) {
+        } catch (Throwable) {
 
           try {
             $this->value = $filterClassName($this->value);

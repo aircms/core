@@ -123,7 +123,7 @@ const nav = new class {
 
   request(url, callback, requestData, method) {
     let xmlHttpRequest = this._getXmlHttpRequest();
-    xmlHttpRequest.open(method || "GET", this._addHash(url), true);
+    xmlHttpRequest.open(method || "GET", url, true);
     xmlHttpRequest.setRequestHeader(
       'X-Requested-With',
       'XMLHttpRequest'
@@ -192,14 +192,6 @@ const nav = new class {
         return false;
       }
     }
-  }
-
-  _addHash(url) {
-    let rand = ("" + Math.random()).substr(2, 15);
-    if (url.indexOf('?') === -1) {
-      return url + '?_=' + rand;
-    }
-    return url + '&_=' + rand;
   }
 
   _isEqualUrls(requested, response) {

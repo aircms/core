@@ -16,6 +16,7 @@ use Air\Form\Element\Storage;
 
 /**
  * @mod-manageable true
+ * @mod-sortable title
  */
 class Language extends Multiple
 {

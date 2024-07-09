@@ -38,21 +38,29 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   private ?DocumentAbstract $document = null;
 
   /**
+   * @param array|null $data
+   * @throws CallUndefinedMethod
    * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws Meta\Exception\CollectionCantBeWithoutPrimary
    * @throws Meta\Exception\CollectionCantBeWithoutProperties
    * @throws Meta\Exception\CollectionNameDoesNotExists
    * @throws Meta\Exception\PropertyIsSetIncorrectly
    * @throws ReflectionException
    */
-  public function __construct()
+  public function __construct(?array $data = null)
   {
     if (!Config::getConfig()) {
       throw new ConfigWasNotProvided();
     }
 
     $this->meta = new Meta($this);
+
+    if ($data) {
+      $this->populateWithoutQuerying($data);
+    }
   }
 
   /**
