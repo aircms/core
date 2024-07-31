@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 
 abstract class KeyValueAbstract extends ElementAbstract
@@ -31,6 +32,7 @@ abstract class KeyValueAbstract extends ElementAbstract
   /**
    * @param string $name
    * @param array $userOptions
+   * @throws ClassWasNotFound
    */
   public function __construct(string $name, array $userOptions = [])
   {

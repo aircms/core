@@ -1,6 +1,7 @@
 <?php
 
 use Air\Model\ModelAbstract;
+use Air\Crud\Locale;
 
 /** @var array $filter */
 $filter = $this->filter;
@@ -13,6 +14,12 @@ $field = $this->field;
 
 if (!$field && $model->getMeta()->hasProperty('title')) {
   $field = 'title';
+}
+
+if (isset($filter['title'])) {
+  $title = $filter['title'] . ' (' . Locale::t('All') . ')';
+} else {
+  $title = Locale::t('All');
 }
 
 $hasImage = $model->getMeta()->hasProperty('image');
@@ -38,13 +45,13 @@ $hasEnabled = $model->getMeta()->hasProperty('enabled');
   <ul class="dropdown-menu w-100 admin-select-searchable overflow-y-auto">
     <li>
       <a class="dropdown-item" role="button" data-admin-select-option>
-        <?php echo \Air\Crud\Locale::t('All'); ?>
+        <?php echo $title; ?>
       </a>
     </li>
     <li class="p-2">
       <div class="form-outline" data-mdb-input-init>
         <input type="text" class="form-control" data-admin-select-search/>
-        <label class="form-label"><?php echo \Air\Crud\Locale::t('Search'); ?></label>
+        <label class="form-label"><?php echo Locale::t('Search'); ?></label>
       </div>
     </li>
     <?php foreach ($model::fetchAll() as $rec) : ?>

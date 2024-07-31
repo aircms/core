@@ -2,6 +2,7 @@
 
 namespace Air\Model;
 
+use Air\Cache;
 use Air\Crud\Model\Language;
 use ArrayAccess;
 use Air\Core\Exception\ClassWasNotFound;
@@ -193,6 +194,27 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    */
+  public static function singleOne(array $cond = [], array $sort = [], array $map = []): static|null
+  {
+    $cond = static::addCond($cond);
+    $sort = static::addPosition($sort);
+
+    return Cache::single(['one', static::class, $cond, $sort, $map], function () use ($cond, $sort, $map) {
+      return static::fetchOne($cond, $sort, $map);
+    });
+  }
+
+  /**
+   * @param array $cond
+   * @param array $sort
+   * @param array $map
+   * @return static|null
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   */
   public static function one(array $cond = [], array $sort = [], array $map = []): static|null
   {
     return static::fetchOne(static::addCond($cond), static::addPosition($sort), $map);
@@ -217,6 +239,11 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   /**
    * @param array $cond
    * @return array
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    */
   public static function addCond(array $cond = []): array
   {
@@ -243,6 +270,37 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
       $sort['position'] = 1;
     }
     return $sort;
+  }
+
+  /**
+   * @param array $cond
+   * @param array $sort
+   * @param int|null $count
+   * @param int|null $offset
+   * @param array $map
+   * @return CursorAbstract|array|static[]
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   */
+  public static function singleAll(
+    array $cond = [],
+    array $sort = [],
+    int   $count = null,
+    int   $offset = null,
+    array $map = []
+  ): CursorAbstract|array
+  {
+    $cond = static::addCond($cond);
+    $sort = static::addPosition($sort);
+
+    return Cache::single(
+      ['all', static::class, $cond, $sort, $count, $offset, $map],
+      function () use ($cond, $sort, $count, $offset, $map) {
+        return static::fetchAll($cond, $sort, $count, $offset, $map);
+      });
   }
 
   /**

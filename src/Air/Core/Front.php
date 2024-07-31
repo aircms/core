@@ -12,6 +12,7 @@ use Air\Crud\Controller\Phrase;
 use Air\Crud\Controller\RobotsTxt;
 use Air\Crud\Controller\RobotsTxtUi;
 use Error;
+use Exception;
 use Throwable;
 use ReflectionClass;
 use ReflectionException;
@@ -207,12 +208,12 @@ final class Front
   /**
    * @return $this
    * @throws ReflectionException
-   * @throws \Exception
+   * @throws Exception
    */
   public function bootstrap(): Front
   {
     set_error_handler(function ($number, $message, $file, $line) {
-      throw new \Exception(implode(':', [$message, $file, $line]), $number);
+      throw new Exception(implode(':', [$message, $file, $line]), $number);
     });
 
     if ($this->bootstrap) {
@@ -233,13 +234,13 @@ final class Front
   }
 
   /**
-   * @param \Exception|Error|null $exception
+   * @param Exception|Error|null $exception
    * @return string|void
    *
-   * @throws \Exception
+   * @throws Exception
    * @throws Throwable
    */
-  public function run(\Exception|Error $exception = null)
+  public function run(Exception|Error $exception = null)
   {
     if (!$this->request) {
 
@@ -578,7 +579,7 @@ final class Front
 
           try {
             $param = explode('|', explode('$', $line)[1]);
-          } catch (\Exception) {
+          } catch (Exception) {
           }
 
           $var = trim($param[0]);
@@ -654,12 +655,20 @@ final class Front
 
                   try {
                     settype($value, $property->getType());
-                  } catch (\Exception) {
+                  } catch (Exception) {
                     $value = (string)$value;
                   }
 
-                  $allCond = [$params[$parameter->getName()]['main'] => $value];
-                  $userCond = ($params[$parameter->getName()]['cond'] ?? []);
+                  if ($params[$parameter->getName()]['main'] === 'id') {
+                    $allCond = ['$or' => [
+                      ['id' => $value],
+                      ['url' => $value],
+                    ]];
+                    $userCond = [];
+                  } else {
+                    $allCond = [$params[$parameter->getName()]['main'] => $value];
+                    $userCond = ($params[$parameter->getName()]['cond'] ?? []);
+                  }
 
                   if (count($userCond)) {
                     $allCond = [...$userCond, ...$allCond];
@@ -671,7 +680,7 @@ final class Front
               } else {
                 $args[$var] = new $className($value);
               }
-            } catch (\Exception) {
+            } catch (Exception) {
               $args[$var] = $value;
             }
         }

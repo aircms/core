@@ -9,9 +9,9 @@ use Air\Core\Exception\ClassWasNotFound;
 
 class Page
 {
-  const WIDTH = 360;
-  const HEIGHT = 560;
-  const GUTTER = 10;
+  const int WIDTH = 360;
+  const int HEIGHT = 560;
+  const int GUTTER = 10;
 
   /**
    * @var string|null

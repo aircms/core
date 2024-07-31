@@ -18,6 +18,18 @@ $(document).ready(() => {
     element.find(`[name="${name}"]`).val(JSON.stringify(ids));
   };
 
+  $(document).on('dblclick', '[data-admin-form-multiple-model-item-id]', (e) => {
+    const model = $(e.currentTarget)
+      .closest('[data-admin-form-multiple-model-name]')
+      .data('admin-form-multiple-model-name');
+
+    const id = $(e.currentTarget).data('admin-form-multiple-model-item-id');
+
+    modal.record(model, id);
+
+    return false;
+  });
+
   $(document).on('click', '[data-admin-form-multiple-model-item-delete]', (e) => {
     const container = $(e.currentTarget)
       .closest('[data-admin-form-multiple-model-item-id]');

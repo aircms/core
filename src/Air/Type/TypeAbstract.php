@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
+use ReflectionProperty;
+use Throwable;
+
 abstract class TypeAbstract
 {
   /**
@@ -13,7 +16,16 @@ abstract class TypeAbstract
   {
     foreach (array_keys(get_class_vars(static::class)) as $var) {
       if (!empty($item[$var])) {
-        $this->{$var} = $item[$var];
+        try {
+          $rp = new ReflectionProperty(static::class, $var);
+          $className = $rp->getType()->getName();
+          $this->{$var} = new $className($item[$var]);
+
+        } catch (Throwable) {
+        }
+        if (!$this->{$var}) {
+          $this->{$var} = $item[$var];
+        }
       }
     }
   }

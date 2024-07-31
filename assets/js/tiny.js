@@ -14,11 +14,11 @@ class Tiny {
   }
 
   options = {
-    menubar: 'edit insert view format table tools html',
+    menubar: 'edit insert view format lineheight table tools html',
     toolbar_sticky: false,
     toolbar_items_size: 'small',
-    plugins: `advlist anchor link lists fullscreen code paste textcolor`,
-    toolbar: 'styles fontfamily fontsize forecolor backcolor bold italic underline strikethrough align link bullist numlist code fullscreen',
+    plugins: ['advlist anchor link lists fullscreen code paste textcolor lineheight'],
+    toolbar: 'styles fontfamily fontsize forecolor backcolor bold italic underline strikethrough align link bullist numlist code fullscreen lineheightselect',
     style_formats: [
       {title: 'Heading 1', block: 'h1'},
       {title: 'Heading 2', block: 'h2'},
@@ -32,7 +32,8 @@ class Tiny {
     image_caption: true,
     language: $('html').attr('lang') === 'ua' ? 'uk' : 'en',
 
-    font_size_formats: "8pt 9pt 10pt 11pt 12pt 14pt 18pt 24pt 30pt 36pt 48pt 60pt 72pt 96pt",
+    lineheight_formats: "8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 26pt 36pt",
+    font_size_formats: "8pt 9pt 10pt 11pt 12pt 14pt 16px 18pt 24pt 30pt 36pt 48pt 60pt 72pt 96pt",
     font_family_formats: "Arial=arial,helvetica,sans-serif; " + Tiny.fonts,
     content_style: "@import url('/_fonts/css');",
 

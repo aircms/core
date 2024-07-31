@@ -182,6 +182,15 @@ const modal = new class {
     });
   }
 
+  record(model, id) {
+    const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/view?id=` + id);
+    modal.html(locale('View row'), modalHtml, {size: 'xxLarge'}).then(() => {
+      $('[data-admin-model-modal]').on('load', (e) => {
+        $(e.currentTarget).addClass('show');
+      });
+    });
+  }
+
   model(model, cb) {
     const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/select`);
     modal.html(locale('Select row'), modalHtml, {size: 'xxLarge'}).then(() => {

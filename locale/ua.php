@@ -171,14 +171,13 @@ return [
   'Embed' => 'Вставити',
   'Any' => 'Будь-який',
   'Select row' => 'Вибрати рядок',
+  'View row' => 'Переглянути рядок',
   'Question' => 'Питання',
   'Yes' => 'Так',
   'No' => 'Ні',
   'Alt' => 'Альтернативный текст',
-  'Title' => 'Назва',
   'Fill automatically' => 'Заповнити автоматично',
   'Save' => 'Зберегти',
-  'Cancel' => 'Скасувати',
   '(no title)' => '(без назви)',
   'Message' => 'Повідомлення',
   'Got it' => 'Зрозумів',
@@ -190,5 +189,7 @@ return [
   'This is a slightly expanded version of the title' => 'Це трохи розширена версія назви',
   'Quote' => 'Цитата',
   'Author' => 'Автор',
-  'Date/Time' => 'Дата, час'
+  'Date/Time' => 'Дата, час',
+  'Go back' => 'Назад',
+  'Add string' => 'Додати запис'
 ];

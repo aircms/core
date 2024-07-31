@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Air\Filter\Lowercase;
 use Air\Filter\Trim;
@@ -33,6 +34,7 @@ final class Generator
    * @param ModelAbstract|null $model
    * @param array $elements
    * @return Form
+   * @throws ClassWasNotFound
    * @throws PropertyWasNotFound
    */
   public static function minimal(ModelAbstract $model = null, array $elements = []): Form
@@ -45,6 +47,7 @@ final class Generator
    * @param array $elements
    * @return Form
    * @throws PropertyWasNotFound
+   * @throws ClassWasNotFound
    */
   public static function full(ModelAbstract $model = null, array $elements = []): Form
   {
@@ -55,6 +58,7 @@ final class Generator
    * @param ModelAbstract $model
    * @param array $elements
    * @return Form
+   * @throws ClassWasNotFound
    * @throws PropertyWasNotFound
    */
   public static function fullRequired(ModelAbstract $model, array $elements = []): Form
@@ -68,6 +72,7 @@ final class Generator
    * @param bool|null $includeReferences
    * @param bool $allowNull
    * @return array
+   * @throws ClassWasNotFound
    * @throws PropertyWasNotFound
    */
   public static function defaultElement(
@@ -262,6 +267,10 @@ final class Generator
       'allowNull' => $allowNull
     ];
 
+    if (is_callable([self::class, $name])) {
+      $elementOptions = array_merge($elementOptions, call_user_func([self::class, $name]));
+    }
+
     if ($userElement) {
       $elementClassName = $userElement::class;
       $elementOptions = array_merge($elementOptions, $userElement->getUserOptions());
@@ -272,6 +281,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function language(): array
   {
@@ -282,6 +292,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function enabled(): array
   {
@@ -293,6 +304,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function url(): array
   {
@@ -306,6 +318,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function date(): array
   {
@@ -316,6 +329,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function dateTime(): array
   {
@@ -326,6 +340,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function title(): array
   {
@@ -339,6 +354,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function subTitle(): array
   {
@@ -351,6 +367,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function description(): array
   {
@@ -362,7 +379,8 @@ final class Generator
   }
 
   /**
-   * @return string[]
+   * @return array
+   * @throws ClassWasNotFound
    */
   private static function image(): array
   {
@@ -373,6 +391,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function images(): array
   {
@@ -383,7 +402,8 @@ final class Generator
   }
 
   /**
-   * @return string[]
+   * @return array
+   * @throws ClassWasNotFound
    */
   private static function file(): array
   {
@@ -394,6 +414,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function files(): array
   {
@@ -404,7 +425,8 @@ final class Generator
   }
 
   /**
-   * @return string[]
+   * @return array
+   * @throws ClassWasNotFound
    */
   private static function meta(): array
   {
@@ -417,6 +439,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function quote(): array
   {
@@ -427,7 +450,8 @@ final class Generator
   }
 
   /**
-   * @return string[]
+   * @return array
+   * @throws ClassWasNotFound
    */
   private static function content(): array
   {
@@ -439,7 +463,8 @@ final class Generator
   }
 
   /**
-   * @return string[]
+   * @return array
+   * @throws ClassWasNotFound
    */
   private static function embed(): array
   {
@@ -450,7 +475,8 @@ final class Generator
   }
 
   /**
-   * @return string[]
+   * @return array
+   * @throws ClassWasNotFound
    */
   private static function richContent(): array
   {
@@ -462,6 +488,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function page(): array
   {
@@ -474,6 +501,7 @@ final class Generator
 
   /**
    * @return array
+   * @throws ClassWasNotFound
    */
   private static function pages(): array
   {
@@ -483,7 +511,8 @@ final class Generator
   }
 
   /**
-   * @return string[]
+   * @return array
+   * @throws ClassWasNotFound
    */
   private static function icon(): array
   {

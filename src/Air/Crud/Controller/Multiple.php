@@ -203,11 +203,34 @@ abstract class Multiple extends AuthCrud
 
   /**
    * @return string
+   * @throws ClassWasNotFound
+   * @throws Exception
+   */
+  protected function getIcon(): string
+  {
+    $icon = $this->getMods('icon');
+
+    if (!$icon) {
+      $icon = $this->getAdminMenuItem()['icon'] ?? null;
+    }
+
+    return $icon;
+  }
+
+  /**
+   * @return string
    * @throws Exception
    */
   protected function getTitle(): string
   {
-    return $this->getMods('title');
+    $title = $this->getMods('title');
+
+    if (!$title) {
+      $menuItem = $this->getAdminMenuItem();
+      $title = implode(' / ', [$menuItem['parent']['title'], $menuItem['title']]);
+    }
+
+    return $title;
   }
 
   /**
@@ -482,7 +505,10 @@ abstract class Multiple extends AuthCrud
     foreach (Front::getInstance()->getConfig()['air']['admin']['menu'] ?? [] as $menu) {
       foreach ($menu['items'] as $subMenu) {
         if (strtolower($subMenu['url']['controller'] ?? '') == $section) {
-          return $subMenu;
+          return [...$subMenu, ...['parent' => [
+            'title' => $menu['title'],
+            'icon' => $menu['icon']
+          ]]];
         }
       }
     }
@@ -507,7 +533,7 @@ abstract class Multiple extends AuthCrud
       }
     )));
 
-    if ($type == 'title') {
+    if ($type == 'title' || $type == 'icon') {
       return $mods[0] ?? '';
     }
 
@@ -631,7 +657,7 @@ abstract class Multiple extends AuthCrud
     }
 
     $this->getView()->setVars([
-      'icon' => $this->getAdminMenuItem()['icon'] ?? null,
+      'icon' => $this->getIcon(),
       'title' => $this->getTitle(),
 
       'rows' => $rows,
@@ -692,7 +718,7 @@ abstract class Multiple extends AuthCrud
     $this->adminLog(History::TYPE_READ_TABLE);
 
     $this->getView()->setVars([
-      'icon' => $this->getAdminMenuItem()['icon'] ?? null,
+      'icon' => $this->getIcon(),
       'title' => $this->getTitle(),
       'manageable' => $this->getManageable(),
       'positioning' => $this->getPositioning(),
@@ -716,7 +742,7 @@ abstract class Multiple extends AuthCrud
   public function select(): void
   {
     $this->getView()->setVars([
-      'icon' => $this->getAdminMenuItem()['icon'] ?? null,
+      'icon' => $this->getIcon(),
       'title' => $this->getTitle(),
       'filter' => $this->getFilterWithValues(),
       'header' => $this->getHeader(),
@@ -819,10 +845,6 @@ abstract class Multiple extends AuthCrud
           $formData
         );
 
-        if ($model->getMeta()->hasProperty('updatedAt') && !isset($formData['updatedAt'])) {
-          $formData['updatedAt'] = time();
-        }
-
         $model->populateWithoutQuerying($formData);
         $isCreating = !!$model->id;
         $model->save();
@@ -830,11 +852,6 @@ abstract class Multiple extends AuthCrud
         if ($isCreating) {
           $this->didChanged($model, $formData);
         } else {
-          if ($model->getMeta()->hasProperty('createdAt') && !isset($formData['createdAt'])) {
-            $model->createdAt = time();
-            $model->save();
-          }
-
           $this->didCreated($model, $formData);
         }
 
@@ -880,6 +897,39 @@ abstract class Multiple extends AuthCrud
       'title' => $this->getTitle(),
       'form' => $form,
       'mode' => 'manage'
+    ]);
+
+    $this->getView()->setScript('form/index');
+  }
+
+  /**
+   * @param string $id
+   * @return void
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws Exception
+   */
+  public function view(string $id): void
+  {
+    /** @var ModelAbstract $modelClassName */
+    $modelClassName = $this->getModelClassName();
+    $model = $modelClassName::fetchObject(['id' => $id]);
+
+    $form = $this->getForm($model);
+
+    $form->setReturnUrl($this->getRouter()->assemble([
+      'controller' => $this->getRouter()->getController(),
+    ]));
+
+    $this->getView()->setVars([
+      'icon' => $this->getAdminMenuItem()['icon'] ?? null,
+      'title' => $this->getTitle(),
+      'form' => $form,
+      'mode' => 'manage',
+      'isSelectControl' => true,
     ]);
 
     $this->getView()->setScript('form/index');

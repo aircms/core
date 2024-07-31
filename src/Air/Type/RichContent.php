@@ -6,12 +6,12 @@ namespace Air\Type;
 
 class RichContent
 {
-  const TYPE_FILE = 'file';
-  const TYPE_FILES = 'files';
-  const TYPE_QUOTE = 'quote';
-  const TYPE_TEXT = 'text';
-  const TYPE_HTML = 'html';
-  const TYPE_EMBED = 'embed';
+  const string TYPE_FILE = 'file';
+  const string TYPE_FILES = 'files';
+  const string TYPE_QUOTE = 'quote';
+  const string TYPE_TEXT = 'text';
+  const string TYPE_HTML = 'html';
+  const string TYPE_EMBED = 'embed';
 
   /**
    * @var string

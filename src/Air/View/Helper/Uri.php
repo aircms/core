@@ -6,7 +6,6 @@ namespace Air\View\Helper;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Exception\DomainMustBeProvided;
-use Air\Core\Exception\RouterVarMustBeProvided;
 use Air\Core\Front;
 
 class Uri extends HelperAbstract
@@ -16,9 +15,8 @@ class Uri extends HelperAbstract
    * @param array $params
    * @param bool $reset
    * @return string
-   * @throws DomainMustBeProvided
-   * @throws RouterVarMustBeProvided
    * @throws ClassWasNotFound
+   * @throws DomainMustBeProvided
    */
   public function call(array $route = [], array $params = [], bool $reset = true): string
   {

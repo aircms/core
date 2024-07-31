@@ -32,7 +32,7 @@ class Group extends ElementAbstract
     parent::init();
 
     foreach ($this->getElements() as $index => $element) {
-      $element->setValue($this->value[$this->originalElementNames[$index]] ?? null);
+      $element->setValue(((array)$this->value)[$this->originalElementNames[$index]] ?? null);
 
       $element->setContainerTemplate('form/element/group/container');
       $element->setAllowNull($this->isAllowNull());

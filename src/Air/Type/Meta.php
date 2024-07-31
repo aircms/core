@@ -209,7 +209,7 @@ class Meta
     }
 
     $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'];
-    $canonical = $siteUrl . '/';
+    $canonical = $siteUrl . $_SERVER['REQUEST_URI'];
     $ogUrl = $siteUrl . explode('?', $_SERVER['REQUEST_URI'])[0];
 
     $ogType = 'website';

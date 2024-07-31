@@ -41,7 +41,7 @@ class Language extends ModelAbstract
   }
 
   /**
-   * @return mixed|self|null
+   * @return mixed
    * @throws ClassWasNotFound
    * @throws CallUndefinedMethod
    * @throws ConfigWasNotProvided
@@ -53,7 +53,7 @@ class Language extends ModelAbstract
     if (self::$defaultLanguage) {
       return self::$defaultLanguage;
     }
-    self::$defaultLanguage = self::one([
+    self::$defaultLanguage = self::singleOne([
       'isDefault' => true
     ]);
     return self::$defaultLanguage;

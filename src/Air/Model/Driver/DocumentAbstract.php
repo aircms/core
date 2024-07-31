@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Model\Driver;
 
+use Air\Cache;
 use Air\Type\Meta;
 use ArrayAccess;
 use Air\Core\Exception\ClassWasNotFound;
@@ -363,17 +364,18 @@ abstract class DocumentAbstract implements ArrayAccess
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws PropertyHasDifferentType
    * @throws PropertyWasNotFound
+   * @throws \Air\Model\Meta\Exception\PropertyWasNotFound
    */
   public function getProperty(string $name, bool $toArray = false): mixed
   {
-    $data = $this->getData();
-    foreach ($this->getModel()->getMeta()->getProperties() as $property) {
-      if ($property->getName() == $name) {
-        $value = $data[$name] ?? null;
-        return $this->_castDataType($property, $value, false, $toArray);
-      }
-    }
-    throw new PropertyWasNotFound($this->getModel()->getMeta()->getCollection(), $name);
+    $key = [__FUNCTION__, $this->getModel()->getModelClassName(), $this->getData()[$name] ?? '0', $name, $toArray];
+
+    return Cache::single($key, function () use ($name, $toArray, $key) {
+      $data = $this->getData();
+      $property = $this->getModel()->getMeta()->getPropertyWithName($name);
+      $value = $data[$name] ?? null;
+      return $this->_castDataType($property, $value, false, $toArray);
+    });
   }
 
   /**
@@ -449,19 +451,12 @@ abstract class DocumentAbstract implements ArrayAccess
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws PropertyHasDifferentType
    * @throws PropertyWasNotFound
+   * @throws \Air\Model\Meta\Exception\PropertyWasNotFound
    */
   public function __set(string $name, mixed $value)
   {
-    $isSet = false;
-    foreach ($this->getModel()->getMeta()->getProperties() as $property) {
-      if ($property->getName() == $name) {
-        $this->setProperty($property, $value, true);
-        $isSet = true;
-      }
-    }
-    if (!$isSet) {
-      throw new PropertyWasNotFound($this->getModel()->getMeta()->getCollection(), $name);
-    }
+    $property = $this->getModel()->getMeta()->getPropertyWithName($name);
+    $this->setProperty($property, $value, true);
   }
 
   /**

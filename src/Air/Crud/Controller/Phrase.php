@@ -11,12 +11,21 @@ use Air\Form\Element\Text;
 use Air\Form\Element\Textarea;
 use Air\Form\Form;
 use Air\Form\Generator;
+use Air\Model\ModelAbstract;
 
 /**
  * @mod-manageable true
  */
 class Phrase extends Multiple
 {
+  /**
+   * @return int
+   */
+  protected function getItemsPerPage(): int
+  {
+    return 20;
+  }
+
   /**
    * @return string
    * @throws ClassWasNotFound
@@ -34,6 +43,7 @@ class Phrase extends Multiple
     return [
       'key' => ['title' => Locale::t('Key'), 'by' => 'key'],
       'value' => ['title' => Locale::t('Value'), 'by' => 'value'],
+      'isEdited' => ['title' => Locale::t('Edited'), 'by' => 'isEdited', 'type' => 'bool'],
       'language' => ['title' => Locale::t('Language'), 'by' => 'language', 'type' => 'model', 'field' => 'title'],
     ];
   }
@@ -45,6 +55,7 @@ class Phrase extends Multiple
   {
     return [
       ['type' => 'search', 'by' => ['key', 'value']],
+      ['type' => 'bool', 'by' => 'isEdited', 'true' => 'Edited', 'false' => 'Not edited'],
       ['type' => 'model', 'by' => 'language', 'field' => 'title', 'model' => \Air\Crud\Model\Language::class]
     ];
   }
@@ -90,5 +101,17 @@ class Phrase extends Multiple
         ]),
       ],
     ]);
+  }
+
+  /**
+   * @param ModelAbstract|\Air\Crud\Model\Phrase $model
+   * @param array $formData
+   * @return void
+   */
+  protected function didSaved(ModelAbstract $model, array $formData)
+  {
+    parent::didSaved($model, $formData);
+    $model->isEdited = true;
+    $model->save();
   }
 }

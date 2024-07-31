@@ -6,13 +6,12 @@ namespace Air\Type;
 
 use Exception;
 use Air\Core\Exception\ClassWasNotFound;
-use mysql_xdevapi\BaseResult;
 
 class PageItem
 {
-  const TYPE_FILE = 'file';
-  const TYPE_HTML = 'html';
-  const TYPE_EMBED = 'embed';
+  const string TYPE_FILE = 'file';
+  const string TYPE_HTML = 'html';
+  const string TYPE_EMBED = 'embed';
 
   /**
    * @var string

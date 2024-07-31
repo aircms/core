@@ -22,6 +22,9 @@ $request = Front::getInstance()->getRequest();
 /** @var bool $positioning */
 $positioning = $this->positioning;
 
+/** @var bool $isSelectControl */
+$isSelectControl = $this->isSelectControl;
+
 /** @var bool $isPositioningControl */
 $isPositioningControl = $this->isPositioningControl;
 
@@ -43,7 +46,7 @@ $controller = $this->controller;
       </h5>
 
       <div class="d-flex">
-        <?php if ($mode === 'manage') : ?>
+        <?php if ($mode === 'manage' && !$isSelectControl) : ?>
           <a class="btn btn-secondary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-back>
             <i class="fa fa-arrow-left me-1"></i>
             <?php echo \Air\Crud\Locale::t('Go back'); ?>

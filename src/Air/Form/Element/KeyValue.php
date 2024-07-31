@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
@@ -20,6 +21,7 @@ class KeyValue extends KeyValueAbstract
    * @return bool
    * @throws FilterClassWasNotFound
    * @throws ValidatorClassWasNotFound
+   * @throws ClassWasNotFound
    */
   public function isValid($value): bool
   {
@@ -46,10 +48,9 @@ class KeyValue extends KeyValueAbstract
    */
   public function getValue(): ?array
   {
-    $value = parent::getValue();
+    $value = (array)parent::getValue();
 
-    if ($value === null ||
-      !strlen(($value[$this->getKeyPropertyName()]) ?? '') ||
+    if (!strlen(($value[$this->getKeyPropertyName()]) ?? '') ||
       !strlen(($value[$this->getValuePropertyName()] ?? ''))) {
       return null;
     }

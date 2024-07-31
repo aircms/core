@@ -42,7 +42,7 @@ class Paging
         $start = $totalPages - $range;
       }
 
-      $pages = array_slice($pages, $start, $range);
+      $pages = array_slice($pages, intval($start), intval($range));
     }
 
     return [

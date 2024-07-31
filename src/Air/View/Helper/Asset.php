@@ -15,11 +15,6 @@ class Asset extends HelperAbstract
   public static ?array $config = null;
 
   /**
-   * @var bool
-   */
-  public static bool $base = false;
-
-  /**
    * @param string|array $assets
    * @param string|null $type
    * @return string
@@ -45,23 +40,12 @@ class Asset extends HelperAbstract
 
       $assetsHtml[] = match ($type) {
         'js' => $this->js($asset),
-        'svg', 'jpg', 'jpeg', 'png', 'webp', 'json' => $this->filter($asset),
+        'svg', 'jpg', 'jpeg', 'png', 'webp', 'json', 'woff', 'woff2' => $this->filter($asset),
         default => $this->css($asset),
       };
     }
 
     return implode("\n", $assetsHtml);
-  }
-
-  /**
-   * @return string|void
-   */
-  public function base()
-  {
-    if (!self::$base) {
-      self::$base = true;
-      return '<base href="' . self::$config['prefix'] . '/"/>';
-    }
   }
 
   /**
@@ -75,7 +59,7 @@ class Asset extends HelperAbstract
 
     $settings = implode(' ', [$defer, $async]);
 
-    return $this->base() . '<script src="' . $this->filter($uri) . '" ' . $settings . '></script>';
+    return '<script src="' . $this->filter($uri) . '" ' . $settings . '></script>';
   }
 
   /**
@@ -89,7 +73,7 @@ class Asset extends HelperAbstract
 
     $settings = implode(' ', [$defer, $async]);
 
-    return $this->base() . '<link href="' . $this->filter($uri) . '" ' . $settings . ' rel="stylesheet" />';
+    return '<link href="' . $this->filter($uri) . '" ' . $settings . ' rel="stylesheet" />';
   }
 
   /**
