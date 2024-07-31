@@ -52,6 +52,8 @@ class Cache extends ModelAbstract
   const int LIFETIME_QUICK = 600;
 
   /**
+   * 10 minutes
+   *
    * @param mixed $key
    * @param Closure $fn
    * @return mixed
@@ -68,6 +70,8 @@ class Cache extends ModelAbstract
   }
 
   /**
+   * 30 minutes
+   *
    * @param mixed $key
    * @param Closure $fn
    * @return mixed
@@ -84,6 +88,8 @@ class Cache extends ModelAbstract
   }
 
   /**
+   * 2 hours
+   *
    * @param mixed $key
    * @param Closure $fn
    * @return mixed
@@ -100,6 +106,8 @@ class Cache extends ModelAbstract
   }
 
   /**
+   * 1 day
+   *
    * @param mixed $key
    * @param Closure $fn
    * @return mixed
@@ -155,7 +163,7 @@ class Cache extends ModelAbstract
       return $fn();
     }
 
-    $key = md5(var_export($key, true));
+    $key = md5(serialize($key));
     $data = self::one(['key' => $key]);
 
     if ($data) {
@@ -165,15 +173,20 @@ class Cache extends ModelAbstract
       $data->remove();
     }
 
-    $value = $fn();
+    ob_start();
+    $returned = $fn();
+    $content = ob_get_contents();
+    ob_end_clean();
+
+    $returned = $returned ?? $content;
 
     $cache = new self();
     $cache->key = $key;
-    $cache->value = json_encode($value);
+    $cache->value = json_encode($returned);
     $cache->lifetime = time() + $lifetime;
 
     $cache->save();
-    return $value;
+    return $returned;
   }
 
   /**

@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Air\View;
 
+//require_once 'Shorts/Tag.php';
+//require_once 'Shorts/Breadcrumbs.php';
+//require_once 'Shorts/Swiper.php';
+//
+//require_once 'Helpers/Asset.php';
+//require_once 'Helpers/Head.php';
+
 use Air\Type\File;
 use Air\Type\Meta;
 use Air\View\Helper\Asset;
@@ -20,6 +27,7 @@ use Air\View\Helper\PartialCached;
 use Air\View\Helper\Preload;
 use Air\View\Helper\Uri;
 use Air\View\Helper\Viewport;
+use App\Module\Ui\View\Helper\Swiper;
 use Closure;
 use Exception;
 use Air\Core\Exception\ClassWasNotFound;
@@ -41,6 +49,7 @@ use ReflectionClass;
  * @method Viewport|string viewport(string $viewport = 'width=device-width, initial-scale=1.0, minimum-scale=1.0')
  * @method Charset|string charset(string $charset = 'UTF-8')
  * @method FaIcon|string faIcon(string $icon = null, string $family = null, string $type = null, array $attributes = [], string $tag = 'i', string $class = null, string $style = null)
+ * @method Swiper|string swiper(string $id, Closure $slides, string $class = '', array $attributes = []): string
  */
 class View
 {

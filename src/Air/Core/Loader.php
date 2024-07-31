@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Core;
 
 use Air\Core\Exception\ClassWasNotFound;
@@ -23,16 +25,13 @@ class Loader
   {
     $this->_config = $config;
 
-    $self = $this;
+    spl_autoload_register(function ($className) use ($config) {
 
-    spl_autoload_register(function ($className) use ($config, $self) {
-
-      $classFilePath = $self->getClassFilePath($className);
+      $classFilePath = $this->getClassFilePath($className);
 
       if (!$classFilePath) {
         throw new ClassWasNotFound($classFilePath);
       }
-
       if (file_exists($classFilePath)) {
         require_once $classFilePath;
         return true;
@@ -43,7 +42,7 @@ class Loader
 
   /**
    * @param string $namespace
-   * @return string|null
+   * @return string
    */
   public function getClassFilePath(string $namespace): string
   {
