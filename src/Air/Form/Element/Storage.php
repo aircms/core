@@ -75,6 +75,7 @@ class Storage extends ElementAbstract
   /**
    * @param $value
    * @return bool
+   * @throws ClassWasNotFound
    * @throws FilterClassWasNotFound
    * @throws ValidatorClassWasNotFound
    */

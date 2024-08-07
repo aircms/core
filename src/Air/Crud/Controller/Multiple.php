@@ -852,6 +852,7 @@ abstract class Multiple extends AuthCrud
 
         $model->populateWithoutQuerying($formData);
         $isCreating = !!$model->id;
+
         $model->save();
 
         if ($isCreating) {

@@ -87,7 +87,7 @@ return [
   'Table view' => 'Прочитана табл',
   'Record details' => 'Деталі запису',
   'From' => 'Від',
-  'Till' => 'Till',
+  'Till' => 'До',
   'Value' => 'До',
   'Language' => 'Мова',
   'Settings' => 'Налаштування',

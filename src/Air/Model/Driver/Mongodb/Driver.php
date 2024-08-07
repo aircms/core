@@ -22,6 +22,7 @@ use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
+use ReflectionException;
 use ReflectionProperty;
 use Throwable;
 
@@ -107,6 +108,7 @@ class Driver extends DriverAbstract
   /**
    * @param array $data
    * @return array
+   * @throws ReflectionException
    */
   private function normalizeDataTypes(array $data = []): array
   {
@@ -134,7 +136,11 @@ class Driver extends DriverAbstract
 
             /** @var TypeAbstract[] $value */
             foreach ($value as $item) {
-              $data[$name][] = $item->toRaw();
+              if (is_object($item)) {
+                $data[$name][] = $item->toRaw();
+              } else {
+                $data[$name][] = $item;
+              }
             }
           }
         } catch (Throwable) {

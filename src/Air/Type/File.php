@@ -6,6 +6,12 @@ namespace Air\Type;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
+use Air\Model\Exception\CallUndefinedMethod;
+use Air\Model\Exception\ConfigWasNotProvided;
+use Air\Model\Exception\DriverClassDoesNotExists;
+use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
+use ReflectionException;
+use Throwable;
 
 class File extends TypeAbstract
 {
@@ -146,7 +152,15 @@ class File extends TypeAbstract
   }
 
   /**
+   * @param array|null $file
    * @return self
+   * @throws ClassWasNotFound
+   * @throws CallUndefinedMethod
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ReflectionException
+   * @throws Throwable
    */
   public static function fromArray(?array $file): self
   {
