@@ -27,11 +27,6 @@ class Meta
   /**
    * @var string
    */
-  public string $keywords = '';
-
-  /**
-   * @var string
-   */
   public string $ogTitle = '';
 
   /**
@@ -60,28 +55,6 @@ class Meta
   public string $modelObjectId = '';
 
   /**
-   * @param array|null $meta
-   * @param ModelAbstract|null $model
-   */
-  public function __construct(?array $meta = [], ?ModelAbstract $model = null)
-  {
-    foreach (array_keys(get_class_vars(self::class)) as $var) {
-      if (!empty($meta[$var])) {
-        if ($var === 'ogImage') {
-          $this->{$var} = new File((array)$meta[$var]);
-        } else {
-          $this->{$var} = $meta[$var];
-        }
-      }
-    }
-
-    if ($model) {
-      $this->modelClassName = $model::class;
-      $this->modelObjectId = $model->{$model->getMeta()->getPrimary()};
-    }
-  }
-
-  /**
    * @return string
    */
   public function getTitle(): string
@@ -95,14 +68,6 @@ class Meta
   public function getDescription(): string
   {
     return $this->description;
-  }
-
-  /**
-   * @return string
-   */
-  public function getKeywords(): string
-  {
-    return $this->keywords;
   }
 
   /**
@@ -154,6 +119,65 @@ class Meta
   }
 
   /**
+   * @param array|null $meta
+   * @param ModelAbstract|null $model
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws PropertyWasNotFound
+   */
+  public function __construct(?array $meta = [], ?ModelAbstract $model = null)
+  {
+    foreach (array_keys(get_class_vars(self::class)) as $var) {
+      if (!empty($meta[$var])) {
+        if ($var === 'ogImage') {
+          $this->{$var} = new File((array)$meta[$var]);
+        } else {
+          $this->{$var} = $meta[$var];
+        }
+      }
+    }
+
+    if ($model) {
+      $this->modelClassName = $model::class;
+      $this->modelObjectId = $model->{$model->getMeta()->getPrimary()};
+    }
+  }
+
+  /**
+   * @return array
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws PropertyWasNotFound
+   */
+  public function getComputedData(): array
+  {
+    if ($this->isUseModelData()) {
+      $objectData = $this->getObjectData();
+      return [
+        'title' => $objectData['title'],
+        'description' => $objectData['description'],
+        'ogImage' => $objectData['image'],
+        'ogTitle' => $objectData['title'],
+        'ogDescription' => $objectData['description'],
+      ];
+    }
+
+    return [
+      'title' => $this->getTitle(),
+      'description' => $this->getDescription(),
+      'ogImage' => $this->getOgImage(),
+      'ogTitle' => $this->getOgTitle(),
+      'ogDescription' => $this->getOgDescription(),
+    ];
+  }
+
+  /**
    * @return string
    * @throws CallUndefinedMethod
    * @throws ClassWasNotFound
@@ -164,49 +188,13 @@ class Meta
    */
   public function __toString(): string
   {
-    $objectData = $this->getObjectData();
+    $data = $this->getComputedData();
 
-    if ($this->isUseModelData()) {
-      $data = $objectData;
-      if (!$data['title']) {
-        $data['title'] = $this->getTitle();
-      }
-      if (!$data['description']) {
-        $data['description'] = $this->getDescription();
-      }
-      if (!$data['image']) {
-        $data['image'] = $this->getOgImage();
-      }
-      $data['keywords'] = '';
-      $data['ogTitle'] = $data['title'];
-      $data['ogDescription'] = $data['description'];
-
-    } else {
-      $data = [
-        'title' => $this->getTitle(),
-        'description' => $this->getDescription(),
-        'keywords' => '',
-        'ogTitle' => $this->getOgTitle(),
-        'ogDescription' => $this->getOgDescription(),
-        'image' => $this->getOgImage(),
-      ];
-
-      if (!$data['title']) {
-        $data['title'] = $objectData['title'];
-      }
-      if (!$data['description']) {
-        $data['description'] = $objectData['description'];
-      }
-      if (!$data['image']) {
-        $data['image'] = $objectData['image'];
-      }
-      if (!$data['ogTitle']) {
-        $data['ogTitle'] = $data['title'];
-      }
-      if (!$data['ogDescription']) {
-        $data['ogDescription'] = $data['description'];
-      }
-    }
+    $title = $data['title'];
+    $description = $data['description'];
+    $ogTitle = $data['ogTitle'];
+    $ogDescription = $data['ogDescription'];
+    $ogImage = $data['ogImage'];
 
     $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'];
     $canonical = $siteUrl . $_SERVER['REQUEST_URI'];
@@ -216,20 +204,19 @@ class Meta
 
     $tags = [
       // Default Meta tags
-      "<title>{$data['title']}</title>",
-      "<meta name=\"description\" content=\"{$data['description']}\">",
-      "<meta name=\"keywords\" content=\"{$data['keywords']}\">",
+      "<title>{$title}</title>",
+      "<meta name=\"description\" content=\"{$description}\">",
       "<link rel=\"canonical\" href=\"$canonical\">",
 
       // OG Meta tags
       "<meta name=\"og:type\" content=\"$ogType\">",
       "<meta name=\"og:url\" content=\"$ogUrl\">",
-      "<meta name=\"og:title\" content=\"{$data['ogTitle']}\" itemprop=\"title name\">",
-      "<meta name=\"og:description\" content=\"{$data['ogDescription']}\" itemprop=\"description\">",
+      "<meta name=\"og:title\" content=\"{$ogTitle}\" itemprop=\"title name\">",
+      "<meta name=\"og:description\" content=\"{$ogDescription}\" itemprop=\"description\">",
     ];
 
-    if ($data['image']) {
-      $tags[] = "<meta property=\"og:image\" content=\"{$data['image']->getSrc()}\" itemprop=\"image primaryImageOfPage\">";
+    if ($ogImage) {
+      $tags[] = "<meta property=\"og:image\" content=\"{$ogImage->getSrc()}\" itemprop=\"image primaryImageOfPage\">";
     }
 
     return implode("\n", $tags);
@@ -292,12 +279,6 @@ class Meta
         }
         $defaults['description'] = mb_substr($defaults['description'], 0, 60);
       }
-
-      /**
-       * TODO: Maybe implement OpenAI for generating keywords
-       * Or implement OpenAi for all meta stuff
-       */
-      $keywords = '';
 
       $defaults['image'] = null;
 

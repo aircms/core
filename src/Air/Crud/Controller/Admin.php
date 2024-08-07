@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Air\Form\Element\Checkbox;
+use Air\Form\Exception\FilterClassWasNotFound;
+use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Form\Form;
+use Air\Model\Exception\CallUndefinedMethod;
+use Air\Model\Exception\ConfigWasNotProvided;
+use Air\Model\Exception\DriverClassDoesNotExists;
+use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Exception;
 use Air\Core\Exception\DomainMustBeProvided;
-use Air\Core\Exception\RouterVarMustBeProvided;
-use Air\Core\Exception\ValidatorClassWasNotFound;
-use Air\Crud\Controller\Multiple;
 use Air\Form\Element\Text;
-use Air\Form\Generator;
 
 /**
  * @mod-manageable true
@@ -22,6 +25,7 @@ class Admin extends Multiple
 {
   /**
    * @return array[]
+   * @throws ClassWasNotFound
    */
   protected function getHeader(): array
   {
@@ -34,7 +38,7 @@ class Admin extends Multiple
 
   /**
    * @return string
-   * @throws \Air\Core\Exception\ClassWasNotFound
+   * @throws ClassWasNotFound
    */
   protected function getTitle(): string
   {
@@ -58,8 +62,9 @@ class Admin extends Multiple
   }
 
   /**
-   * @param ModelAbstract $model
-   * @return Generator
+   * @param $model
+   * @return Form
+   * @throws ClassWasNotFound
    */
   public function getForm($model = null): Form
   {
@@ -74,7 +79,7 @@ class Admin extends Multiple
         new Text('login', [
           'label' => Locale::t('Login'),
         ]),
-        new Text('password', [
+        new Text('new-password', [
           'value' => '',
           'label' => Locale::t('Password'),
           'allowNull' => true,
@@ -85,11 +90,18 @@ class Admin extends Multiple
 
   /**
    * @param string|null $id
+   * @return array
+   * @throws ClassWasNotFound
    * @throws DomainMustBeProvided
-   * @throws RouterVarMustBeProvided|ValidatorClassWasNotFound
+   * @throws FilterClassWasNotFound
+   * @throws ValidatorClassWasNotFound
+   * @throws CallUndefinedMethod
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws Exception
    */
-  public function manage(string $id = null): void
+  public function manage(string $id = null)
   {
     $model = \Air\Crud\Model\Admin::fetchObject([
       'id' => $this->getRequest()->getParam('id')
@@ -102,16 +114,18 @@ class Admin extends Multiple
 
         $formData = $form->getValues();
 
-        if (strlen($formData['password'])) {
-          $formData['password'] = md5($formData['password']);
-        } else {
-          unset($formData['password']);
+        if (strlen($formData['new-password'])) {
+          $formData['password'] = md5($formData['new-password']);
         }
+        unset($formData['new-password']);
 
         $model->populate($formData);
         $model->save();
 
-        die('ok:' . $this->getRequest()->getPost('return-url'));
+        return ['url' => $this->getRouter()->assemble(
+          ['controller' => $this->getRouter()->getController(), 'action' => 'manage'],
+          ['id' => $model->id],
+        )];
       }
     }
 

@@ -52,6 +52,21 @@ class Cache extends ModelAbstract
   const int LIFETIME_QUICK = 600;
 
   /**
+   * @param mixed $key
+   * @param Closure $fn
+   * @return mixed
+   */
+  public static function single(mixed $key, Closure $fn): mixed
+  {
+    $key = md5(serialize($key));
+    if (isset(self::$single[$key])) {
+      return self::$single[$key];
+    }
+    self::$single[$key] = $fn();
+    return self::$single[$key];
+  }
+
+  /**
    * 10 minutes
    *
    * @param mixed $key
@@ -160,7 +175,7 @@ class Cache extends ModelAbstract
   public static function propagate(mixed $key, int $lifetime, Closure $fn = null): mixed
   {
     if (!(Front::getInstance()->getConfig()['air']['cache']['enabled'] ?? false)) {
-      return $fn();
+      return self::getContent($fn);
     }
 
     $key = md5(serialize($key));
@@ -173,34 +188,34 @@ class Cache extends ModelAbstract
       $data->remove();
     }
 
-    ob_start();
-    $returned = $fn();
-    $content = ob_get_contents();
-    ob_end_clean();
+    $content = self::getContent($fn);
 
-    $returned = $returned ?? $content;
+    if (!$content) {
+      return $content;
+    }
 
     $cache = new self();
     $cache->key = $key;
-    $cache->value = json_encode($returned);
+    $cache->value = json_encode($content);
     $cache->lifetime = time() + $lifetime;
 
     $cache->save();
-    return $returned;
+    return $content;
   }
 
   /**
-   * @param mixed $key
    * @param Closure $fn
    * @return mixed
    */
-  public static function single(mixed $key, Closure $fn): mixed
+  public static function getContent(Closure $fn): mixed
   {
-    $key = md5(serialize($key));
-    if (isset(self::$single[$key])) {
-      return self::$single[$key];
-    }
-    self::$single[$key] = $fn();
-    return self::$single[$key];
+    ob_start();
+
+    $returned = $fn();
+    $content = ob_get_contents();
+
+    ob_end_clean();
+
+    return $returned ?? $content;
   }
 }

@@ -12,7 +12,9 @@ use Air\Model\Exception\CallUndefinedMethod;
 use Air\Model\Exception\ConfigWasNotProvided;
 use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
+use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\ModelAbstract;
+use Air\Type\TypeAbstract;
 use MongoDB\BSON\ObjectId;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Command;
@@ -20,6 +22,7 @@ use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
+use ReflectionProperty;
 use Throwable;
 
 class Driver extends DriverAbstract
@@ -32,10 +35,11 @@ class Driver extends DriverAbstract
   /**
    * @return int
    * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ClassWasNotFound
+   * @throws PropertyWasNotFound
    */
   public function save(): int
   {
@@ -110,15 +114,34 @@ class Driver extends DriverAbstract
 
       if ($value instanceof ModelAbstract) {
         $data[$name] = $value->{$value->getMeta()->getPrimary()};
-      }
-      if ($value instanceof Cursor) {
+
+      } else if ($value instanceof Cursor) {
         $ids = [];
         foreach ($value as $record) {
           $ids[] = $record->{$value->getModel()->getMeta()->getPrimary()};
         }
         $data[$name] = $ids;
+
+      } else if ($value instanceof TypeAbstract) {
+        $data[$name] = $value->toRaw();
+
+      } else {
+        try {
+          $typeName = $this->getModel()->getMeta()->getPropertyWithName($name)->getType();
+
+          if (str_ends_with($typeName, '[]') && is_subclass_of(substr($typeName, 0, -2), TypeAbstract::class)) {
+            $data[$name] = [];
+
+            /** @var TypeAbstract[] $value */
+            foreach ($value as $item) {
+              $data[$name][] = $item->toRaw();
+            }
+          }
+        } catch (Throwable) {
+        }
       }
     }
+
     return $data;
   }
 

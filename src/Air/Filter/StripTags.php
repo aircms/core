@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Filter;
 
 /**
@@ -11,7 +13,7 @@ class StripTags extends FilterAbstract
   /**
    * @var array
    */
-  public $allowableTags = [];
+  public array $allowableTags = [];
 
   /**
    * @return array
@@ -31,7 +33,7 @@ class StripTags extends FilterAbstract
 
   /**
    * @param $value
-   * @return mixed|string
+   * @return string
    */
   public function filter($value)
   {
@@ -41,6 +43,6 @@ class StripTags extends FilterAbstract
       $allowableTags[] = '<' . $allowableTag . '>';
     }
 
-    return strip_tags($value, implode(null, $allowableTags));
+    return strip_tags($value, implode('', $allowableTags));
   }
 }

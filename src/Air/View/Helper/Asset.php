@@ -54,12 +54,11 @@ class Asset extends HelperAbstract
    */
   public function js(string $uri): string
   {
-    $defer = $this->config['defer'] ?? false ? 'defer' : '';
-    $async = $this->config['async'] ?? false ? 'async' : '';
-
-    $settings = implode(' ', [$defer, $async]);
-
-    return '<script src="' . $this->filter($uri) . '" ' . $settings . '></script>';
+    return script(
+      src: $this->filter($uri),
+      defer: $this->config['defer'] ?? false,
+      async: $this->config['async'] ?? false
+    );
   }
 
   /**
@@ -68,12 +67,10 @@ class Asset extends HelperAbstract
    */
   public function css(string $uri): string
   {
-    $defer = $this->config['defer'] ?? false ? 'defer' : '';
-    $async = $this->config['async'] ?? false ? 'async' : '';
-
-    $settings = implode(' ', [$defer, $async]);
-
-    return '<link href="' . $this->filter($uri) . '" ' . $settings . ' rel="stylesheet" />';
+    return tag(tagName: 'link', attributes: [
+      'href' => $this->filter($uri),
+      'rel' => 'stylesheet'
+    ]);
   }
 
   /**

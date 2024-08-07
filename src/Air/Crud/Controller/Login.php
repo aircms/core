@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Crud\Auth;
-use Air\Crud\Model\Admin;
 use Exception;
 use Air\Core\Controller;
 use Air\Core\Exception\ClassWasNotFound;
@@ -25,43 +24,20 @@ class Login extends Controller
    * @throws CallUndefinedMethod
    * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided
-   * @throws DomainMustBeProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws RouterVarMustBeProvided
    * @throws Exception
    */
   public function index(): string|array
   {
     if ($this->getRequest()->isPost()) {
 
-      $login = (new Trim())->filter($this->getRequest()->getPost('login'));
-      $password = (new Trim())->filter($this->getRequest()->getPost('password'));
+      $login = Trim::clean($this->getParam('login'));
+      $password = Trim::clean($this->getParam('password'));
 
-      $config = Front::getInstance()->getConfig()['air']['admin']['auth'];
-
-      if (($config['root']['login'] ?? false) == $login && ($config['root']['password'] ?? false) == $password) {
-        Auth::getInstance()->set($config['root']);
-        $this->redirect($this->getRouter()->assemble(['controller' => 'index']));
-      }
-
-      if (($config['source'] ?? false) === 'database') {
-
-        $admin = Admin::one([
-          'login' => $login,
-          'password' => md5($password)
-        ]);
-
-        if ($admin) {
-
-          $config['login'] = $admin->login;
-          $config['password'] = $admin->password;
-
-          Auth::getInstance()->set($config);
-          $this->redirect($this->getRouter()->assemble(['controller' => 'index']));
-
-          return [];
-        }
+      if (Auth::getInstance()->isValid($login, $password)) {
+        Auth::getInstance()->authorize($login, $password);
+        return [];
       }
 
       $this->getResponse()->setStatusCode(400);

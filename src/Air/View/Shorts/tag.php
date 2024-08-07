@@ -12,24 +12,34 @@ use Air\Type\File;
 function isNonClosingTag(string $tagName): bool
 {
   return in_array(trim(strtolower($tagName)), [
+    'input',
     'meta',
     'base',
     'br',
     'hr',
-    'link'
+    'link',
+    'img'
   ]);
 }
 
 /**
- * @param Closure|string|array|null $content
+ * @param Closure|string|array|Generator|null $content
  * @return array
  */
-function content(Closure|string|array|null $content = null): array
+function content(Closure|string|array|null|Generator $content = null): array
 {
   if ($content) {
 
     if (is_string($content)) {
       $content = (array)$content;
+
+    } else if ($content instanceof Generator) {
+      $contentArray = [];
+      foreach ($content as $item) {
+        $contentArray[] = $item;
+      }
+
+      $content = $contentArray;
 
     } else if ($content instanceof Closure) {
       ob_start();
@@ -54,30 +64,50 @@ function content(Closure|string|array|null $content = null): array
 }
 
 /**
+ * @param File|string $image
+ * @return string
+ * @throws ClassWasNotFound
+ */
+function image(File|string $image): string
+{
+  if ($image instanceof File) {
+    return $image->getSrc();
+  } else {
+    return $image;
+  }
+}
+
+/**
  * @param string $tagName
- * @param Closure|string|array|null $content
+ * @param Closure|string|array|Generator|null $content
  * @param string|array|null $class
- * @param array $attributes
+ * @param array|string|null $attributes
  * @param File|string|null $bgImage
  * @return string
  * @throws ClassWasNotFound
  */
 function tag(
-  string                    $tagName,
-  Closure|string|array|null $content = null,
-  string|array              $class = null,
-  array                     $attributes = [],
-  File|string               $bgImage = null
+  string                              $tagName,
+  Closure|string|array|null|Generator $content = null,
+  string|array                        $class = null,
+  array|string                        $attributes = null,
+  File|string                         $bgImage = null
 ): string
 {
   $tagName = trim(strtolower($tagName));
 
-  if (!is_array($class)) {
-    $class = (array)$class;
+  $class = (array)$class;
+  $attributes = (array)$attributes;
+
+  if ($bgImage) {
+    $class[] = 'bg-image';
+    $attributes['style'] = (array)($attributes['style'] ?? []) ?? [];
+    $attributes['style'][] = "background-image: url('" . image($bgImage) . "')";
+    $attributes['style'] = implode('; ', $attributes['style']);
   }
 
   if (count($class)) {
-    $class = 'class="' . implode(' ', $class) . '"';
+    $class = 'class="' . implode(' ', array_filter($class)) . '"';
   }
 
   foreach ($attributes as $key => $value) {
@@ -89,19 +119,7 @@ function tag(
     }
   }
 
-  if ($bgImage) {
-    if ($bgImage instanceof File) {
-      $bgImage['data-bg'] = $bgImage->getSrc();
-
-    } elseif (str_starts_with('http:/', $bgImage) || str_starts_with('https:/', $bgImage)) {
-      $bgImage['data-bg'] = $bgImage;
-
-    } else {
-      $bgImage['data-bg'] = $bgImage;
-    }
-  }
-
-  $attributes = implode(' ', $attributes);
+  $attributes = implode(' ', array_filter($attributes));
 
   $html = ['<' . implode(' ', array_filter([$tagName, $class, $attributes]))];
 
@@ -115,7 +133,12 @@ function tag(
     return implode('', array_filter($html));
   }
 
-  $html[] = implode('', content($content));
+  try {
+    $html[] = implode('', content($content));
+  } catch (Throwable $e) {
+    echo "----Опять проблемы с контентом в TAG----";
+    var_dump($content); die();
+  }
 
   $html[] = '</' . $tagName . '>';
 
@@ -123,35 +146,47 @@ function tag(
 }
 
 function div(
-  Closure|string|array|null $content = null,
-  string|array              $class = null,
-  array                     $attributes = [],
-  File|string               $bgImage = null
+  string|array                        $class = null,
+  Closure|string|array|null|Generator $content = null,
+  array|string                        $attributes = null,
+  File|string                         $bgImage = null
 ): string
 {
-  return tag('div', $content, $class, $attributes, $bgImage);
+  return tag(
+    tagName: 'div',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
 }
 
 function span(
   Closure|string|array|null $content = null,
   string|array              $class = null,
-  array                     $attributes = [],
+  array|string              $attributes = null,
   File|string               $bgImage = null
 ): string
 {
-  return tag('span', $content, $class, $attributes, $bgImage);
+  return tag(
+    tagName: 'span',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
 }
 
 function form(
   Closure|string|array|null $content = null,
   string|array              $class = null,
-  array                     $attributes = [],
+  array|string              $attributes = null,
   string                    $method = 'get',
   string                    $action = '',
   File|string               $bgImage = null
 ): string
 {
-  $attributes = $attributes ?? [];
+  $attributes = (array)$attributes ?? [];
 
   if ($method) {
     $attributes['method'] = $method;
@@ -161,53 +196,220 @@ function form(
     $attributes['action'] = $action;
   }
 
-  return tag('form', $content, $class, $attributes, $bgImage);
+  return tag(
+    tagName: 'form',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
 }
 
 function i(
   Closure|string|array|null $content = null,
   string|array              $class = null,
-  array                     $attributes = [],
+  array|string              $attributes = null,
   File|string               $bgImage = null
 ): string
 {
-  return tag('i', $content, $class, $attributes, $bgImage);
+  return tag(
+    tagName: 'i',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
 }
 
 function a(
   string                    $href = null,
   Closure|string|array|null $content = null,
   string|array              $class = null,
-  array                     $attributes = [],
-  File|string               $bgImage = null
+  array|string              $attributes = null,
+  File|string               $bgImage = null,
+  string                    $title = null,
+  bool                      $openInNewWindow = false
 ): string
 {
-  $attributes = $attributes ?? [];
-  $attributes['href'] = $href;
+  $attributes = (array)$attributes ?? [];
 
-  if (is_string($content)) {
-    $attributes['title'] = mb_substr(strip_tags($content), 0, 100);
+  if ($href) {
+    $attributes['href'] = $href;
   }
 
-  return tag('a', $content, $class, $attributes, $bgImage);
+  if (is_string($content) && !$title) {
+    $attributes['title'] = mb_substr(strip_tags($content), 0, 100);
+  } else if ($title) {
+    $attributes['title'] = $title;
+  }
+
+  if ($openInNewWindow) {
+    $attributes['target'] = '_blank';
+  }
+
+  return tag(
+    tagName: 'a',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
 }
 
 function ul(
   Closure|string|array|null $content = null,
   string|array              $class = null,
-  array                     $attributes = [],
+  array|string              $attributes = null,
   File|string               $bgImage = null
 ): string
 {
-  return tag('ul', $content, $class, $attributes, $bgImage);
+  return tag(
+    tagName: 'ul',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
 }
 
 function li(
   Closure|string|array|null $content = null,
   string|array              $class = null,
-  array                     $attributes = [],
+  array|string              $attributes = null,
   File|string               $bgImage = null
 ): string
 {
-  return tag('li', $content, $class, $attributes, $bgImage);
+  return tag(
+    tagName: 'li',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
+}
+
+function script(
+  Closure|string|array|null $content = null,
+  bool                      $async = false,
+  bool                      $defer = false,
+  string                    $src = null,
+  array|string              $attributes = null,
+): string
+{
+  $attributes = (array)$attributes ?? [];
+
+  if ($async) {
+    $attributes[] = 'async';
+  }
+
+  if ($defer) {
+    $attributes[] = 'defer';
+  }
+
+  if ($src) {
+    $attributes['src'] = $src;
+  }
+
+  return tag(
+    tagName: 'script',
+    content: $content,
+    attributes: $attributes
+  );
+}
+
+function img(
+  File|string  $src = null,
+  string|array $class = null,
+  array|string $attributes = null,
+  string       $alt = null,
+  string       $title = null
+)
+{
+  $attributes = (array)$attributes ?? [];
+
+  if ($src instanceof File) {
+    $attributes['src'] = $src->getSrc();
+    $attributes['alt'] = $src->getAlt();
+    $attributes['title'] = $src->getTitle();
+  } else {
+    $attributes['src'] = $src;
+  }
+
+  if ($alt) {
+    $attributes['alt'] = $alt;
+  }
+
+  if ($title) {
+    $attributes['title'] = $title;
+  }
+
+  return tag(
+    tagName: 'img',
+    class: $class,
+    attributes: $attributes
+  );
+}
+
+function h1(
+  string|array              $class = null,
+  Closure|string|array|null $content = null,
+  array|string              $attributes = null,
+  File|string               $bgImage = null
+): string
+{
+  return tag(
+    tagName: 'h1',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
+}
+
+function h2(
+  string|array              $class = null,
+  Closure|string|array|null $content = null,
+  array|string              $attributes = null,
+  File|string               $bgImage = null
+): string
+{
+  return tag(
+    tagName: 'h2',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
+}
+
+function h3(
+  string|array              $class = null,
+  Closure|string|array|null $content = null,
+  array|string              $attributes = null,
+  File|string               $bgImage = null
+): string
+{
+  return tag(
+    tagName: 'h3',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
+}
+
+function iframe(
+  string       $src,
+  string|array $class = null,
+  array|string $attributes = null,
+): string
+{
+  $attributes = $attributes ?? [];
+  $attributes['src'] = $src;
+
+  return tag(
+    tagName: 'iframe',
+    class: $class,
+    attributes: $attributes
+  );
 }

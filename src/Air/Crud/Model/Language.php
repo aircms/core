@@ -41,14 +41,14 @@ class Language extends ModelAbstract
   }
 
   /**
-   * @return mixed
-   * @throws ClassWasNotFound
+   * @return self
    * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    */
-  public static function getLanguage(): mixed
+  public static function getLanguage(): self
   {
     if (self::$defaultLanguage) {
       return self::$defaultLanguage;

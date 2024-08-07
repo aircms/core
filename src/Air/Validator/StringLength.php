@@ -1,17 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Validator;
 
-/**
- * Class StringLength
- * @package Air\Validator
- */
 class StringLength extends Number
 {
   /**
    * @var string
    */
-  public $encoding = 'UTF-8';
+  public string $encoding = 'UTF-8';
 
   /**
    * @return string

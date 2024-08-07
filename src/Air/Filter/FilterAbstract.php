@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Filter;
 
 /**
@@ -22,8 +24,19 @@ abstract class FilterAbstract
   }
 
   /**
-   * @param $value
+   * @param mixed $value
+   * @param array $options
    * @return mixed
+   */
+  public static function clean(mixed $value, array $options = []): mixed
+  {
+    $filter = new static($options);
+    return $filter->filter($value);
+  }
+
+  /**
+   * @param $value
+   * @return mixed|null
    */
   public abstract function filter($value);
 }

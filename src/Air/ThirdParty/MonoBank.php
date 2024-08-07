@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Air\ThirdParty;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Http\Request;
 use Air\Log;
+use Air\Model\Exception\CallUndefinedMethod;
+use Air\Model\Exception\ConfigWasNotProvided;
+use Air\Model\Exception\DriverClassDoesNotExists;
+use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Exception;
+use Throwable;
 
 class MonoBank
 {
@@ -14,6 +20,20 @@ class MonoBank
    * @var string|null
    */
   protected ?string $key = null;
+
+  /**
+   * @param string $key
+   * @return bool
+   */
+  public static function isValidKey(string $key): bool
+  {
+    try {
+      $self = new self($key);
+      return !!$self->createInvoice(5, 'http://airshop.com/', 'http://airshop.com/webhook');
+    } catch (Throwable) {
+    }
+    return false;
+  }
 
   /**
    * @param string $key
@@ -28,11 +48,12 @@ class MonoBank
    * @param string $redirectUrl
    * @param string $webHookUrl
    * @return array
-   * @throws \Air\Core\Exception\ClassWasNotFound
-   * @throws \Air\Model\Exception\CallUndefinedMethod
-   * @throws \Air\Model\Exception\ConfigWasNotProvided
-   * @throws \Air\Model\Exception\DriverClassDoesNotExists
-   * @throws \Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ClassWasNotFound
+   * @throws CallUndefinedMethod
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws Exception
    */
   public function createInvoice(float $amount, string $redirectUrl, string $webHookUrl): array
   {
@@ -51,11 +72,11 @@ class MonoBank
       ->do();
 
     if (!$mono->isOk()) {
-      Log::error('Error creating invoice', [
+      $exceptionData = [
         'request' => $data,
         'response' => $mono->body
-      ]);
-      throw new Exception('Error creating invoice');
+      ];
+      throw new Exception(json_encode($exceptionData, JSON_PRETTY_PRINT));
     }
     return $mono->body;
   }
@@ -63,11 +84,11 @@ class MonoBank
   /**
    * @param string $invoiceId
    * @return array
-   * @throws \Air\Core\Exception\ClassWasNotFound
-   * @throws \Air\Model\Exception\CallUndefinedMethod
-   * @throws \Air\Model\Exception\ConfigWasNotProvided
-   * @throws \Air\Model\Exception\DriverClassDoesNotExists
-   * @throws \Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ClassWasNotFound
+   * @throws CallUndefinedMethod
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    */
   public function invoiceStatus(string $invoiceId): array
   {
@@ -84,6 +105,6 @@ class MonoBank
       ]);
       throw new Exception('Error getting invoice status by invoiceId . ' . $invoiceId);
     }
-    return $results->body;
+    return $mono->body;
   }
 }

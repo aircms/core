@@ -1,11 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Validator;
 
-/**
- * Class Phone
- * @package Air\Validator
- */
 class Phone extends ValidatorAbstract
 {
   /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air;
 
+use Air\Type\TypeAbstract;
 use Closure;
 use Air\Model\Driver\Mongodb\Cursor;
 use Air\Model\ModelAbstract;
@@ -43,7 +44,7 @@ class Map
    * @param mixed $data
    * @return bool
    */
-  private static function isSingle(mixed $data): bool
+  public static function isSingle(mixed $data): bool
   {
     return $data instanceof ModelInterface || (!isset($data[0]) && !($data instanceof Cursor));
   }
@@ -54,7 +55,7 @@ class Map
    * @param array $userData
    * @return array|null
    */
-  private static function executeAssoc(mixed $data, array $mapper = [], array $userData = []): ?array
+  public static function executeAssoc(mixed $data, array $mapper = [], array $userData = []): ?array
   {
     if (self::isSingle($data)) {
       return self::executeSingle($data, $mapper, $userData);
@@ -73,7 +74,7 @@ class Map
    * @param array $userData
    * @return mixed
    */
-  private static function executeLine(mixed $data, string $mapper = null, array $userData = []): mixed
+  public static function executeLine(mixed $data, string $mapper = null, array $userData = []): mixed
   {
     if (self::isSingle($data)) {
       return self::executeSingle($data, [$mapper], $userData)[$mapper];
@@ -91,7 +92,7 @@ class Map
    * @param array|null $userData
    * @return mixed
    */
-  private static function executeLineClosure(mixed $data, Closure $mapper, array $userData = null): mixed
+  public static function executeLineClosure(mixed $data, Closure $mapper, array $userData = null): mixed
   {
     if (self::isSingle($data)) {
       return self::transform($data, null, $mapper, $userData);
@@ -111,7 +112,7 @@ class Map
    *
    * @return array
    */
-  private static function executeSingle($data, array $mapper, array $userData = null): array
+  public static function executeSingle($data, array $mapper, array $userData = null): array
   {
     $mapped = [];
 
@@ -134,7 +135,7 @@ class Map
    *
    * @return mixed
    */
-  private static function transform($data, $dest, $value, array $userData = null): mixed
+  public static function transform($data, $dest, $value, array $userData = null): mixed
   {
     if ($value instanceof Closure) {
       return $value($data, $userData ?: []);
@@ -149,9 +150,24 @@ class Map
       }
     }
 
+    if ($data instanceof TypeAbstract) {
+      try {
+        return $data->{$value} ?? $data->{$data};
+
+      } catch (Throwable) {
+        return null;
+      }
+    }
+
     if (is_array($data)) {
       return $data[$value] ?? $data[$dest] ?? null;
     }
+
     return null;
+  }
+
+  public static function array(): string
+  {
+
   }
 }

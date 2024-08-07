@@ -170,10 +170,16 @@ class Router
    * @param array $requestedRoute
    * @param array $params
    * @param bool $reset
+   * @param bool $onlyUri
    * @return string
    * @throws DomainMustBeProvided
    */
-  public function assemble(array $requestedRoute = [], array $params = [], bool $reset = false): string
+  public function assemble(
+    array $requestedRoute = [],
+    array $params = [],
+    bool  $reset = false,
+    bool  $onlyUri = false
+  ): string
   {
     $module = $requestedRoute['module'] ?? $this->module;
     $controller = $requestedRoute['controller'] ?? ($reset ? '' : $this->controller);
@@ -252,6 +258,10 @@ class Router
 
     if ($selectedDomain == '*') {
       $selectedDomain = $this->getRequest()->getDomain();
+    }
+
+    if ($onlyUri) {
+      return $uri;
     }
 
     $port = '';

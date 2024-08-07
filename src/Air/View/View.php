@@ -4,30 +4,14 @@ declare(strict_types=1);
 
 namespace Air\View;
 
-//require_once 'Shorts/Tag.php';
-//require_once 'Shorts/Breadcrumbs.php';
-//require_once 'Shorts/Swiper.php';
-//
-//require_once 'Helpers/Asset.php';
-//require_once 'Helpers/Head.php';
-
-use Air\Type\File;
 use Air\Type\Meta;
 use Air\View\Helper\Asset;
 use Air\View\Helper\Base;
-use Air\View\Helper\Charset;
-use Air\View\Helper\Codes;
-use Air\View\Helper\FaIcon;
-use Air\View\Helper\Favicon;
+use Air\View\Helper\Head;
 use Air\View\Helper\HelperAbstract;
-use Air\View\Helper\Icon;
-use Air\View\Helper\Image;
 use Air\View\Helper\Partial;
 use Air\View\Helper\PartialCached;
-use Air\View\Helper\Preload;
 use Air\View\Helper\Uri;
-use Air\View\Helper\Viewport;
-use App\Module\Ui\View\Helper\Swiper;
 use Closure;
 use Exception;
 use Air\Core\Exception\ClassWasNotFound;
@@ -36,20 +20,12 @@ use Air\Core\Front;
 use ReflectionClass;
 
 /**
- * @method Partial|string partial(string $template, array $vars = [])
- * @method Asset|string asset(string[]|string $array)
- * @method Codes|string codes()
- * @method Base|string base()
- * @method Favicon|string favicon(string $string)
- * @method Preload|string preload(string[]|string $string, array $attributes = [])
- * @method Icon|string icon(?string $icon = null, array $attributes = [], string $tag = 'i')
- * @method Image|string image(File|string|null $image = null, string $alt = null, string $title = null, string $class = null, array $attributes = [],)
- * @method PartialCached|string partialCached(string $template)
- * @method Uri|string uri(array $route = [], array $params = [], bool $reset = true)
- * @method Viewport|string viewport(string $viewport = 'width=device-width, initial-scale=1.0, minimum-scale=1.0')
- * @method Charset|string charset(string $charset = 'UTF-8')
- * @method FaIcon|string faIcon(string $icon = null, string $family = null, string $type = null, array $attributes = [], string $tag = 'i', string $class = null, string $style = null)
- * @method Swiper|string swiper(string $id, Closure $slides, string $class = '', array $attributes = []): string
+ * @method Asset|string asset(string[]|string $array): string
+ * @method Base|string base(): string
+ * @method Head|string head(string $charset = 'UTF-8', string $viewport = 'width=device-width, initial-scale=1.0, minimum-scale=1.0', string $favicon = null): string
+ * @method Partial|string partial(string $template, array $vars = []): string
+ * @method PartialCached|string partialCached(string $template): string
+ * @method Uri|string uri(array $route = [], array $params = [], bool $reset = true): string
  */
 class View
 {

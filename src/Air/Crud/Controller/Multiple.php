@@ -7,6 +7,8 @@ namespace Air\Crud\Controller;
 use Air\Crud\Locale;
 use Air\Crud\Model\History;
 use Air\Crud\Trait\Ui;
+use Air\Form\Exception\FilterClassWasNotFound;
+use Air\Form\Exception\ValidatorClassWasNotFound;
 use Exception;
 use ReflectionClass;
 use MongoDB\BSON\Regex;
@@ -480,7 +482,7 @@ abstract class Multiple extends AuthCrud
       $history = new History();
       $data = [
         'dateTime' => time(),
-        'admin' => Auth::getInstance()->get(),
+        'admin' => Auth::getInstance()->getName(),
         'type' => $type,
         'section' => $section,
         'entity' => $entity,
@@ -804,12 +806,15 @@ abstract class Multiple extends AuthCrud
 
   /**
    * @param string|null $id
-   *
-   * @throws DomainMustBeProvided
-   * @throws RouterVarMustBeProvided
-   * @throws ClassWasNotFound
+   * @return array|void
    * @throws CallUndefinedMethod
-   * @throws Exception
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DomainMustBeProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws FilterClassWasNotFound
+   * @throws ValidatorClassWasNotFound
    */
   public function manage(string $id = null)
   {

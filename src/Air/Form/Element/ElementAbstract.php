@@ -309,7 +309,7 @@ abstract class ElementAbstract
         if (!class_exists($validatorClassName)) {
           throw new ValidatorClassWasNotFound($validatorClassName);
         }
-      } catch (Exception $exception) {
+      } catch (Throwable $exception) {
 
         if (!($exception instanceof ValidatorClassWasNotFound)) {
 

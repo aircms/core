@@ -1,22 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Validator;
 
-/**
- * Class Number
- * @package Air\Validator
- */
 class Number extends ValidatorAbstract
 {
   /**
-   * @var int
+   * @var int|null
    */
-  public $min = null;
+  public ?int $min = null;
 
   /**
-   * @var int
+   * @var int|null
    */
-  public $max = null;
+  public ?int $max = null;
 
   /**
    * @return int

@@ -18,10 +18,9 @@ class Partial extends HelperAbstract
    */
   public function call(string $template, array $vars = []): string
   {
-    foreach ($vars as $key => $value) {
-      $this->getView()->assign($key, $value);
-    }
-    return $this->getView()->render($template);
-   // return $this->getView()->render($template, $vars);
+//    foreach ($vars as $key => $value) {
+//      $this->getView()->assign($key, $value);
+//    }
+    return $this->getView()->render($template, $vars);
   }
 }

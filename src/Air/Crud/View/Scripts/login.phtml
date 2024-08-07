@@ -1,18 +1,31 @@
 <?php
 
 use Air\Cookie;
+use Air\Core\Front;
 
 /** @var string $title */
 $title = $this->title;
 
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
+
+/** @var array $adminConfig */
+$adminConfig = Front::getInstance()->getConfig()['air']['admin'];
+
+/** @var string $favicon */
+$favicon = Front::getInstance()->getConfig()['air']['admin']['favicon'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <?php
-  echo $this->partial('common/head');
+  echo tag('link', attributes: ['rel' => 'icon', 'href' => $favicon]);
+  echo tag('meta', attributes: ['charset' => 'UTF-8']);
+  echo tag('meta', attributes: ['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0']);
+  echo tag('title', content: $adminConfig['title']);
+
+  echo $this->base();
+
   echo $this->asset([
     'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap',
     'vendor/mdb/light.css',

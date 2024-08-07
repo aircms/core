@@ -191,5 +191,7 @@ return [
   'Author' => 'Автор',
   'Date/Time' => 'Дата, час',
   'Go back' => 'Назад',
-  'Add string' => 'Додати запис'
+  'Add string' => 'Додати запис',
+  'Clean cache' => 'Очистити кеш',
+  'Clear cache now?' => 'Очистити кеш зараз?'
 ];

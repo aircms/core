@@ -205,7 +205,7 @@ abstract class DocumentAbstract implements ArrayAccess
           return $value ? $value->toArray() : [];
         }
 
-        return $value;
+        return (array)$value;
       }
 
       $records = [];
@@ -295,7 +295,12 @@ abstract class DocumentAbstract implements ArrayAccess
 
         foreach ($value as $item) {
           $objectsA[] = $item;
-          $objects[] = new $typeClassName($item, $this->getModel());
+
+          if (is_object($item) && $typeClassName === $item::class) {
+            $objects[] = $item;
+          } else {
+            $objects[] = new $typeClassName($item, $this->getModel());
+          }
         }
 
         if ($toArray) {

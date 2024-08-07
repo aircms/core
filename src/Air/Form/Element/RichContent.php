@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
+use Air\Core\Exception\ClassWasNotFound;
+use Air\Core\Front;
 use Air\Crud\Locale;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
@@ -21,6 +23,7 @@ class RichContent extends ElementAbstract
    * @return bool
    * @throws FilterClassWasNotFound
    * @throws ValidatorClassWasNotFound
+   * @throws ClassWasNotFound
    */
   public function isValid($value): bool
   {
@@ -36,6 +39,22 @@ class RichContent extends ElementAbstract
     }
 
     return true;
+  }
+
+  /**
+   * @return array|string[]
+   * @throws ClassWasNotFound
+   */
+  public function getEnabledElements(): array
+  {
+    $enabled = ['file', 'files', 'quote', 'text', 'html', 'embed'];
+    $richContentEnabledElements = (Front::getInstance()->getConfig()['air']['admin']['rich-content'] ?? []);
+
+    if (count($richContentEnabledElements)) {
+      $enabled = $richContentEnabledElements;
+    }
+
+    return $enabled;
   }
 
   /**

@@ -1,20 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Validator;
 
-/**
- * Class ValidatorAbstract
- * @package Air\Validator
- */
 abstract class ValidatorAbstract
 {
   /**
    * @var bool
    */
-  public $allowNull = false;
+  public bool $allowNull = false;
 
   /**
-   * ValidatorAbstract constructor.
    * @param array $options
    */
   public function __construct(array $options = [])
@@ -41,6 +38,17 @@ abstract class ValidatorAbstract
   public function setAllowNull(bool $allowNull): void
   {
     $this->allowNull = $allowNull;
+  }
+
+  /**
+   * @param mixed $value
+   * @param array $options
+   * @return bool
+   */
+  public static function valid(mixed $value, array $options = []): bool
+  {
+    $validator = new static($options);
+    return $validator->isValid($value);
   }
 
   /**

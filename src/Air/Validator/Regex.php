@@ -1,17 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Validator;
 
-/**
- * Class Regex
- * @package Air\Validator
- */
 class Regex extends ValidatorAbstract
 {
   /**
    * @var string
    */
-  public $pattern = '';
+  public string $pattern = '';
 
   /**
    * @return string

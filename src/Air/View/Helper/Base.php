@@ -15,6 +15,6 @@ class Base extends HelperAbstract
    */
   public function call(): string
   {
-    return '<base href="' . Front::getInstance()->getConfig()['air']['asset']['prefix'] . '/"/>';
+    return tag('base', attributes: ['href' => Front::getInstance()->getConfig()['air']['asset']['prefix'] . '/']);
   }
 }

@@ -22,7 +22,7 @@ trait Ui
    */
   public static function badge(mixed $label, string $style = 'primary'): string
   {
-    return '<span class="badge badge-' . $style . '">' . $label . '</span>';
+    return span(class: ['badge', 'badge-' . $style], content: (string)$label);
   }
 
   /**
@@ -34,13 +34,12 @@ trait Ui
    */
   public static function btn(string $label, string $url, ?string $confirm = null, string $style = 'primary'): string
   {
-    $html = '<a class="btn btn-' . $style . '" href="' . $url . '"';
-
-    if ($confirm) {
-      $html .= ' data-confirm="' . $confirm . '"';
-    }
-
-    return $html . '>' . $label . '</a>';
+    return a(
+      href: $url,
+      class: ['btn', 'btn-' . $style],
+      content: $label,
+      attributes: $confirm ? ['data-confirm' => $confirm] : null
+    );
   }
 
   /**
@@ -59,25 +58,21 @@ trait Ui
       $url = 'tel:' . $url;
     }
 
-    $html = '<a class="text-decoration-underline text-' . $style . '" href="' . $url . '"';
-
-    if ($confirm) {
-      $html .= ' data-confirm="' . $confirm . '"';
-    }
-
-    return $html . '>' . $label . '</a>';
+    return a(
+      href: $url,
+      class: ['text-decoration-underline', 'text-' . $style],
+      attributes: $confirm ? ['data-confirm' => $confirm] : null
+    );
   }
 
   /**
    * @param string $label
-   * @param string $url
-   * @param string|null $confirm
    * @param string $style
    * @return string
    */
   public static function label(string $label, string $style = 'primary'): string
   {
-    return '<span class="text-' . $style . '">' . $label . '</a>';
+    return span(class: 'text-' . $style, content: $label);
   }
 
   /**

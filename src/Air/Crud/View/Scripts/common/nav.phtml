@@ -62,6 +62,9 @@ $phrases = $route($config['admin']['phrases'] ?? null);
 
 /** @var string $robotsTxt */
 $robotsTxt = $route($config['admin']['robotsTxt'] ?? null);
+
+/** @var string $cache */
+$cache = $route($config['admin']['cache'] ?? null);
 ?>
 
 <div class="d-flex flex-column h-100">
@@ -207,6 +210,19 @@ $robotsTxt = $route($config['admin']['robotsTxt'] ?? null);
                 </a>
               </li>
             <?php endif; ?>
+            <li class="dropdown-divider"></li>
+          <?php endif; ?>
+
+          <?php if ($cache) : ?>
+            <li>
+              <a class="dropdown-item text-danger-emphasis"
+                 role="button"
+                 data-admin-clean-cache
+                 data-href="<?php echo $cache; ?>"
+                 data-confirm="<?php echo \Air\Crud\Locale::t('Clear cache now?'); ?>">
+                <i class="fa fa-trash me-1"></i> <?php echo \Air\Crud\Locale::t('Clean cache'); ?>
+              </a>
+            </li>
             <li class="dropdown-divider"></li>
           <?php endif; ?>
           <li>

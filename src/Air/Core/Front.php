@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Core;
 
 use Air\Crud\Controller\Asset;
+use Air\Crud\Controller\Cache;
 use Air\Crud\Controller\Codes;
 use Air\Crud\Controller\FontsUi;
 use Air\Crud\Controller\Language;
@@ -13,6 +14,7 @@ use Air\Crud\Controller\RobotsTxt;
 use Air\Crud\Controller\RobotsTxtUi;
 use Error;
 use Exception;
+use MongoDB\BSON\ObjectId;
 use Throwable;
 use ReflectionClass;
 use ReflectionException;
@@ -500,6 +502,9 @@ final class Front
     } else if (($this->getConfig()['air']['admin']['robotsTxt'] ?? false) === $controller) {
       return RobotsTxt::class;
 
+    } else if (($this->getConfig()['air']['admin']['cache'] ?? false) === $controller) {
+      return Cache::class;
+
     } else if ('robots.txt' === $controller) {
       return RobotsTxtUi::class;
 
@@ -645,7 +650,7 @@ final class Front
               /** @var ModelAbstract $model */
               $model = new $className();
 
-              if (is_subclass_of($model, '\\Air\\Model\\ModelAbstract')) {
+              if (is_subclass_of($model, ModelAbstract::class)) {
 
                 if (isset($params[$parameter->getName()])) {
 
@@ -660,10 +665,12 @@ final class Front
                   }
 
                   if ($params[$parameter->getName()]['main'] === 'id') {
-                    $allCond = ['$or' => [
-                      ['id' => $value],
-                      ['url' => $value],
-                    ]];
+                    try {
+                      new ObjectId($value);
+                      $allCond['id'] = $value;
+                    } catch (Throwable) {
+                      $allCond['url'] = $value;
+                    }
                     $userCond = [];
                   } else {
                     $allCond = [$params[$parameter->getName()]['main'] => $value];

@@ -287,6 +287,7 @@ final class Generator
   {
     return [
       'label' => Locale::t('Language'),
+      'allowNull' => false
     ];
   }
 

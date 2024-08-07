@@ -1,7 +1,3 @@
-let currentScriptDir = document.currentScript.src.split('?')[0].split('/');
-currentScriptDir.pop();
-currentScriptDir = currentScriptDir.join('/');
-
 $(document).ready(() => {
   const activeTab = [];
   wait.on('[data-admin-tab]', (tab) => {
