@@ -6,12 +6,6 @@ namespace Air\View\Helper;
 
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
-use Air\Crud\Model\Codes;
-use Air\Map;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 
 class Head extends HelperAbstract
 {
@@ -21,10 +15,6 @@ class Head extends HelperAbstract
    * @param string|null $favicon
    * @return string
    * @throws ClassWasNotFound
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    */
   public function call(
     string $charset = 'UTF-8',
@@ -40,7 +30,6 @@ class Head extends HelperAbstract
       tag('meta', attributes: ['charset' => $charset]),
       tag('meta', attributes: ['name' => 'viewport', 'content' => $viewport]),
       tag('base', attributes: ['href' => $baseHref . '/']),
-      implode('', Map::execute(Codes::all(), 'description')),
     ];
 
     if ($favicon) {

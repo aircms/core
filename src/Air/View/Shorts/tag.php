@@ -137,7 +137,8 @@ function tag(
     $html[] = implode('', content($content));
   } catch (Throwable $e) {
     echo "----Опять проблемы с контентом в TAG----";
-    var_dump($content); die();
+    var_dump($content);
+    die();
   }
 
   $html[] = '</' . $tagName . '>';
