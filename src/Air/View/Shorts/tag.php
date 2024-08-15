@@ -91,6 +91,7 @@ function tag(
   Closure|string|array|null|Generator $content = null,
   string|array                        $class = null,
   array|string                        $attributes = null,
+  array|string                        $data = null,
   File|string                         $bgImage = null
 ): string
 {
@@ -98,6 +99,7 @@ function tag(
 
   $class = (array)$class;
   $attributes = (array)$attributes;
+  $data = (array)$data;
 
   if ($bgImage) {
     $class[] = 'bg-image';
@@ -108,6 +110,14 @@ function tag(
 
   if (count($class)) {
     $class = 'class="' . implode(' ', array_filter($class)) . '"';
+  }
+
+  foreach ($data as $key => $value) {
+    if (!is_int($key)) {
+      $attributes[] = 'data-' . $key . '="' . $value . '"';
+    } else {
+      $attributes[] = 'data-' . $value;
+    }
   }
 
   foreach ($attributes as $key => $value) {
@@ -412,5 +422,29 @@ function iframe(
     tagName: 'iframe',
     class: $class,
     attributes: $attributes
+  );
+}
+
+function doctype()
+{
+  return '<!DOCTYPE html>';
+}
+
+function main(
+  string|array              $class = null,
+  array|string              $attributes = null,
+  array|string              $data = null,
+  Closure|string|array|null $content = null,
+)
+{
+  $attributes = $attributes ?? [];
+  $attributes['role'] = 'main';
+
+  return tag(
+    tagName: 'main',
+    attributes: $attributes,
+    class: $class,
+    data: $data,
+    content: $content
   );
 }
