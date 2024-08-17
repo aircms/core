@@ -18,7 +18,8 @@ function isNonClosingTag(string $tagName): bool
     'br',
     'hr',
     'link',
-    'img'
+    'img',
+    'source',
   ]);
 }
 
@@ -147,6 +148,7 @@ function tag(
     $html[] = implode('', content($content));
   } catch (Throwable $e) {
     echo "----Опять проблемы с контентом в TAG----";
+    throw $e;
     var_dump($content);
     die();
   }
@@ -160,6 +162,7 @@ function div(
   string|array                        $class = null,
   Closure|string|array|null|Generator $content = null,
   array|string                        $attributes = null,
+  array|string                        $data = null,
   File|string                         $bgImage = null
 ): string
 {
@@ -168,6 +171,7 @@ function div(
     content: $content,
     class: $class,
     attributes: $attributes,
+    data: $data,
     bgImage: $bgImage
   );
 }
@@ -176,6 +180,7 @@ function span(
   Closure|string|array|null $content = null,
   string|array              $class = null,
   array|string              $attributes = null,
+  array|string              $data = null,
   File|string               $bgImage = null
 ): string
 {
@@ -184,6 +189,7 @@ function span(
     content: $content,
     class: $class,
     attributes: $attributes,
+    data: $data,
     bgImage: $bgImage
   );
 }
@@ -192,6 +198,7 @@ function form(
   Closure|string|array|null $content = null,
   string|array              $class = null,
   array|string              $attributes = null,
+  array|string              $data = null,
   string                    $method = 'get',
   string                    $action = '',
   File|string               $bgImage = null
@@ -212,6 +219,7 @@ function form(
     content: $content,
     class: $class,
     attributes: $attributes,
+    data: $data,
     bgImage: $bgImage
   );
 }
@@ -237,12 +245,14 @@ function a(
   Closure|string|array|null $content = null,
   string|array              $class = null,
   array|string              $attributes = null,
+  array|string              $data = null,
   File|string               $bgImage = null,
   string                    $title = null,
   bool                      $openInNewWindow = false
 ): string
 {
   $attributes = (array)$attributes ?? [];
+  $data = (array)$data ?? [];
 
   if ($href) {
     $attributes['href'] = $href;
@@ -263,6 +273,7 @@ function a(
     content: $content,
     class: $class,
     attributes: $attributes,
+    data: $data,
     bgImage: $bgImage
   );
 }
@@ -446,5 +457,71 @@ function main(
     class: $class,
     data: $data,
     content: $content
+  );
+}
+
+function video(
+  File|string  $src = null,
+  string|array $class = null,
+  array|string $attributes = null
+)
+{
+  $type = 'video/mp4';
+
+  if ($src instanceof File) {
+    $type = $src->getMime();
+    $src = $src->getSrc();
+  }
+
+  return tag(
+    tagName: 'video',
+    class: $class,
+    attributes: $attributes,
+    content: tag(
+      tagName: 'source',
+      attributes: [
+        'src' => $src,
+        'type' => $type
+      ]
+    )
+  );
+}
+
+function section(
+  Closure|string|array|null|Generator $content = null,
+  string|array                        $class = null,
+  array|string                        $attributes = null,
+  array|string                        $data = null,
+  File|string                         $bgImage = null
+): string
+{
+  return tag(
+    tagName: 'section',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    data: $data,
+    bgImage: $bgImage
+  );
+}
+
+function br()
+{
+  return tag('br');
+}
+
+function p(
+  Closure|string|array|null|Generator $content = null,
+  string|array                        $class = null,
+  array|string                        $attributes = null,
+  array|string                        $data = null,
+): string
+{
+  return tag(
+    tagName: 'p',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    data: $data
   );
 }

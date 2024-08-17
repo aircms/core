@@ -21,6 +21,55 @@ function hidden(
   );
 }
 
+function checkbox(
+  string       $name = null,
+  string       $value = null,
+  bool         $checked = false,
+  array|string $attributes = [],
+  array|string $data = [],
+  array|string $class = [],
+): string
+{
+  return tag(
+    tagName: 'input',
+    class: $class,
+    data: $data,
+    attributes: [
+      ...$attributes,
+      ...[
+        'name' => $name,
+        'value' => $value,
+        'type' => 'checkbox',
+        $checked ? 'checked' : null
+      ]
+    ]
+  );
+}
+
+function button(
+  Closure|string|array|null $content = null,
+  array|string              $attributes = [],
+  array|string              $data = [],
+  array|string              $class = [],
+  bool                      $isSubmit = false
+): string
+{
+
+  $attributes = (array)$attributes;
+
+  if ($isSubmit) {
+    $attributes['type'] = 'submit';
+  }
+
+  return tag(
+    tagName: 'button',
+    class: $class,
+    attributes: $attributes,
+    data: $data,
+    content: $content
+  );
+}
+
 function text(
   string       $name = null,
   string       $value = null,

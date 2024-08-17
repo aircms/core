@@ -9,17 +9,29 @@ declare(strict_types=1);
  * @param Closure|string|array|null $additionalContent
  * @param string|null $mainClass
  * @param string|null $slideClass
+ * @param bool $slideInsideValue
  * @return string
  */
 function swiper(
-  string  $dataId,
-  mixed   $slides,
-  Closure $renderer,
+  mixed                     $slides,
+  Closure                   $renderer,
+  string                    $dataId = null,
   Closure|string|array|null $additionalContent = null,
-  ?string $mainClass = null,
-  ?string $slideClass = null,
+  ?string                   $mainClass = null,
+  ?string                   $slideClass = null,
+  bool                      $slideInsideValue = false,
+  array                     $options = []
 ): string
 {
+  if (count($options)) {
+    if (!isset($options['spaceBetween'])) {
+      $options['spaceBetween'] = 20;
+    }
+    if (!isset($options['slidesPerView'])) {
+      $options['slidesPerView'] = 1;
+    }
+  }
+
   $content = [];
   foreach ($slides as $index => $slide) {
     ob_start();
@@ -28,17 +40,38 @@ function swiper(
       $value = ob_get_contents();
     }
     ob_end_clean();
-    $content[] = div(['swiper-slide', $slideClass], $value);
+
+    if ($slideInsideValue) {
+      $content[] = $value;
+    } else {
+      $content[] = div(['swiper-slide', $slideClass], $value);
+    }
   }
 
   $additionalContent = implode('', content($additionalContent));
 
-  return div(
+  $data = ['swiper'];
+
+  if ($dataId) {
+    $data[] = 'swiper-' . $dataId;
+  }
+
+  if (count($options)) {
+    $data['swiper-options'] = str_replace('"', "'", json_encode($options));
+  }
+
+  $swiper = div(
     class: ['swiper', $mainClass],
-    attributes: ['data-swiper-' . $dataId],
+    data: $data,
     content: [
       div(class: 'swiper-wrapper', content: $content),
       $additionalContent,
     ]
   );
+
+  if (strlen($additionalContent)) {
+    return div(data: 'swiper-container', content: $swiper);
+  }
+
+  return $swiper;
 }
