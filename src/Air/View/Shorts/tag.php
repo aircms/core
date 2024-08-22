@@ -259,9 +259,9 @@ function a(
   }
 
   if (is_string($content) && !$title) {
-    $attributes['title'] = mb_substr(strip_tags($content), 0, 100);
+    $attributes['title'] = htmlspecialchars(mb_substr(strip_tags($content), 0, 100));
   } else if ($title) {
-    $attributes['title'] = $title;
+    $attributes['title'] = htmlspecialchars($title);
   }
 
   if ($openInNewWindow) {
@@ -453,6 +453,22 @@ function main(
 
   return tag(
     tagName: 'main',
+    attributes: $attributes,
+    class: $class,
+    data: $data,
+    content: $content
+  );
+}
+
+function footer(
+  string|array              $class = null,
+  array|string              $attributes = null,
+  array|string              $data = null,
+  Closure|string|array|null $content = null,
+): string
+{
+  return tag(
+    tagName: 'footer',
     attributes: $attributes,
     class: $class,
     data: $data,

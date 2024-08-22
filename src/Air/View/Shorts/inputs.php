@@ -54,12 +54,8 @@ function button(
   bool                      $isSubmit = false
 ): string
 {
-
   $attributes = (array)$attributes;
-
-  if ($isSubmit) {
-    $attributes['type'] = 'submit';
-  }
+  $attributes['type'] = $isSubmit ? 'submit' : 'button';
 
   return tag(
     tagName: 'button',
@@ -74,13 +70,15 @@ function text(
   string       $name = null,
   string       $value = null,
   array|string $class = null,
-  array        $attributes = [],
+  array|string $attributes = [],
+  array|string $data = [],
   string       $placeholder = null,
 ): string
 {
   return tag(
     tagName: 'input',
     class: $class,
+    data: $data,
     attributes: [
       ...$attributes,
       ...[

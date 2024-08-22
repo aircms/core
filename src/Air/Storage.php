@@ -125,6 +125,37 @@ class Storage
   }
 
   /**
+   * @param array $paths
+   * @return array|File[]
+   * @throws Core\Exception\ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws \ReflectionException
+   * @throws \Throwable
+   */
+  public static function info(array $paths): array
+  {
+    $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
+    $url = $storageConfig['url'] . '/api/info';
+
+    $response = Request::run($url, [
+      'method' => Request::POST,
+      'body' => [
+        'key' => $storageConfig['key'],
+        'paths' => $paths,
+      ]
+    ]);
+
+    $files = [];
+    foreach ($response->body as $file) {
+      $files[] = new File($file);
+    }
+    return $files;
+  }
+
+  /**
    * @param string $folder
    * @param string $fileName
    * @param string $title

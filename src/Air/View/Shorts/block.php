@@ -7,7 +7,8 @@ use Air\Type\File;
 function container(
   Closure|string|array|null $content = null,
   string|array              $class = null,
-  array                     $attributes = [],
+  array|string              $attributes = [],
+  array|string              $data = [],
   File|string               $bgImage = null
 ): string
 {
@@ -18,6 +19,7 @@ function container(
     content: $content,
     class: $class,
     attributes: $attributes,
+    data: $data,
     bgImage: $bgImage
   );
 }
@@ -25,7 +27,8 @@ function container(
 function flex(
   string|array              $class = null,
   Closure|string|array|null $content = null,
-  array                     $attributes = [],
+  array|string              $attributes = [],
+  array|string              $data = [],
   File|string               $bgImage = null
 ): string
 {
@@ -36,6 +39,7 @@ function flex(
     content: $content,
     class: $class,
     attributes: $attributes,
+    data: $data,
     bgImage: $bgImage
   );
 }
@@ -59,7 +63,7 @@ function row(
 }
 
 function col(
-  string|array              $class = null,
+  string|array              $class = [],
   Closure|string|array|null $content = null,
   array                     $attributes = [],
   File|string               $bgImage = null
