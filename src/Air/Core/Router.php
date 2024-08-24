@@ -446,11 +446,13 @@ class Router
       }
     }
 
+    $fontsUi = Front::getInstance()->getConfig()['air']['fontsUi'] ?? false;
+
     if (
       isset($routes['strict'])
       && $routes['strict'] === true
       && $parts[0] !== 'robots.txt'
-      && !($parts[0] === 'fonts' && $parts[1] === 'css')
+      && !($parts[0] === $fontsUi)
     ) {
       throw new RouterWasNotFound($uri);
     }

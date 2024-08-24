@@ -4,7 +4,7 @@ class Tiny {
 
   static ready(cb) {
     if (!Tiny.isReady) {
-      $.get('/_fonts/fonts', (fonts) => {
+      $.get('/' + window.fontsUrl + '/fonts', (fonts) => {
         Tiny.fonts = fonts;
         cb && cb();
       });
@@ -18,7 +18,7 @@ class Tiny {
     toolbar_sticky: false,
     toolbar_items_size: 'small',
     plugins: ['advlist anchor link lists fullscreen code paste textcolor lineheight'],
-    toolbar: 'styles fontfamily fontsize forecolor backcolor bold italic underline strikethrough align link bullist numlist code fullscreen lineheightselect',
+    toolbar: 'styles fontfamily fontsize lineheight forecolor backcolor bold italic underline strikethrough align link bullist numlist code fullscreen',
     style_formats: [
       {title: 'Heading 1', block: 'h1'},
       {title: 'Heading 2', block: 'h2'},
@@ -34,8 +34,8 @@ class Tiny {
 
     lineheight_formats: "8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 26pt 36pt",
     font_size_formats: "8pt 9pt 10pt 11pt 12pt 14pt 16px 18pt 24pt 30pt 36pt 48pt 60pt 72pt 96pt",
-    font_family_formats: "Arial=arial,helvetica,sans-serif; " + Tiny.fonts,
-    content_style: "@import url('/_fonts/css');",
+    font_family_formats: ["Arial=arial,helvetica,sans-serif", Tiny.fonts].filter(n => n).join('; '),
+    content_style: "@import url('/" + window.fontsUrl + "/css');",
 
     setup: (editor) => editor.on('change', () => editor.save())
   }
@@ -64,8 +64,21 @@ class Tiny {
   }
 }
 
-Tiny.ready(() => {
-  wait.on('[data-admin-form-tiny]', (tiny) => new Tiny(tiny, {
-    autosize: true
-  }));
+$(document).ready(() => {
+  Tiny.ready(() => {
+    $(document).on('dblclick', '[data-admin-form-tiny]', function () {
+      const preview = $(this).find('[data-admin-form-tiny-preview]');
+      const textarea = $(this).find('textarea');
+
+      modal.tiny(textarea.val(), (html) => {
+        textarea.val(html);
+        preview.html(html);
+      });
+    });
+    wait.on('[data-admin-tiny]', (tiny) => new Tiny(tiny, {
+      autosize: true,
+      min_height: 500,
+      max_height: 700
+    }));
+  });
 });

@@ -8,15 +8,14 @@ use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 use Air\Crud\Locale;
 use Air\Form\Element\Storage;
+use Air\Form\Element\Text;
 use Air\Form\Form;
 use Air\Form\Generator;
-use Air\Map;
 use Air\Model\Exception\CallUndefinedMethod;
 use Air\Model\Exception\ConfigWasNotProvided;
 use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\Meta\Exception\PropertyWasNotFound;
-use Air\View\View;
 
 /**
  * @mod-manageable true
@@ -72,12 +71,13 @@ class Font extends Multiple
   /**
    * @param \Air\Crud\Model\Font $model
    * @return Form
+   * @throws ClassWasNotFound
    * @throws PropertyWasNotFound
    */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      'General' => [
+      Locale::t('My font') => [
         new Storage('eotIe9', [
           'value' => $model->eotIe9,
           'description' => 'IE9 Compat Modes',
@@ -120,7 +120,18 @@ class Font extends Multiple
           'label' => 'SVG',
           'allowNull' => true,
         ]),
-      ]
+      ],
+      Locale::t('Google font') => [
+        new Text('googleFontName', [
+          'allowNull' => true,
+          'label' => Locale::t('Google font'),
+          'description' => Locale::t('Enter the name of the Google Font')
+        ]),
+        new Text('googleFontImportUrl', [
+          'allowNull' => true,
+          'label' => Locale::t('Google font import URL'),
+        ])
+      ],
     ]);
   }
 
@@ -160,7 +171,11 @@ class Font extends Multiple
 
     $fonts = [];
     foreach (\Air\Crud\Model\Font::all() as $font) {
-      $fonts[] = $font->title . '=' . $font->title;
+      if ($font->isGoogleFont()) {
+        $fonts[] = $font->title . '=' . $font->googleFontName;
+      } else {
+        $fonts[] = $font->title . '=' . $font->title;
+      }
     }
     return implode('; ', $fonts);
   }

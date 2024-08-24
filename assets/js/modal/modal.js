@@ -42,6 +42,7 @@ const modal = new class {
     container: '',
     file: '',
     model: '',
+    tiny: ''
   };
 
   embedTemplates = {
@@ -61,6 +62,7 @@ const modal = new class {
     $.get(modalScriptDir + '/templates/html.html', (t) => this.templates.html = t);
     $.get(modalScriptDir + '/templates/file.html', (t) => this.templates.file = t);
     $.get(modalScriptDir + '/templates/model.html', (t) => this.templates.model = t);
+    $.get(modalScriptDir + '/templates/tiny.html', (t) => this.templates.tiny = t);
 
     $.get(modalScriptDir + '/templates/image.html', (t) => this.embedTemplates.image = t);
     $.get(modalScriptDir + '/templates/video.html', (t) => this.embedTemplates.video = t);
@@ -101,6 +103,15 @@ const modal = new class {
         }
         return false;
       });
+    });
+  }
+
+  tiny(content, cb) {
+    const html = this.templates.tiny.replaceAll('{{content}}', content);
+    this.open(html, {title: locale('Edit HTML'), html}, this.mergeOpts({size: 'xxLarge'}, {}));
+    $(this.selector).find('[data-save]').click(() => {
+      cb && cb($(this.selector).find('[data-admin-tiny]').val());
+      this.hide();
     });
   }
 
@@ -196,6 +207,8 @@ const modal = new class {
     modal.html(locale('Select row'), modalHtml, {size: 'xxLarge'}).then(() => {
       $('[data-admin-model-modal]').on('load', (e) => {
         $(e.currentTarget).addClass('show');
+        $('[data-modal-loader]').removeClass('show');
+        setTimeout(() => $('[data-modal-loader]').remove(), 300);
         $(window).off('message').on('message', (message) => {
           if (message.originalEvent.data.row && cb) {
             cb(message.originalEvent.data.row);

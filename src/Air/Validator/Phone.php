@@ -18,7 +18,7 @@ class Phone extends ValidatorAbstract
       return true;
     }
 
-    return strlen(trim($value)) >= 11;
+    return strlen(trim($value)) >= 10;
   }
 
   /**

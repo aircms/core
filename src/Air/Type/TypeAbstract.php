@@ -32,7 +32,7 @@ abstract class TypeAbstract
   {
     foreach (array_keys(get_class_vars(static::class)) as $var) {
 
-      if (!empty($item[$var])) {
+      if (isset($item[$var])) {
         $value = $item[$var];
 
         list($type, $isArray) = $this->getPropertyType($var);

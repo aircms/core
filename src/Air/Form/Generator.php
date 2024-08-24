@@ -12,6 +12,7 @@ use Air\Form\Element\Checkbox;
 use Air\Form\Element\Date;
 use Air\Form\Element\DateTime;
 use Air\Form\Element\ElementAbstract;
+use Air\Form\Element\FaIcon;
 use Air\Form\Element\Icon;
 use Air\Form\Element\MultiplePage;
 use Air\Form\Element\Page;
@@ -94,6 +95,7 @@ final class Generator
         'description' => null,
         'quote' => null,
         'icon' => null,
+        'faIcon' => null,
       ],
       Locale::t('Documents') => [
         'page' => null,
@@ -194,6 +196,7 @@ final class Generator
       'page' => Page::class,
       'pages' => MultiplePage::class,
       'icon' => Icon::class,
+      'faIcon' => FaIcon::class,
       default => null,
     };
   }
@@ -521,6 +524,19 @@ final class Generator
       'label' => Locale::t('Icon (Google Symbol)'),
       'description' => Locale::t('Use icons name from Google Symbols<br><a href="https://fonts.google.com/icons"' .
         ' class="text-info text-decoration-underline" target="_blank">Google Symbols</a>')
+    ];
+  }
+
+  /**
+   * @return array
+   * @throws ClassWasNotFound
+   */
+  private static function faIcon(): array
+  {
+    return [
+      'label' => Locale::t('Font Awesome v6.6'),
+      'description' => Locale::t('Use icons name from Font Awesome<br><a href="https://fontawesome.com/search"' .
+        ' class="text-info text-decoration-underline" target="_blank">Font Awesome</a>')
     ];
   }
 }

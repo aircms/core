@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Air\Core;
 
-use Air\Crud\Controller\Asset;
 use Air\Crud\Controller\Cache;
 use Air\Crud\Controller\Codes;
+use Air\Crud\Controller\FaIcon;
 use Air\Crud\Controller\FontsUi;
 use Air\Crud\Controller\Language;
 use Air\Crud\Controller\Phrase;
@@ -505,10 +505,13 @@ final class Front
     } else if (($this->getConfig()['air']['admin']['cache'] ?? false) === $controller) {
       return Cache::class;
 
+    } else if (($this->getConfig()['air']['admin']['faIcon'] ?? false) === $controller) {
+      return FaIcon::class;
+
     } else if ('robots.txt' === $controller) {
       return RobotsTxtUi::class;
 
-    } else if ('fonts' === $controller) {
+    } else if (($this->getConfig()['air']['fontsUi'] ?? false) === $controller) {
       return FontsUi::class;
     }
 

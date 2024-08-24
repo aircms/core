@@ -1,0 +1,116 @@
+<?php
+
+use Air\Type\FaIcon;
+
+?>
+
+<div class="d-flex flex-column h-100" data-admin-faicon-choose-container>
+  <div class="d-flex flex-column flex-grow-1">
+    <div class="p-3 position-sticky top-0 z-1 header-menu">
+      <div class="card position-sticky w-100">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-outline" data-mdb-input-init>
+                <input type="text" class="form-control" data-admin-faicon-search-input/>
+                <label class="form-label"><?php echo \Air\Crud\Locale::t('Search'); ?></label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="btn-group w-100" data-admin-select data-admin-faicon-style>
+                <input type="hidden" data-admin-select-input value="<?php echo FaIcon::STYLE_SOLID; ?>"/>
+                <button class="btn btn-primary btn-block text-start px-3 rounded-1"
+                        data-mdb-dropdown-init
+                        data-admin-select-title
+                        data-mdb-ripple-init></button>
+                <ul class="dropdown-menu w-100">
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option data-value="<?php echo FaIcon::STYLE_SOLID; ?>"
+                       role="button">
+                      Solid
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option data-value="<?php echo FaIcon::STYLE_REGULAR; ?>"
+                       role="button">
+                      Regular
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option data-value="<?php echo FaIcon::STYLE_LIGHT; ?>"
+                       role="button">
+                      Light
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option data-value="<?php echo FaIcon::STYLE_THIN; ?>"
+                       role="button">
+                      Thin
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option data-value="<?php echo FaIcon::STYLE_DUOTONE; ?>"
+                       role="button">
+                      Duotone
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option
+                       data-value="<?php echo FaIcon::STYLE_SHARP_SOLID; ?>"
+                       role="button">
+                      Sharp solid
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option
+                       data-value="<?php echo FaIcon::STYLE_SHARP_REGULAR; ?>"
+                       role="button">
+                      Sharp regular
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option
+                       data-value="<?php echo FaIcon::STYLE_SHARP_LIGHT; ?>"
+                       role="button">
+                      Sharp light
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option
+                       data-value="<?php echo FaIcon::STYLE_SHARP_THIN; ?>"
+                       role="button">
+                      Sharp thin
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" data-admin-select-option
+                       data-value="<?php echo FaIcon::STYLE_SHARP_DUOTONE; ?>"
+                       role="button">
+                      Sharp duotone
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="px-3">
+      <div class="row row-gap-4">
+        <?php foreach (FaIcon::getIcons() as $icon) : ?>
+          <?php $iconTitle = ucfirst(strtolower(str_replace(['_', '-'], ' ', $icon))); ?>
+          <div class="col-2" data-admin-faicon-search="<?php echo $icon . $iconTitle; ?>">
+            <div data-admin-faicon-id="<?php echo $icon; ?>"
+                 data-admin-faicon-title="<?php echo $iconTitle; ?>"
+                 class="p-2 rounded-3 shadow-2 bg-body-tertiary text-center d-flex gap-2 flex-column"
+                 role="button">
+              <?php echo \faIcon(icon: $icon, class: 'fs-1 icon p-3'); ?>
+              <div class="small max-lines-1 text-muted"><?php echo $iconTitle; ?></div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </div>
+</div>

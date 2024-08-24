@@ -1,16 +1,16 @@
 $(document).ready(() => {
-  $(document).on('input', '[data-admin-icon-search-input]', (e) => {
+  $(document).on('input', '[data-admin-faicon-search-input]', (e) => {
 
-    const container = $(e.currentTarget).closest('[data-admin-icon-search-container]');
+    const container = $(e.currentTarget).closest('[data-admin-faicon-search-container]');
     const query = $(e.currentTarget).val();
 
     if (!query.length) {
-      container.find('[data-admin-icon-search]').removeClass('d-none');
+      container.find('[data-admin-faicon-search]').removeClass('d-none');
 
     } else {
       setTimeout(() => {
-        container.find('[data-admin-icon-search]').each((index, icon) => {
-          if ($(icon).data('admin-icon-search').toString().indexOf(query) != -1) {
+        container.find('[data-admin-faicon-search]').each((index, icon) => {
+          if ($(icon).data('admin-faicon-search').toString().indexOf(query) != -1) {
             $(icon).removeClass('d-none');
           } else {
             $(icon).addClass('d-none');

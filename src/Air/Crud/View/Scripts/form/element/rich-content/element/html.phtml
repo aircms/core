@@ -8,5 +8,20 @@ $name = $this->name;
 /** @var string $html */
 $html = $this->html;
 ?>
+
 <input type="hidden" name="<?php echo $name; ?>[type]" value="<?php echo RichContent::TYPE_HTML; ?>">
-<textarea name="<?php echo $name; ?>[value]" data-admin-form-tiny><?php echo $html; ?></textarea>
+
+<div class="card">
+  <div class="card-body p-3" role="button" data-admin-form-tiny>
+    <textarea class="d-none" name="<?php echo $name; ?>[value]"><?php echo $html; ?></textarea>
+    <div data-admin-form-tiny-preview class="admin-tiny-preview">
+      <?php if (!strlen($html)) : ?>
+        <div class="text-muted text-center small" style="user-select: none">
+          <?php echo \Air\Crud\Locale::t('Double click to edit text'); ?>
+        </div>
+      <?php else: ?>
+        <?php echo $html; ?>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>

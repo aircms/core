@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Air\Crud\Model;
 
+use Air\Core\Exception\ClassWasNotFound;
+use Air\Http\Request;
 use Air\Model\ModelAbstract;
 use Air\Type\File;
+use Exception;
 
 /**
  * @collection AirFont
@@ -22,12 +25,28 @@ use Air\Type\File;
  * @property File $ttf
  * @property File $svg
  *
+ * @property string $googleFontName
+ * @property string $googleFontImportUrl
+ *
  * @property boolean $enabled
  */
 class Font extends ModelAbstract
 {
+  /**
+   * @return string
+   * @throws ClassWasNotFound
+   * @throws Exception
+   */
   public function asCss(): string
   {
+    if ($this->isGoogleFont()) {
+      $css = Request::getQuery($this->googleFontImportUrl);
+      if ($css->isOk()) {
+        return $css->body;
+      }
+      return '';
+    }
+
     $css =
       "@font-face {
         font-family: '" . $this->title . "';
@@ -70,5 +89,13 @@ class Font extends ModelAbstract
     $css .= ";}";
 
     return $css;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isGoogleFont(): bool
+  {
+    return !!strlen($this->googleFontName) && !!strlen($this->googleFontImportUrl);
   }
 }

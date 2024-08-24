@@ -10,6 +10,7 @@ use Air\Crud\Locale;
 use Air\Form\Element\Textarea;
 use Air\Form\Form;
 use Air\Form\Generator;
+use Air\Model\Meta\Exception\PropertyWasNotFound;
 
 /**
  * @mod-manageable true
@@ -66,6 +67,8 @@ class Codes extends Multiple
   /**
    * @param \Air\Crud\Model\Codes $model
    * @return Form
+   * @throws ClassWasNotFound
+   * @throws PropertyWasNotFound
    */
   protected function getForm($model = null): Form
   {

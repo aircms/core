@@ -5,6 +5,8 @@ function dropdown(
   string|array         $containerAttributes = [],
   string|array         $containerData = [],
   string|array         $buttonClass = [],
+  string|array         $buttonData = [],
+  string|array         $buttonAttributes = [],
   string|array         $boxClass = [],
   Closure|array|string $button = null,
   Closure|array|string $box = null,
@@ -26,7 +28,8 @@ function dropdown(
     content: [
       a(
         class: $buttonClass,
-        attributes: ['role' => 'button'],
+        attributes: [...['role' => 'button'], ...$buttonAttributes],
+        data: $buttonData,
         content: [
           ...(array)$button,
           ...[faIcon(icon: 'chevron-down', class: 'fs-10')]

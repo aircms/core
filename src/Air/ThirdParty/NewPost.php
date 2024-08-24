@@ -64,8 +64,6 @@ class NewPost
       ]
     ];
 
-    var_dump($data);
-
     $newPost = Request::postJson('https://api.novaposhta.ua/v2.0/json/', $data);
 
     if (!$newPost->isOk()) {

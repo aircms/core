@@ -394,4 +394,12 @@ class Form
     }
     return $errorMessages;
   }
+
+  /**
+   * @return array
+   */
+  public function getErrorFields(): array
+  {
+    return array_keys($this->getErrorMessages());
+  }
 }

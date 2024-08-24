@@ -31,6 +31,11 @@ foreach ($header as $key => $col) : ?>
       <i class="material-symbols-outlined" style=""><?php echo $row->$key; ?></i>
     </td>
 
+  <?php elseif ($type == 'faIcon') : ?>
+    <td class="text-center admin-table-row-bool">
+      <i class="fs-2 fa-<?php echo $row->$key?->getIcon(); ?> <?php echo $row->$key?->getStyle(); ?>"></i>
+    </td>
+
 
   <?php elseif ($type == 'longtext') : ?>
     <td class="<?php echo $size; ?>">

@@ -69,8 +69,8 @@ function col(
   File|string               $bgImage = null
 ): string
 {
-//  $class = (array)$class ?? [];
-//  $class[] = 'col';
+  $class = (array)$class ?? [];
+  $class[] = 'col';
 
   return div(
     content: $content,

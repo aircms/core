@@ -147,7 +147,7 @@ return [
   'Today' => 'Сьогодні',
   'Clear' => 'Очистити',
   'clear' => 'очистити',
-  'Enter embed URL' => 'Enter embed URL',
+  'Enter embed URL' => 'Введіть URL-адресу для вбудовування',
   'Remove block?' => 'Видалити блок?',
   'Are you sure want to remove?' => 'Ви дійсно хочете видалити?',
   'Remove background image?' => 'Видалити фонове зображення?',
@@ -193,5 +193,11 @@ return [
   'Go back' => 'Назад',
   'Add string' => 'Додати запис',
   'Clean cache' => 'Очистити кеш',
-  'Clear cache now?' => 'Очистити кеш зараз?'
+  'Clear cache now?' => 'Очистити кеш зараз?',
+  'Type URL' => 'Введіть URL-адресу для вбудовування',
+  'Double click to edit text' => 'Двічі клацніть для редагування тексту',
+  'Edit HTML' => 'Редагувати HTML',
+  'Google font' => 'Шрифт Google',
+  'Enter the name of the Google Font' => 'Введіть назву Google-шрифта',
+  'Google font import URL' => 'URL-адреса імпорту шрифту Google'
 ];
