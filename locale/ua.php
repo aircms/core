@@ -199,5 +199,6 @@ return [
   'Edit HTML' => 'Редагувати HTML',
   'Google font' => 'Шрифт Google',
   'Enter the name of the Google Font' => 'Введіть назву Google-шрифта',
-  'Google font import URL' => 'URL-адреса імпорту шрифту Google'
+  'Google font import URL' => 'URL-адреса імпорту шрифту Google',
+  'My font' => 'Мій шрифт'
 ];
