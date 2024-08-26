@@ -26,10 +26,10 @@ class FontsUi extends Controller
     $this->getView()->setPath(realpath(__DIR__ . '/../View'));
     $this->getResponse()->setHeader('Content-type', 'text/css');
 
-    $css = null;
+    $css = [];
     foreach (\Air\Crud\Model\Font::all() as $font) {
-      $css .= $font->asCss();
+      $css[] = $font->asCss();
     }
-    return $css;
+    return implode('', $css);
   }
 }
