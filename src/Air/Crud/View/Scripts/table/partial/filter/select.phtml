@@ -2,6 +2,8 @@
 
 /** @var array $filter */
 $filter = $this->filter;
+
+$isAllowAll = $filter['allowAll'] ?? true;
 ?>
 <div class="btn-group w-100 rounded-4" data-admin-select-submit="true" data-admin-select>
   <button class="btn btn-primary btn-block text-start px-3"
@@ -21,11 +23,15 @@ $filter = $this->filter;
          data-admin-select-input/>
 
   <ul class="dropdown-menu w-100">
-    <li>
-      <a class="dropdown-item" role="button" data-admin-select-option>
-        <?php echo \Air\Crud\Locale::t('All'); ?>
-      </a>
-    </li>
+
+    <?php if ($isAllowAll) : ?>
+      <li>
+        <a class="dropdown-item" role="button" data-admin-select-option>
+          <?php echo \Air\Crud\Locale::t('All'); ?>
+        </a>
+      </li>
+    <?php endif; ?>
+
     <?php foreach ($filter['options'] as $option) : ?>
       <li>
         <a class="dropdown-item"

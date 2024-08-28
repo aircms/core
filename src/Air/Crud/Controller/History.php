@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Throwable;
 use Exception;
@@ -15,7 +16,7 @@ class History extends Multiple
 {
   /**
    * @return string
-   * @throws \Air\Core\Exception\ClassWasNotFound
+   * @throws ClassWasNotFound
    */
   protected function getTitle(): string
   {
@@ -59,6 +60,7 @@ class History extends Multiple
 
   /**
    * @return array[]
+   * @throws ClassWasNotFound
    */
   public function getFilter(): array
   {
