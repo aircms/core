@@ -229,7 +229,7 @@ abstract class Multiple extends AuthCrud
 
     if (!$title) {
       $menuItem = $this->getAdminMenuItem();
-      $title = implode(' &#8250; ', [$menuItem['parent']['title'], $menuItem['title']]);
+      $title = implode('&nbsp;&nbsp;&#8250;&nbsp;&nbsp;', [$menuItem['parent']['title'], $menuItem['title']]);
     }
 
     return $title;
