@@ -11,6 +11,8 @@ use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\ModelAbstract;
+use ReflectionException;
+use Throwable;
 
 class Meta
 {
@@ -126,7 +128,8 @@ class Meta
    * @throws ConfigWasNotProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyWasNotFound
+   * @throws ReflectionException
+   * @throws Throwable
    */
   public function __construct(?array $meta = [], ?ModelAbstract $model = null)
   {
@@ -292,5 +295,22 @@ class Meta
       }
     }
     return $defaults;
+  }
+
+  /**
+   * @return array
+   */
+  public function toArray(): array
+  {
+    return [
+      'title' => $this->title,
+      'description' => $this->description,
+      'ogTitle' => $this->ogTitle,
+      'ogDescription' => $this->ogDescription,
+      'ogImage' => $this->ogImage,
+      'useModelData' => $this->useModelData,
+      'modelClassName' => $this->modelClassName,
+      'modelObjectId' => $this->modelObjectId
+    ];
   }
 }
