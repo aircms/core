@@ -12,7 +12,7 @@
     "ext-mbstring": "*",
     "ext-mongodb": "*",
     "ext-curl": "*",
-    "phpmailer/phpmailer": "*",
+    "phpmailer/phpmailer": "*"
   },
   "autoload": {
     "psr-0": {
