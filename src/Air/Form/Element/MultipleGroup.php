@@ -41,6 +41,11 @@ class MultipleGroup extends ElementAbstract
   public bool $allowNullGroup = true;
 
   /**
+   * @var bool
+   */
+  public bool $isFixed = false;
+
+  /**
    * @return array|null
    */
   public function getDefaultValue(): ?array
@@ -127,6 +132,22 @@ class MultipleGroup extends ElementAbstract
   public function setGroup(Group $group): void
   {
     $this->group = $group;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isFixed(): bool
+  {
+    return $this->isFixed;
+  }
+
+  /**
+   * @param bool $isFixed
+   */
+  public function setIsFixed(bool $isFixed): void
+  {
+    $this->isFixed = $isFixed;
   }
 
   /**

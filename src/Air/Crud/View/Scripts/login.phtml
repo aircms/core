@@ -14,6 +14,9 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
 
 /** @var string $favicon */
 $favicon = Front::getInstance()->getConfig()['air']['admin']['favicon'];
+
+/** @var string $returnUrl */
+$returnUrl = $this->returnUrl;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +50,7 @@ $favicon = Front::getInstance()->getConfig()['air']['admin']['favicon'];
       <div class="card fade transition mt-4">
         <div class="card-body">
           <h1 class="mb-4"><?php echo $title; ?></h1>
-          <form method="post">
+          <form method="post" data-return-url="<?php echo $returnUrl; ?>">
             <div data-mdb-input-init class="form-outline mb-4">
               <input type="text" id="login" class="form-control" name="login" required/>
               <label class="form-label" for="login">

@@ -1,0 +1,40 @@
+<?php
+
+use Air\Form\Element\Permissions;
+
+/** @var Permissions $element */
+$element = $this->element;
+?>
+
+<div class="row">
+  <?php foreach ($element->getPermissions() as $group) : ?>
+    <div class="col-4 mb-4">
+      <div class="fw-bold text-muted mb-2"><?php echo $group['title']; ?></div>
+
+      <?php foreach ($group['items'] as $route) : ?>
+
+        <?php $routeCheckboxName = md5(serialize($route['url'])); ?>
+
+        <div class="d-flex align-items-center mb-2">
+          <div class="flex-grow-1">
+            <div class="form-check form-switch">
+              <input class="form-check-input"
+                     type="checkbox"
+                     role="switch" value="1"
+                     id="<?php echo $element->getName(); ?>[<?php echo $routeCheckboxName; ?>]"
+                     name="<?php echo $element->getName(); ?>[<?php echo $routeCheckboxName; ?>]"
+                     <?php if ($element->isPermitted($route)) : ?>checked="checked"<?php endif; ?>>
+            </div>
+          </div>
+          <div class="me-3 admin-form-label">
+            <div class="h6 m-0 w-100">
+              <?php echo $route['title']; ?>
+            </div>
+          </div>
+        </div>
+
+      <?php endforeach; ?>
+
+    </div>
+  <?php endforeach; ?>
+</div>

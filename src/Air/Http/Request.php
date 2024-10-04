@@ -256,7 +256,7 @@ class Request
     return match ($contentType) {
       'application/json' => json_encode($data),
       'multipart/form-data' => $data,
-      default => http_build_query($data),
+      default => http_build_query($data ?? []),
     };
   }
 

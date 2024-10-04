@@ -1,6 +1,7 @@
 <?php
 
 use Air\Paginator;
+use Air\Crud\Locale;
 
 /** @var Paginator $paginator */
 $paginator = $this->paginator;
@@ -25,13 +26,13 @@ $prev = $calculation['prev'];
   <div class="col">
     <div class="h6 small m-0">
       <?php if ($filteredCount <= $itemsPerPage) : ?>
-        <b><?php echo $filteredCount; ?></b> item.
+        <b><?php echo $filteredCount; ?></b> <?php echo Locale::t('items'); ?>.
       <?php else: ?>
         <b><?php echo (($page - 1) * $itemsPerPage) + 1; ?></b> -
         <b><?php $till = $page * $itemsPerPage;
           echo $till > $filteredCount ? $filteredCount : $till; ?></b>
         /
-        <b><?php echo $filteredCount; ?></b> items.
+        <b><?php echo $filteredCount; ?></b> <?php echo Locale::t('items'); ?>.
       <?php endif; ?>
     </div>
   </div>

@@ -50,51 +50,22 @@ class Auth
   }
 
   /**
+   * @param string $controller
+   * @param Admin $admin
    * @return bool
    */
-  public function isAuthorized(): bool
+  private function isControllerAllowedForUser(string $controller, Admin $admin): bool
   {
-    try {
-      $credentials = Cookie::get($this->cookieName);
-
-      $source = $credentials['source'];
-      $login = $credentials['login'];
-      $password = $credentials['password'];
-
-      if ($source === self::SOURCE_ROOT) {
-        $config = Front::getInstance()->getConfig()['air']['admin']['auth'];
-        if ($config['root']['login'] == $login && $config['root']['password'] == $password) {
-          return true;
-        }
-
-      } elseif ($source === self::SOURCE_DATABASE) {
-        return !!Admin::quantity(['login' => $login, 'password' => md5($password)]);
-      }
-
-      return false;
-
-    } catch (Throwable) {
+    if ($admin->isRoot) {
+      return true;
     }
 
+    foreach ($admin->permissions as $permission) {
+      if ($permission['controller'] === $controller) {
+        return true;
+      }
+    }
     return false;
-  }
-
-  /**
-   * @param string $login
-   * @param string $password
-   * @return bool
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
-  public function isValid(string $login, string $password): bool
-  {
-    return in_array($this->getLoginSource($login, $password), [
-      self::SOURCE_ROOT,
-      self::SOURCE_DATABASE,
-    ]);
   }
 
   /**
@@ -107,7 +78,7 @@ class Auth
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    */
-  public function getLoginSource(string $login, string $password): ?string
+  private function getLoginSource(string $login, string $password): ?string
   {
     $config = Front::getInstance()->getConfig()['air']['admin']['auth'];
 
@@ -141,6 +112,99 @@ class Auth
       'source' => $this->getLoginSource($login, $password),
       'login' => $login,
       'password' => $password
+    ]);
+  }
+
+  /**
+   * @return bool
+   */
+  public function isLoggedIn(): bool
+  {
+    try {
+      $credentials = Cookie::get($this->cookieName);
+
+      $source = $credentials['source'];
+      $login = $credentials['login'];
+      $password = $credentials['password'];
+
+      if ($source === self::SOURCE_ROOT) {
+        $config = Front::getInstance()->getConfig()['air']['admin']['auth'];
+        if ($config['root']['login'] == $login && $config['root']['password'] == $password) {
+          return true;
+        }
+
+      } elseif ($source === self::SOURCE_DATABASE) {
+        return !!Admin::quantity(['login' => $login, 'password' => md5($password)]);
+      }
+
+      return false;
+
+    } catch (Throwable) {
+    }
+
+    return false;
+  }
+
+  /**
+   * @return bool
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   */
+  public function isCurrentRouteAllowedAuthorizedUser(): bool
+  {
+    $credentials = Cookie::get($this->cookieName);
+
+    $source = $credentials['source'];
+    $login = $credentials['login'];
+    $password = $credentials['password'];
+
+    if ($source === self::SOURCE_ROOT) {
+      $config = Front::getInstance()->getConfig()['air']['admin']['auth'];
+      if ($config['root']['login'] == $login && $config['root']['password'] == $password) {
+        return true;
+      }
+
+    } elseif ($source === self::SOURCE_DATABASE) {
+
+      $controller = Front::getInstance()->getRouter()->getController();
+
+      if ($controller === 'index') {
+        return true;
+      }
+
+      $admin = Admin::one(['login' => $login, 'password' => md5($password)]);
+
+      if (!$admin) {
+        return false;
+      }
+
+      return $this->isControllerAllowedForUser(
+        Front::getInstance()->getRouter()->getController(),
+        $admin
+      );
+    }
+
+    return false;
+  }
+
+  /**
+   * @param string $login
+   * @param string $password
+   * @return bool
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   */
+  public function isValid(string $login, string $password): bool
+  {
+    return in_array($this->getLoginSource($login, $password), [
+      self::SOURCE_ROOT,
+      self::SOURCE_DATABASE,
     ]);
   }
 

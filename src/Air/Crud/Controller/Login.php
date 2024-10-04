@@ -45,6 +45,7 @@ class Login extends Controller
     }
 
     $this->getView()->assign('title', Front::getInstance()->getConfig()['air']['admin']['title']);
+    $this->getView()->assign('returnUrl', $this->getParam('returnUrl'));
     $this->getView()->setPath(__DIR__ . '/../View');
 
     return $this->getView()->render('login');
@@ -54,11 +55,12 @@ class Login extends Controller
    * @return void
    * @throws ClassWasNotFound
    * @throws DomainMustBeProvided
-   * @throws RouterVarMustBeProvided
    */
   public function logout(): void
   {
     Auth::getInstance()->remove();
-    $this->redirect($this->getRouter()->assemble(['action' => 'index']));
+
+    $authRoute = Front::getInstance()->getConfig()['air']['admin']['auth']['route'];
+    $this->redirect($this->getRouter()->assemble(['controller' => $authRoute], [], true));
   }
 }

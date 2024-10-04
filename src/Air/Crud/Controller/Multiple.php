@@ -526,10 +526,16 @@ abstract class Multiple extends AuthCrud
   {
     $reflection = new ReflectionClass(static::class);
 
+    $docComment = $reflection->getDocComment();
+
+    if ($docComment === false) {
+      return [];
+    }
+
     $mods = array_values(array_map(function ($item) use ($type) {
       return trim(str_replace('@mod-' . $type . " ", '', $item));
     }, array_filter(
-      explode("\n", str_replace('*', ' ', $reflection->getDocComment())),
+      explode("\n", str_replace('*', ' ', $docComment)),
       function ($item) use ($type) {
         return strstr($item, '@mod-' . $type . " ");
       }

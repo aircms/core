@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Air\Core;
 
+use Air\Core\Exception\ActionMethodWasNotFound;
+use Air\Core\Exception\ControllerClassWasNotFound;
 use Air\Crud\Controller\Cache;
 use Air\Crud\Controller\Codes;
 use Air\Crud\Controller\FaIcon;
 use Air\Crud\Controller\FontsUi;
 use Air\Crud\Controller\Language;
+use Air\Crud\Controller\NotAllowed;
 use Air\Crud\Controller\Phrase;
 use Air\Crud\Controller\RobotsTxt;
 use Air\Crud\Controller\RobotsTxtUi;
@@ -329,13 +332,13 @@ final class Front
 
       $controllerClassName = $this->getControllerClassName($this->router);
 
-      if (!class_exists($controllerClassName, true) || !is_subclass_of($controllerClassName, '\\Air\\Core\\Controller')) {
+      if (!class_exists($controllerClassName) || !is_subclass_of($controllerClassName, '\\Air\\Core\\Controller')) {
 
         if ($exception) {
           throw $exception;
         }
 
-        throw new \Air\Core\Exception\ControllerClassWasNotFound($controllerClassName);
+        throw new ControllerClassWasNotFound($controllerClassName);
       }
 
       /** @var Controller|ErrorController $controller */
@@ -429,7 +432,7 @@ final class Front
           $plugin->postRun($this->request, $this->response, $this->router);
         }
       } else {
-        throw new \Air\Core\Exception\ActionMethodWasNotFound($this->router->getAction());
+        throw new ActionMethodWasNotFound($this->router->getAction());
       }
 
       return $this->render($this->response);
@@ -513,6 +516,9 @@ final class Front
 
     } else if (($this->getConfig()['air']['fontsUi'] ?? false) === $controller) {
       return FontsUi::class;
+
+    } else if (($this->getConfig()['air']['admin']['notAllowed'] ?? false) === $controller) {
+      return NotAllowed::class;
     }
 
     if ($this->config['air']['modules'] ?? false) {

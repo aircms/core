@@ -25,6 +25,9 @@ $positioning = $this->positioning;
 /** @var bool $isSelectControl */
 $isSelectControl = $this->isSelectControl;
 
+/** @var bool $isSingleControl */
+$isSingleControl = $this->isSingleControl;
+
 /** @var bool $isPositioningControl */
 $isPositioningControl = $this->isPositioningControl;
 
@@ -47,10 +50,14 @@ $controller = $this->controller;
 
       <div class="d-flex">
         <?php if ($mode === 'manage' && !$isSelectControl) : ?>
-          <a class="btn btn-secondary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-back>
-            <i class="fa fa-arrow-left me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Go back'); ?>
-          </a>
+
+          <?php if (!$isSingleControl) : ?>
+            <a class="btn btn-secondary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-back>
+              <i class="fa fa-arrow-left me-1"></i>
+              <?php echo \Air\Crud\Locale::t('Go back'); ?>
+            </a>
+          <?php endif; ?>
+
           <a class="btn btn-primary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-save>
             <i class="fa fa-save me-1"></i>
             <?php echo \Air\Crud\Locale::t('Save (CTRL+S)'); ?>
@@ -58,16 +65,18 @@ $controller = $this->controller;
         <?php endif; ?>
 
         <?php if (count($filter)) : ?>
-          <a href="<?php echo $this->uri(['controller' => $controller]); ?>" class="btn btn-danger ms-2 px-3" data-mdb-ripple-init>
+          <a href="<?php echo $this->uri(['controller' => $controller]); ?>" class="btn btn-danger ms-2 px-3"
+             data-mdb-ripple-init>
             <i class="fa fa-filter me-1"></i>
             <?php echo \Air\Crud\Locale::t('Clear filter'); ?>
           </a>
         <?php endif; ?>
 
         <?php if ($manageable) : ?>
-          <a href="<?php echo $this->uri(['controller' => $controller,'action' => 'manage'], ['returnUrl' => $request->getUri()]); ?>"
-             class="btn btn-primary ms-2 px-3"
-             data-mdb-ripple-init>
+          <a
+            href="<?php echo $this->uri(['controller' => $controller, 'action' => 'manage'], ['returnUrl' => $request->getUri()]); ?>"
+            class="btn btn-primary ms-2 px-3"
+            data-mdb-ripple-init>
             <i class="fas fa-plus me-1"></i>
             <?php echo \Air\Crud\Locale::t('Add'); ?>
           </a>
@@ -97,10 +106,11 @@ $controller = $this->controller;
         <?php endif; ?>
 
         <?php if (count($export)) : ?>
-          <a href="<?php echo $this->uri(['controller' => $controller,'action' => 'export'], $request->getParams()); ?>"
-             class="btn btn-secondary ms-2 px-3"
-             data-mdb-ripple-init
-             data-force="true">
+          <a
+            href="<?php echo $this->uri(['controller' => $controller, 'action' => 'export'], $request->getParams()); ?>"
+            class="btn btn-secondary ms-2 px-3"
+            data-mdb-ripple-init
+            data-force="true">
             <i class="fas fa-download me-1"></i>
             <?php echo \Air\Crud\Locale::t('Export'); ?>
           </a>

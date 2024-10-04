@@ -7,6 +7,7 @@ namespace Air\Crud\Controller;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Air\Form\Element\Checkbox;
+use Air\Form\Element\Permissions;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Form\Form;
@@ -17,6 +18,7 @@ use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Exception;
 use Air\Core\Exception\DomainMustBeProvided;
 use Air\Form\Element\Text;
+use MongoDB\BSON\ObjectId;
 
 /**
  * @mod-manageable true
@@ -62,33 +64,6 @@ class Admin extends Multiple
   }
 
   /**
-   * @param $model
-   * @return Form
-   * @throws ClassWasNotFound
-   */
-  public function getForm($model = null): Form
-  {
-    return new Form(['data' => $model], [
-      'Credentials' => [
-        new Checkbox('enabled', [
-          'label' => Locale::t('Enabled'),
-        ]),
-        new Text('name', [
-          'label' => Locale::t('Name'),
-        ]),
-        new Text('login', [
-          'label' => Locale::t('Login'),
-        ]),
-        new Text('new-password', [
-          'value' => '',
-          'label' => Locale::t('Password'),
-          'allowNull' => true,
-        ]),
-      ]
-    ]);
-  }
-
-  /**
    * @param string|null $id
    * @return array
    * @throws ClassWasNotFound
@@ -107,7 +82,48 @@ class Admin extends Multiple
       'id' => $this->getRequest()->getParam('id')
     ]);
 
-    $form = $this->getForm($model);
+    $form = new Form(['data' => $model], [
+      Locale::t('General') => [
+        new Checkbox('enabled', [
+          'label' => Locale::t('Enabled'),
+        ]),
+        new Checkbox('isRoot', [
+          'label' => Locale::t('Is root'),
+        ]),
+        new Text('name', [
+          'label' => Locale::t('Name'),
+        ]),
+        new Text('login', [
+          'label' => Locale::t('Login'),
+          'validators' => [
+            [
+              'message' => Locale::t('User with this login is already exists'),
+              'isValid' => function (string $value) use ($model) {
+                if ($model->id) {
+                  return !\Air\Crud\Model\Admin::count([
+                    'login' => $value,
+                    '_id' => ['$ne' => new ObjectId($model->id)]
+                  ]);
+                }
+                return !\Air\Crud\Model\Admin::count([
+                  'login' => $value
+                ]);
+              }
+            ]
+          ]
+        ]),
+        new Text('new-password', [
+          'value' => '',
+          'label' => Locale::t('Password'),
+          'allowNull' => !empty($model->id),
+        ])
+      ],
+      Locale::t('Permissions') => [
+        new Permissions('permissions', [
+          'label' => Locale::t('Permissions')
+        ])
+      ],
+    ]);
 
     if ($this->getRequest()->isPost()) {
       if ($form->isValid($this->getRequest()->getPostAll())) {
@@ -140,7 +156,8 @@ class Admin extends Multiple
       'icon' => $this->getAdminMenuItem()['icon'],
       'title' => $this->getTitle(),
       'form' => $form,
-      'mode' => 'manage'
+      'mode' => 'manage',
+      'admin' => $model,
     ]);
 
     $this->getView()->setScript('form/index');

@@ -200,5 +200,13 @@ return [
   'Google font' => 'Шрифт Google',
   'Enter the name of the Google Font' => 'Введіть назву Google-шрифта',
   'Google font import URL' => 'URL-адреса імпорту шрифту Google',
-  'My font' => 'Мій шрифт'
+  'My font' => 'Мій шрифт',
+  'Name' => 'Ім\'я',
+  'items' => 'елементи',
+  'Permissions' => 'Дозволи',
+  'Is root' => 'Головний адміністратор',
+  'System settings' => 'Налаштування системи',
+  'Ooops...' => 'Ой...',
+  'This page is not permitted for you' => 'Ця сторінка вам не дозволена',
+  'User with this login is already exists' => 'Користувач із таким логіном вже існує'
 ];

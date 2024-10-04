@@ -11,7 +11,8 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-mongodb": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "phpmailer/phpmailer": "*",
   },
   "autoload": {
     "psr-0": {

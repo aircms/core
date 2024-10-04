@@ -10,9 +10,14 @@ use Air\Model\ModelAbstract;
  * @collection AirAdmin
  *
  * @property string $id
+ *
  * @property string $name
  * @property string $login
  * @property string $password
+ *
+ * @property boolean $isRoot
+ * @property array $permissions
+ *
  * @property boolean $enabled
  */
 class Admin extends ModelAbstract
