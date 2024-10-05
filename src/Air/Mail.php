@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Air;
 
+use Closure;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
+
 class Mail
 {
   /**
@@ -45,6 +49,11 @@ class Mail
    * @var string
    */
   private string $fromEmail;
+
+  /**
+   * @var Closure|null
+   */
+  private Closure|null $debugOutput;
 
   /**
    * @return string
@@ -175,6 +184,22 @@ class Mail
   }
 
   /**
+   * @return Closure|null
+   */
+  public function getDebugOutput(): ?Closure
+  {
+    return $this->debugOutput;
+  }
+
+  /**
+   * @param Closure|null $debugOutput
+   */
+  public function setDebugOutput(?Closure $debugOutput): void
+  {
+    $this->debugOutput = $debugOutput;
+  }
+
+  /**
    * @param string $charSet
    * @param string $encryption
    * @param int $port
@@ -183,16 +208,18 @@ class Mail
    * @param string $password
    * @param string $fromName
    * @param string $fromEmail
+   * @param Closure|null $debugOutput
    */
   public function __construct(
-    string $charSet,
-    string $encryption,
-    int    $port,
-    string $host,
-    string $username,
-    string $password,
-    string $fromName,
-    string $fromEmail
+    string  $charSet,
+    string  $encryption,
+    int     $port,
+    string  $host,
+    string  $username,
+    string  $password,
+    string  $fromName,
+    string  $fromEmail,
+    ?Closure $debugOutput = null
   )
   {
     $this->charSet = $charSet;
@@ -203,6 +230,7 @@ class Mail
     $this->password = $password;
     $this->fromName = $fromName;
     $this->fromEmail = $fromEmail;
+    $this->debugOutput = $debugOutput;
   }
 
   /**
@@ -212,6 +240,7 @@ class Mail
    * @param string $name
    * @param array $vars
    * @return bool
+   * @throws Exception
    */
   public function send(
     string $email,
@@ -228,27 +257,44 @@ class Mail
       }
     }
 
-    return true;
+    $mail = new PHPMailer(true);
 
-//    $mail = new PHPMailer(true);
-//    $mail->SMTPDebug = 0;
-//    $mail->isSMTP();
-//    $mail->CharSet = $this->charSet;
-//    $mail->SMTPAuth = true;
-//    $mail->SMTPSecure = $this->encryption;
-//    $mail->Host = $this->host;
-//    $mail->Username = $this->username;
-//    $mail->Password = $this->password;
-//    $mail->Port = $this->port;
-//
-//    $mail->setFrom($this->fromEmail, $this->fromName);
-//    $mail->addAddress($email, $name);
-//
-//    $mail->isHTML();
-//    $mail->Subject = $subject;
-//    $mail->Body = $body;
-//    $mail->AltBody = strip_tags($body);
-//
-//    return $mail->send();
+    if ($this->debugOutput) {
+      $mail->SMTPDebug = 1;
+    }
+
+    $mail->isSMTP();
+    $mail->CharSet = $this->charSet;
+    $mail->SMTPAuth = true;
+    $mail->SMTPSecure = $this->encryption;
+    $mail->Host = $this->host;
+    $mail->Username = $this->username;
+    $mail->Password = $this->password;
+    $mail->Port = $this->port;
+
+    $mail->setFrom($this->fromEmail, $this->fromName);
+    $mail->addAddress($email, $name);
+
+    $mail->isHTML();
+    $mail->Subject = $subject;
+    $mail->Body = $body;
+    $mail->AltBody = strip_tags($body);
+
+    if ($this->debugOutput) {
+
+      ob_start();
+      $results = $mail->send();
+      $log = ob_get_contents();
+
+      $mail->Debugoutput = $this->debugOutput;
+
+      $this->getDebugOutput()($log);
+      ob_clean();
+
+    } else {
+      $results = $mail->send();
+    }
+
+    return $results;
   }
 }

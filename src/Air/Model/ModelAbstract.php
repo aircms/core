@@ -169,6 +169,20 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   }
 
   /**
+   * @param array $data
+   * @return int
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   */
+  public static function insert(array $data = []): int
+  {
+    return self::__callStatic(__FUNCTION__, func_get_args());
+  }
+
+  /**
    * @param array $cond
    * @param array $data
    * @return int

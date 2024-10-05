@@ -202,6 +202,7 @@ class Driver extends DriverAbstract
    * @param array $cond
    * @param int|null $limit
    * @return int
+   * @throws ReflectionException
    */
   public function remove(array $cond = [], int $limit = null): int
   {
@@ -274,6 +275,7 @@ class Driver extends DriverAbstract
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws Exception
    * @throws IndexOutOfRange
+   * @throws ReflectionException
    */
   public function fetchOne(array $cond = [], array $sort = [], array $map = []): mixed
   {
@@ -303,6 +305,7 @@ class Driver extends DriverAbstract
    * @param int|null $offset
    * @param array $map
    * @return array|CursorAbstract
+   * @throws ReflectionException
    */
   public function fetchAll(
     array $cond = [],
@@ -365,6 +368,8 @@ class Driver extends DriverAbstract
    * @throws ConfigWasNotProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws PropertyWasNotFound
+   * @throws ReflectionException
    */
   public function batchInsert(array $data = null): int
   {
@@ -376,6 +381,21 @@ class Driver extends DriverAbstract
 
       /** @var ModelAbstract $model */
       $model = new $modelClassName();
+
+      if ($model->getMeta()->hasProperty('updatedAt')) {
+        $updatedAtProperty = $model->getMeta()->getPropertyWithName('updatedAt');
+        if ($updatedAtProperty->getType() === 'integer') {
+          $dataItem['updatedAt'] = time();
+        }
+      }
+
+      if ($model->getMeta()->hasProperty('createdAt')) {
+        $updatedAtProperty = $model->getMeta()->getPropertyWithName('createdAt');
+        if ($updatedAtProperty->getType() === 'integer') {
+          $dataItem['createdAt'] = time();
+        }
+      }
+
       $model->populate($dataItem);
 
       $bulk->insert(
@@ -397,6 +417,22 @@ class Driver extends DriverAbstract
   }
 
   /**
+   * @param array $data
+   * @return int
+   * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws PropertyWasNotFound
+   * @throws ReflectionException
+   */
+  public function insert(array $data = []): int
+  {
+    return self::batchInsert([$data]);
+  }
+
+  /**
    * @param array $cond
    * @param array $data
    * @return int
@@ -405,6 +441,7 @@ class Driver extends DriverAbstract
    * @throws ConfigWasNotProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ReflectionException
    */
   public function update(array $cond = [], array $data = []): int
   {

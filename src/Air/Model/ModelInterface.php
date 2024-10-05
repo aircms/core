@@ -51,6 +51,12 @@ interface ModelInterface
   public static function batchInsert(array $data = []): int;
 
   /**
+   * @param array $data
+   * @return int
+   */
+  public static function insert(array $data = []): int;
+
+  /**
    * @param array $cond
    * @param array $data
    * @return int

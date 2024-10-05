@@ -115,6 +115,12 @@ abstract class DriverAbstract
   abstract public function batchInsert(array $data = []): int;
 
   /**
+   * @param array $data
+   * @return int
+   */
+  abstract public function insert(array $data = []): int;
+
+  /**
    * @param array $cond
    * @param array $data
    * @return int
