@@ -11,6 +11,7 @@ function richContent(
   Closure           $textRenderer = null,
   Closure           $htmlRenderer = null,
   Closure           $embedRenderer = null,
+  Closure           $quoteRendered = null,
   string            $containerClassName = null,
   string            $itemClassName = null,
 ): string
@@ -38,6 +39,8 @@ function richContent(
         'text' => $textRenderer,
         'html' => $htmlRenderer,
         'embed' => $embedRenderer,
+        'quote' => $quoteRendered,
+        default => null
       };
       if ($renderer) {
         $rows[] = div(

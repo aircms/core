@@ -691,7 +691,12 @@ final class Front
                   }
 
                   /** @var ModelAbstract $className */
-                  $args[$var] = $className::fetchOne($allCond);
+
+                  if ($this->getRouter()->getConfig()['strictInject'] ?? false) {
+                    $args[$var] = $className::one($allCond);
+                  } else {
+                    $args[$var] = $className::fetchOne($allCond);
+                  }
                 }
               } else {
                 $args[$var] = new $className($value);
