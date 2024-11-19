@@ -25,6 +25,15 @@ function isNonClosingTag(string $tagName): bool
 
 /**
  * @param Closure|string|array|Generator|null $content
+ * @return string
+ */
+function render(Closure|string|array|null|Generator $content = null): string
+{
+  return implode('', $content);
+}
+
+/**
+ * @param Closure|string|array|Generator|null $content
  * @return array
  */
 function content(Closure|string|array|null|Generator $content = null): array
@@ -345,7 +354,7 @@ function img(
   array|string $attributes = null,
   string       $alt = null,
   string       $title = null
-)
+): string
 {
   $attributes = (array)$attributes ?? [];
 
@@ -413,6 +422,54 @@ function h3(
 {
   return tag(
     tagName: 'h3',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
+}
+
+function h4(
+  string|array              $class = null,
+  Closure|string|array|null $content = null,
+  array|string              $attributes = null,
+  File|string               $bgImage = null
+): string
+{
+  return tag(
+    tagName: 'h4',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
+}
+
+function h5(
+  string|array              $class = null,
+  Closure|string|array|null $content = null,
+  array|string              $attributes = null,
+  File|string               $bgImage = null
+): string
+{
+  return tag(
+    tagName: 'h5',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    bgImage: $bgImage
+  );
+}
+
+function h6(
+  string|array              $class = null,
+  Closure|string|array|null $content = null,
+  array|string              $attributes = null,
+  File|string               $bgImage = null
+): string
+{
+  return tag(
+    tagName: 'h6',
     content: $content,
     class: $class,
     attributes: $attributes,

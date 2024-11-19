@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Air;
 
+use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
-use Air\Form\Element\DateTime;
 use Air\Http\Response;
 use Air\Http\Request;
 use Air\Type\File;
 use Exception;
-use http\Encoding\Stream;
+use ReflectionException;
+use Throwable;
 
 class Storage
 {
@@ -45,8 +46,13 @@ class Storage
    * @param string $url
    * @param string|null $name
    * @return File
-   * @throws Core\Exception\ClassWasNotFound
-   * @throws Exception
+   * @throws ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ReflectionException
+   * @throws Throwable
    */
   public static function uploadByUrl(string $path, string $url, ?string $name = null): File
   {
@@ -78,8 +84,14 @@ class Storage
   /**
    * @param string $path
    * @param array $files
-   * @return File[]
-   * @throws Core\Exception\ClassWasNotFound
+   * @return array|File[]
+   * @throws ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ReflectionException
+   * @throws Throwable
    */
   public static function uploadFiles(string $path, array $files): array
   {
@@ -97,12 +109,63 @@ class Storage
     ]);
 
     $files = [];
-
     foreach ($response->body as $file) {
       $files[] = new File($file);
     }
-
     return $files;
+  }
+
+  /**
+   * @param string $path
+   * @param array $datum
+   * @return array|File[]
+   * @throws Core\Exception\ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ReflectionException
+   * @throws Throwable
+   */
+  public static function uploadDatum(string $path, array $datum): array
+  {
+    $response = self::action('uploadDatum', [
+      'path' => $path,
+      'datum' => $datum,
+    ]);
+
+    if (!$response->isOk()) {
+      throw new Exception($response->body['message']);
+    }
+
+    $files = [];
+    foreach ($response->body as $file) {
+      $files[] = new File($file);
+    }
+    return $files;
+  }
+
+  /**
+   * @param string $path
+   * @param array $datum
+   * @return File[]
+   * @throws Core\Exception\ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ReflectionException
+   * @throws Throwable
+   */
+  public static function uploadBase64Datum(string $path, array $datum): array
+  {
+    foreach ($datum as $index => $image) {
+      $datum[$index] = [
+        'type' => 'base64',
+        'data' => $image
+      ];
+    }
+    return self::uploadDatum($path, $datum);
   }
 
   /**
@@ -132,8 +195,8 @@ class Storage
    * @throws Model\Exception\ConfigWasNotProvided
    * @throws Model\Exception\DriverClassDoesNotExists
    * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws \ReflectionException
-   * @throws \Throwable
+   * @throws ReflectionException
+   * @throws Throwable
    */
   public static function info(array $paths): array
   {
@@ -162,7 +225,13 @@ class Storage
    * @param string $backColor
    * @param string $frontColor
    * @return File|null
-   * @throws Core\Exception\ClassWasNotFound
+   * @throws ClassWasNotFound
+   * @throws Model\Exception\CallUndefinedMethod
+   * @throws Model\Exception\ConfigWasNotProvided
+   * @throws Model\Exception\DriverClassDoesNotExists
+   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
+   * @throws ReflectionException
+   * @throws Throwable
    */
   public static function annotation(
     string $folder,

@@ -33,51 +33,33 @@ class Permissions extends ElementAbstract
   {
     $config = Front::getInstance()->getConfig()['air'];
     $permissions = Front::getInstance()->getConfig()['air']['admin']['menu'];
-    $permissions[] = [
-      'title' => Locale::t('System settings'),
-      'items' => [
-        [
-          'title' => Locale::t('File storage'),
-          'url' => ['controller' => $config['storage']['route']],
-        ],
-        [
-          'title' => Locale::t('Fonts'),
-          'url' => ['controller' => $config['admin']['fonts']],
-        ],
-        [
-          'title' => Locale::t('System monitor'),
-          'url' => ['controller' => $config['admin']['system']],
-        ],
-        [
-          'title' => Locale::t('Languages'),
-          'url' => ['controller' => $config['admin']['languages']],
-        ],
-        [
-          'title' => Locale::t('Phrases'),
-          'url' => ['controller' => $config['admin']['phrases']],
-        ],
-        [
-          'title' => Locale::t('Logs'),
-          'url' => ['controller' => $config['logs']['route']],
-        ],
-        [
-          'title' => Locale::t('Administrators'),
-          'url' => ['controller' => $config['admin']['manage']],
-        ],
-        [
-          'title' => Locale::t('Administrator history'),
-          'url' => ['controller' => $config['admin']['history']],
-        ],
-        [
-          'title' => Locale::t('Codes'),
-          'url' => ['controller' => $config['admin']['codes']],
-        ],
-        [
-          'title' => Locale::t('Robots.txt'),
-          'url' => ['controller' => $config['admin']['robotsTxt']],
-        ],
-      ]
+
+    $sections = [
+      Locale::t('File storage') => $config['storage']['route'] ?? false,
+      Locale::t('Fonts') => $config['admin']['fonts'] ?? false,
+      Locale::t('System monitor') => $config['admin']['system'] ?? false,
+      Locale::t('Languages') => $config['admin']['languages'] ?? false,
+      Locale::t('Phrases') => $config['admin']['phrases'] ?? false,
+      Locale::t('Logs') => $config['logs']['route'] ?? false,
+      Locale::t('Administrators') => $config['admin']['manage'] ?? false,
+      Locale::t('Administrator history') => $config['admin']['history'] ?? false,
+      Locale::t('Codes') => $config['admin']['codes'] ?? false,
+      Locale::t('Robots.txt') => $config['admin']['robotsTxt'] ?? false,
     ];
+
+    foreach ($sections as $title => $controller) {
+      $systemPermissions[] = [
+        'title' => $title,
+        'url' => ['controller' => $controller],
+      ];
+    }
+
+    if (count($systemPermissions)) {
+      $permissions[] = [
+        'title' => Locale::t('System settings'),
+        'items' => $systemPermissions
+      ];
+    }
 
     return $permissions;
   }
