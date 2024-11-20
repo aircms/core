@@ -245,6 +245,15 @@ abstract class Multiple extends AuthCrud
   }
 
   /**
+   * @return bool
+   * @throws Exception
+   */
+  protected function getViewable(): bool
+  {
+    return (bool)$this->getMods('viewable');
+  }
+
+  /**
    * @return array
    * @throws Exception
    */
@@ -296,6 +305,10 @@ abstract class Multiple extends AuthCrud
   protected function getControls(): array
   {
     $controls = [];
+
+    if ($this->getViewable()) {
+      $controls[] = ['type' => 'view'];
+    }
 
     if ($this->getManageable()) {
       $controls[] = ['type' => 'edit'];
@@ -729,6 +742,7 @@ abstract class Multiple extends AuthCrud
       'icon' => $this->getIcon(),
       'title' => $this->getTitle(),
       'manageable' => $this->getManageable(),
+      'viewable' => $this->getViewable(),
       'positioning' => $this->getPositioning(),
       'export' => $this->getExportHeader(),
 

@@ -22,7 +22,7 @@ trait Ui
    */
   public static function badge(mixed $label, string $style = 'primary'): string
   {
-    return span(class: ['badge', 'badge-' . $style], content: (string)$label);
+    return span(content: (string)$label, class: ['badge', 'badge-' . $style]);
   }
 
   /**
@@ -36,8 +36,8 @@ trait Ui
   {
     return a(
       href: $url,
-      class: ['btn', 'btn-' . $style],
       content: $label,
+      class: ['btn', 'btn-' . $style],
       attributes: $confirm ? ['data-confirm' => $confirm] : null
     );
   }
@@ -60,6 +60,7 @@ trait Ui
 
     return a(
       href: $url,
+      content: $label,
       class: ['text-decoration-underline', 'text-' . $style],
       attributes: $confirm ? ['data-confirm' => $confirm] : null
     );
@@ -72,7 +73,7 @@ trait Ui
    */
   public static function label(string $label, string $style = 'primary'): string
   {
-    return span(class: 'text-' . $style, content: $label);
+    return span(content: $label, class: 'text-' . $style);
   }
 
   /**
@@ -81,7 +82,7 @@ trait Ui
    */
   public static function multiple(array $strings): string
   {
-    return implode('<br>', $strings);
+    return implode('<br>', array_filter($strings));
   }
 
   /**
