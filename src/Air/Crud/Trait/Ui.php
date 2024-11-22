@@ -78,11 +78,17 @@ trait Ui
 
   /**
    * @param array $strings
+   * @param string $separator
    * @return string
    */
-  public static function multiple(array $strings): string
+  public static function multiple(array $strings, string $separator = '<br>'): string
   {
-    return implode('<br>', array_filter($strings));
+    return implode($separator, array_filter($strings));
+  }
+
+  public static function multipleLine(array $strings): string
+  {
+    return implode(' ', array_filter($strings));
   }
 
   /**

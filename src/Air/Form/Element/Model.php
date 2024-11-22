@@ -25,23 +25,23 @@ class Model extends ElementAbstract
   public string $model = '';
 
   /**
-   * @var string
+   * @var string|callable
    */
-  public string $field = 'title';
+  public mixed $field = 'title';
 
   /**
-   * @return string
+   * @return string|callable
    */
-  public function getField(): string
+  public function getField(): string|callable
   {
     return $this->field;
   }
 
   /**
-   * @param string $field
+   * @param string|callable $field
    * @return void
    */
-  public function setField(string $field): void
+  public function setField(string|callable $field): void
   {
     $this->field = $field;
   }
