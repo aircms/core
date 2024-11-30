@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 use Air\Crud\Locale;
 use Air\Form\Element\Text;
-use Air\Form\Element\Textarea;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Model\ModelAbstract;
@@ -18,26 +16,16 @@ use Air\Model\ModelAbstract;
  */
 class Phrase extends Multiple
 {
-  /**
-   * @return int
-   */
   protected function getItemsPerPage(): int
   {
     return 20;
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   protected function getTitle(): string
   {
     return Locale::t('Phrases');
   }
 
-  /**
-   * @return array
-   */
   protected function getHeader(): array
   {
     return [
@@ -48,9 +36,6 @@ class Phrase extends Multiple
     ];
   }
 
-  /**
-   * @return array
-   */
   protected function getFilter(): array
   {
     return [
@@ -60,35 +45,21 @@ class Phrase extends Multiple
     ];
   }
 
-  /**
-   * @return string
-   */
   public function getModelClassName(): string
   {
     return \Air\Crud\Model\Phrase::class;
   }
 
-  /**
-   * @return string[]
-   */
   protected function getAdminMenuItem(): array
   {
     return ['icon' => 'language'];
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   protected function getEntity(): string
   {
     return Front::getInstance()->getConfig()['air']['admin']['phrases'];
   }
 
-  /**
-   * @param \Air\Crud\Model\Codes $model
-   * @return Form
-   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
@@ -103,14 +74,10 @@ class Phrase extends Multiple
     ]);
   }
 
-  /**
-   * @param ModelAbstract|\Air\Crud\Model\Phrase $model
-   * @param array $formData
-   * @return void
-   */
-  protected function didSaved(ModelAbstract $model, array $formData)
+  protected function didSaved(ModelAbstract $model, array $formData, ModelAbstract $oldModel): void
   {
-    parent::didSaved($model, $formData);
+    /** @var \Air\Crud\Model\Phrase $model */
+
     $model->isEdited = true;
     $model->save();
   }
