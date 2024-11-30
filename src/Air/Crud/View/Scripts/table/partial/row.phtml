@@ -77,7 +77,6 @@ foreach ($header as $key => $col) : ?>
   <?php elseif ($type == 'model') : ?>
     <td class="admin-table-row-model">
       <div class="d-flex align-items-center">
-
         <?php /** @var ModelAbstract $model */ ?>
         <?php $model = $row[$key]; ?>
 
@@ -101,7 +100,7 @@ foreach ($header as $key => $col) : ?>
       <div class="d-flex align-items-center">
 
         <?php /** @var ModelAbstract $model */ ?>
-        <?php $model = $row[$key][0] ?? null;?>
+        <?php $model = $row[$key][0] ?? null; ?>
 
         <?php if ($model && $model->getMeta()->hasProperty('image')) : ?>
           <div class="bg-image rounded-4 shadow-5-strong me-3"
@@ -132,17 +131,25 @@ foreach ($header as $key => $col) : ?>
     </td>
 
   <?php elseif ($type == 'images') : ?>
-    <td class="admin-table-row-image pe-0">
-      <?php if (isset($row[$key][0])) : ?>
-        <div class="bg-image rounded-4 shadow-5-strong"
-             role="button"
-             data-admin-embed-modal
-             data-admin-embed-modal-alt="<?php echo $row[$key][0]?->getAlt() ?? ''; ?>"
-             data-admin-embed-modal-title="<?php echo $row[$key][0]?->getTitle() ?? ''; ?>"
-             data-admin-embed-modal-src="<?php echo $row[$key][0]?->getSrc() ?? ''; ?>"
-             data-admin-async-image="<?php echo $row[$key][0]?->getSrc() ?? ''; ?>"
-             data-mdb-ripple-init></div>
-      <?php endif; ?>
+    <td class="admin-table-row-image">
+      <div class="d-flex gap-2">
+        <?php /** @var \Air\Type\File $image */ ?>
+        <?php foreach ($row[$key] as $index => $image) : ?>
+
+          <?php if ($index > ($col['max'] ?? 5)) {
+            break;
+          } ?>
+
+          <div class="bg-image rounded-4 shadow-5-strong"
+               role="button"
+               data-admin-embed-modal
+               data-admin-embed-modal-alt="<?php echo $image?->getAlt() ?? ''; ?>"
+               data-admin-embed-modal-title="<?php echo $image?->getTitle() ?? ''; ?>"
+               data-admin-embed-modal-src="<?php echo $image?->getSrc() ?? ''; ?>"
+               data-admin-async-image="<?php echo $image?->getSrc() ?? ''; ?>"
+               data-mdb-ripple-init></div>
+        <?php endforeach; ?>
+      </div>
     </td>
 
   <?php elseif ($type == 'custom') : ?>

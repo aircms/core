@@ -2,6 +2,13 @@
 
 /** @var array $filter */
 $filter = $this->filter;
+
+$title = \Air\Crud\Locale::t('All');
+
+if (!empty($filter['title'])) {
+  $title = $filter['title'] . ' (' . $title . ')';
+}
+
 ?>
 <div class="btn-group w-100 rounded-4" data-admin-select-submit="true" data-admin-select>
   <button class="btn btn-primary btn-block text-start px-3"
@@ -23,7 +30,7 @@ $filter = $this->filter;
   <ul class="dropdown-menu w-100">
     <li>
       <a class="dropdown-item" role="button" data-admin-select-option>
-        <?php echo \Air\Crud\Locale::t('All'); ?>
+        <?php echo $title; ?>
       </a>
     </li>
     <li>
