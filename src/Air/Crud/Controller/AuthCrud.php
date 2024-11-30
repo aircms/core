@@ -48,12 +48,7 @@ abstract class AuthCrud extends Controller
         Front::getInstance()->stop();
       }
       $this->redirect(
-        $this->getRouter()->assemble(
-          ['controller' => Front::getInstance()->getConfig()['air']['admin']['notAllowed']],
-          [],
-          true
-        )
-      );
+        $this->getRouter()->assemble(['controller' => Front::getInstance()->getConfig()['air']['admin']['notAllowed']], [], true));
     }
 
     if ($this->getRequest()->isAjax()) {

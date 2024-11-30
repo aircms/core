@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Crud\Model;
 
 use Air\Core\Exception\ClassWasNotFound;
+use Air\Core\Front;
 use Air\Http\Request;
 use Air\Model\ModelAbstract;
 use Air\Type\File;
@@ -97,5 +98,18 @@ class Font extends ModelAbstract
   public function isGoogleFont(): bool
   {
     return !!strlen($this->googleFontName) && !!strlen($this->googleFontImportUrl);
+  }
+
+  /**
+   * @return string|false
+   * @throws ClassWasNotFound
+   */
+  public static function href(): string|false
+  {
+    $fontsUi = Front::getInstance()->getConfig()['air']['fontsUi'] ?? false;
+    if ($fontsUi) {
+      return '/' . $fontsUi;
+    }
+    return false;
   }
 }

@@ -18,8 +18,12 @@ class NotAllowed extends Controller
   {
     if ($this->getRequest()->isAjax()) {
       $this->getView()->setLayoutEnabled(false);
+    } else {
+      $this->getView()->setLayoutTemplate('index');
+      $this->getView()->setLayoutEnabled(true);
     }
 
+    $this->getView()->setAutoRender(true);
     $this->getView()->setPath(realpath(__DIR__ . '/../View'));
     $this->getView()->setScript('not-allowed');
   }

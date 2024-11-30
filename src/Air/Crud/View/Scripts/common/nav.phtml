@@ -104,6 +104,12 @@ $cache = $route($config['admin']['cache'] ?? null);
                data-admin-accordion-content>
             <div>
               <?php foreach ($subMenu['items'] as $subMenuItems) : ?>
+
+                <?php if ($subMenuItems === 'divider') : ?>
+                  <div class="dropdown-divider"></div>
+                  <?php continue; ?>
+                <?php endif; ?>
+
                 <a class="btn btn-link btn-block text-start btn-lg text-capitalize m-0 px-3 admin-nav-link"
                    href="<?php echo $this->uri($subMenuItems['url'], [], true); ?>"
                    data-mdb-ripple-init>

@@ -48,8 +48,17 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
               <div class="admin-select-image bg-image rounded-4 me-3"
                    style="background-image: url('<?php echo $rec->image?->getSrc(); ?>')"></div>
             <?php endif; ?>
-            <span
-              class="flex-grow-1 text-wrap max-lines-2 pe-3 admin-select-button-title"><?php echo $rec->{$element->getField()}; ?></span>
+            <div
+              class="flex-grow-1 text-wrap max-lines-2 pe-3 admin-select-button-title d-flex align-items-center gap-2">
+              <?php
+              $field = $element->getField();
+              if (is_string($field)) {
+                echo $rec->$field;
+              } else if (is_callable($field)) {
+                echo $field($rec);
+              }
+              ?>
+            </div>
             <?php if ($hasEnabled) : ?>
               <i
                 class="fas fa-<?php if ($rec->enabled) : ?>check text-success<?php else: ?>ban text-danger<?php endif; ?>"></i>

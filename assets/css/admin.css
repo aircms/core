@@ -49,8 +49,13 @@
   width: 10px;
 }
 
+.admin-table-row-images .bg-image {
+  width: auto;
+}
+
 .admin-table-row-model .bg-image,
-.admin-table-row-image .bg-image {
+.admin-table-row-image .bg-image,
+.admin-table-row-images .bg-image {
   height: 40px;
   width: 40px;
   min-width: 40px;

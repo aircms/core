@@ -61,7 +61,7 @@ class Auth
     }
 
     foreach ($admin->permissions as $permission) {
-      if ($permission['controller'] === $controller) {
+      if (strtolower($permission['controller']) === strtolower($controller)) {
         return true;
       }
     }

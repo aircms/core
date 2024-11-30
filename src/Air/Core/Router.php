@@ -451,8 +451,8 @@ class Router
     if (
       isset($routes['strict'])
       && $routes['strict'] === true
-      && $parts[0] !== 'robots.txt'
-      && !($parts[0] === $fontsUi)
+      && ($parts[0] ?? false) !== 'robots.txt'
+      && !(($parts[0] ?? false) === $fontsUi)
     ) {
       throw new RouterWasNotFound($uri);
     }

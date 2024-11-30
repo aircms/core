@@ -22,7 +22,7 @@ use ReflectionClass;
 /**
  * @method Asset|string asset(string[]|string $array): string
  * @method Base|string base(): string
- * @method Head|string head(string $charset = 'UTF-8', string $viewport = 'width=device-width, initial-scale=1.0, minimum-scale=1.0', string $favicon = null): string
+ * @method Head|string head(string $charset = 'UTF-8', string $viewport = 'width=device-width, initial-scale=1.0, minimum-scale=1.0', string $favicon = null, string|array $assets = null): string
  * @method Partial|string partial(string $template, array $vars = []): string
  * @method PartialCached|string partialCached(string $template): string
  * @method Uri|string uri(array $route = [], array $params = [], bool $reset = true): string

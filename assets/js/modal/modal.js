@@ -194,9 +194,11 @@ const modal = new class {
   }
 
   record(model, id) {
-    const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/view?id=` + id);
+    const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/manage?id=` + id + '&isQuickManage=1');
     modal.html(locale('View row'), modalHtml, {size: 'xxLarge'}).then(() => {
       $('[data-admin-model-modal]').on('load', (e) => {
+        $('[data-modal-loader]').removeClass('show');
+        setTimeout(() => $('[data-modal-loader]').remove(), 300);
         $(e.currentTarget).addClass('show');
       });
     });

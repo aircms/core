@@ -53,4 +53,12 @@ $(document).ready(() => {
     nav.nav(location.pathname + '?' + $(this).serialize());
     return false;
   });
+
+  $(document).on('click', '[data-admin-table-view-model][data-admin-table-view-id]', function () {
+    modal.record(
+      $(this).data('admin-table-view-model'),
+      $(this).data('admin-table-view-id'),
+    );
+    return false;
+  });
 });

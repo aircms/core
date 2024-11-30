@@ -10,7 +10,10 @@ $filter = $this->filter;
 $model = new $filter['model']();
 
 /** @var string $field */
-$field = $this->field;
+$field = $filter['field'] ?? null;
+
+/** @var array $cond */
+$cond = $filter['cond'] ?? [];
 
 if (!$field && $model->getMeta()->hasProperty('title')) {
   $field = 'title';
@@ -24,6 +27,7 @@ if (isset($filter['title'])) {
 
 $hasImage = $model->getMeta()->hasProperty('image');
 $hasEnabled = $model->getMeta()->hasProperty('enabled');
+$hasLanguage = $model->getMeta()->hasProperty('language');
 ?>
 <div class="btn-group w-100 rounded-4" data-admin-select-submit="true" data-admin-select>
   <button class="btn btn-primary btn-block text-start px-3 admin-select-button"
@@ -36,12 +40,10 @@ $hasEnabled = $model->getMeta()->hasProperty('enabled');
     class="btn btn-primary dropdown-toggle dropdown-toggle-split"
     data-mdb-dropdown-init
     data-mdb-ripple-init></button>
-
   <input name="filter[<?php echo $filter['by']; ?>]"
          value="<?php echo $filter['value']; ?>"
          type="hidden"
          data-admin-select-input/>
-
   <ul class="dropdown-menu w-100 admin-select-searchable overflow-y-auto">
     <li>
       <a class="dropdown-item" role="button" data-admin-select-option>
@@ -54,7 +56,7 @@ $hasEnabled = $model->getMeta()->hasProperty('enabled');
         <label class="form-label"><?php echo Locale::t('Search'); ?></label>
       </div>
     </li>
-    <?php foreach ($model::fetchAll() as $rec) : ?>
+    <?php foreach ($model::fetchAll($cond) as $rec) : ?>
       <li>
         <a class="dropdown-item"
            role="button"
@@ -62,16 +64,28 @@ $hasEnabled = $model->getMeta()->hasProperty('enabled');
            data-admin-select-option
            <?php if ($filter['value'] === $rec->id) : ?>data-selected<?php endif; ?>>
           <div class="d-flex justify-content-between align-items-center">
-            <?php if ($hasImage) : ?>
-              <div class="admin-select-image bg-image rounded-4 me-3"
-                   style="background-image: url('<?php echo $rec->image?->getSrc(); ?>')"></div>
-            <?php endif; ?>
-            <span
-              class="flex-grow-1 text-wrap max-lines-2 pe-3 admin-select-button-title"><?php echo $rec->$field; ?></span>
-            <?php if ($hasEnabled) : ?>
-              <i
-                class="fas fa-<?php if ($rec->enabled) : ?>check text-success<?php else: ?>ban text-danger<?php endif; ?>"></i>
-            <?php endif; ?>
+            <div class="d-flex align-items-center">
+              <?php if ($hasImage) : ?>
+                <div class="admin-select-image bg-image rounded-4 me-3"
+                     style="background-image: url('<?php echo $rec->image?->getSrc(); ?>')"></div>
+              <?php endif; ?>
+              <div class="flex-grow-1 text-wrap max-lines-2 pe-3 admin-select-button-title d-flex align-items-center gap-2">
+                <?php if (isset($filter['source'])) : ?>
+                  <?php echo $filter['source']($rec); ?>
+                <?php else : ?>
+                  <?php echo $rec->$field; ?>
+                <?php endif; ?>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2 justify-content-between">
+              <?php if ($hasEnabled) : ?>
+                <i
+                  class="fas fa-<?php if ($rec->enabled) : ?>check text-success<?php else: ?>ban text-danger<?php endif; ?>"></i>
+              <?php endif; ?>
+              <?php if ($hasLanguage) : ?>
+                <span><?php echo $rec->language->key; ?></span>
+              <?php endif; ?>
+            </div>
           </div>
         </a>
       </li>

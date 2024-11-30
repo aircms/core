@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Crud\Controller\MultipleHelper\Mods;
 use Air\Crud\Locale;
 use Air\Crud\Model\History;
 use Air\Crud\Trait\Ui;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
 use Exception;
-use ReflectionClass;
 use MongoDB\BSON\Regex;
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Exception\DomainMustBeProvided;
@@ -31,6 +31,7 @@ use Air\Model\Paginator;
 abstract class Multiple extends AuthCrud
 {
   use Ui;
+  use Mods;
 
   /**
    * @var ModelAbstract|null
@@ -245,6 +246,16 @@ abstract class Multiple extends AuthCrud
   }
 
   /**
+   * @return bool
+   * @throws Exception
+   */
+
+  protected function getQuickManage(): bool
+  {
+    return (bool)$this->getMods('quick-manage');
+  }
+
+  /**
    * @return array
    * @throws Exception
    */
@@ -296,6 +307,10 @@ abstract class Multiple extends AuthCrud
   protected function getControls(): array
   {
     $controls = [];
+
+    if ($this->getQuickManage()) {
+      $controls[] = ['type' => 'view'];
+    }
 
     if ($this->getManageable()) {
       $controls[] = ['type' => 'edit'];
@@ -376,10 +391,6 @@ abstract class Multiple extends AuthCrud
     return end($controllerClassPars);
   }
 
-  /**
-   * @param $model
-   * @return Form
-   */
   protected function getForm($model = null): Form
   {
     $formClassName = $this->getFormClassName();
@@ -392,16 +403,6 @@ abstract class Multiple extends AuthCrud
     return Generator::full($model);
   }
 
-  /**
-   * @param string $id
-   * @param bool $enabled
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function setEnabled(string $id, bool $enabled): void
   {
     /** @var ModelAbstract $modelClassName */
@@ -419,12 +420,6 @@ abstract class Multiple extends AuthCrud
     }
   }
 
-  /**
-   * @return void
-   * @throws DomainMustBeProvided
-   * @throws RouterVarMustBeProvided
-   * @throws ClassWasNotFound
-   */
   public function init(): void
   {
     parent::init();
@@ -439,20 +434,6 @@ abstract class Multiple extends AuthCrud
     $this->getView()->setPath(realpath(__DIR__ . '/../View'));
   }
 
-  /**
-   * @param string $type
-   * @param array $entity
-   * @param string|null $section
-   * @param array $was
-   * @param array $became
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws Exception
-   */
   protected function adminLog(
     string $type,
     array  $entity = [],
@@ -495,10 +476,6 @@ abstract class Multiple extends AuthCrud
     }
   }
 
-  /**
-   * @return array|null
-   * @throws ClassWasNotFound
-   */
   protected function getAdminMenuItem(): array|null
   {
     $controllerClassPars = explode('\\', get_class($this));
@@ -517,59 +494,6 @@ abstract class Multiple extends AuthCrud
     return null;
   }
 
-  /**
-   * @param string $type
-   * @return array|false|mixed
-   * @throws Exception
-   */
-  protected function getMods(string $type): mixed
-  {
-    $reflection = new ReflectionClass(static::class);
-
-    $docComment = $reflection->getDocComment();
-
-    if ($docComment === false) {
-      return [];
-    }
-
-    $mods = array_values(array_map(function ($item) use ($type) {
-      return trim(str_replace('@mod-' . $type . " ", '', $item));
-    }, array_filter(
-      explode("\n", str_replace('*', ' ', $docComment)),
-      function ($item) use ($type) {
-        return strstr($item, '@mod-' . $type . " ");
-      }
-    )));
-
-    if ($type == 'title' || $type == 'icon') {
-      return $mods[0] ?? '';
-    }
-
-    if ($type == 'items-per-page') {
-      if (isset($mods[0])) {
-        return (int)$mods[0];
-      }
-      return null;
-    }
-
-    if ($type == 'sortable') {
-      return $mods[0] ?? false;
-    }
-
-    foreach ($mods as $index => $mod) {
-      if ($mod = json_decode($mod, true)) {
-        $mods[$index] = $mod;
-        continue;
-      }
-      throw new Exception("Modification with type: {$type} have not a valid JSON: {$mod}");
-    }
-
-    return $mods;
-  }
-
-  /**
-   * @return string
-   */
   protected function getFormClassName(): string
   {
     $controllerClassPars = explode('\\', get_class($this));
@@ -589,17 +513,20 @@ abstract class Multiple extends AuthCrud
   /**
    * @param ModelAbstract $model
    * @param array $formData
+   * @param ModelAbstract $oldModel
    * @return void
    */
-  protected function didChanged(ModelAbstract $model, array $formData): void
+  protected function didChanged(ModelAbstract $model, array $formData, ModelAbstract $oldModel): void
   {
   }
 
   /**
    * @param ModelAbstract $model
    * @param array $formData
+   * @param ModelAbstract $oldModel
+   * @return void
    */
-  protected function didSaved(ModelAbstract $model, array $formData)
+  protected function didSaved(ModelAbstract $model, array $formData, ModelAbstract $oldModel)
   {
   }
 
@@ -712,15 +639,6 @@ abstract class Multiple extends AuthCrud
     $this->didCopied($record, $newRecord);
   }
 
-  /**
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws Exception
-   */
   public function index()
   {
     $this->adminLog(History::TYPE_READ_TABLE);
@@ -729,6 +647,7 @@ abstract class Multiple extends AuthCrud
       'icon' => $this->getIcon(),
       'title' => $this->getTitle(),
       'manageable' => $this->getManageable(),
+      'quickManage' => $this->getQuickManage(),
       'positioning' => $this->getPositioning(),
       'export' => $this->getExportHeader(),
 
@@ -821,6 +740,7 @@ abstract class Multiple extends AuthCrud
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws FilterClassWasNotFound
    * @throws ValidatorClassWasNotFound
+   * @throws Exception
    */
   public function manage(string $id = null)
   {
@@ -833,6 +753,7 @@ abstract class Multiple extends AuthCrud
     if ($this->getRequest()->isPost()) {
       if ($form->isValid($this->getRequest()->getPostAll())) {
 
+        $oldModel = new $modelClassName($model->getData());
         $oldData = [];
 
         $formData = $form->getCleanValues();
@@ -862,12 +783,12 @@ abstract class Multiple extends AuthCrud
         $model->save();
 
         if ($isCreating) {
-          $this->didChanged($model, $formData);
+          $this->didChanged($model, $formData, $oldModel);
         } else {
           $this->didCreated($model, $formData);
         }
 
-        $this->didSaved($model, $formData);
+        $this->didSaved($model, $formData, $oldModel);
 
         $this->getView()->setLayoutEnabled(false);
         $this->getView()->setAutoRender(false);
@@ -908,7 +829,9 @@ abstract class Multiple extends AuthCrud
       'icon' => $this->getAdminMenuItem()['icon'] ?? null,
       'title' => $this->getTitle(),
       'form' => $form,
-      'mode' => 'manage'
+      'mode' => 'manage',
+      'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false,
+      'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false
     ]);
 
     $this->getView()->setScript('form/index');
@@ -941,6 +864,7 @@ abstract class Multiple extends AuthCrud
       'title' => $this->getTitle(),
       'form' => $form,
       'mode' => 'manage',
+      'isQuickManage' => true,
       'isSelectControl' => true,
     ]);
 

@@ -138,7 +138,12 @@ class Request
     $this->_params = $_REQUEST ?? [];
 
     if (($_SERVER['CONTENT_TYPE'] ?? '') === 'application/json') {
-      $this->_postParams = json_decode(file_get_contents('php://input'), true) ?? [];
+      try {
+        $this->_postParams = json_decode(file_get_contents('php://input'), true) ?? [];
+        if (count($this->_postParams)) {
+          $this->_params = $this->_postParams;
+        }
+      } catch (\Throwable) {}
     }
 
     foreach (getallheaders() as $key => $value) {
