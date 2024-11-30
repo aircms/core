@@ -61,7 +61,20 @@ class Permissions extends ElementAbstract
       ];
     }
 
-    return $permissions;
+    $_permissions = [];
+    foreach ($permissions as $sectionIndex => $section) {
+      foreach ($section['items'] as $page) {
+        if ($page !== 'divider') {
+          $_permissions[$sectionIndex] = $_permissions[$sectionIndex] ?? [
+            'title' => $section['title'],
+            'items' => []
+          ];
+          $_permissions[$sectionIndex]['items'][] = $page;
+        }
+      }
+    }
+
+    return $_permissions;
   }
 
   /**
@@ -75,7 +88,12 @@ class Permissions extends ElementAbstract
 
     foreach ($this->getPermissions() as $groups) {
       foreach ($groups['items'] as $permission) {
-        $permissions[md5(serialize($permission['url']))] = $permission['url'];
+        try {
+          $permissions[md5(serialize($permission['url']))] = $permission['url'];
+        } catch (\Throwable) {
+          var_dump($permission);
+          die();
+        }
       }
     }
 

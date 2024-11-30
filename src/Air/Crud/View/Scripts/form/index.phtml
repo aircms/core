@@ -6,6 +6,9 @@ use Air\Form\Form;
 /** @var Form $form */
 $form = $this->form;
 
+/** @var bool $isQuickManage */
+$isQuickManage = $this->isQuickManage;
+
 $groupedElements = $form->getGroupedElements();
 
 echo $this->partial('common/header');
@@ -17,9 +20,10 @@ echo $this->partial('common/header');
       <form data-admin-from-manage>
         <input type="hidden" value="<?php echo $form->getReturnUrl(); ?>" name="return-url"/>
         <input type="hidden" value="" name="quick-save"/>
-
+        <?php if ($isQuickManage) : ?>
+          <input type="hidden" value="1" name="isQuickManage" />
+        <?php endif; ?>
         <div data-admin-tab>
-
           <div class="<?php if (count($groupedElements) === 1) : ?>d-none<?php else: ?>d-flex mb-2<?php endif; ?>"
                data-admin-tab-nav>
             <?php foreach ($groupedElements as $title => $group) : ?>
@@ -32,7 +36,6 @@ echo $this->partial('common/header');
               </div>
             <?php endforeach; ?>
           </div>
-
           <div class="d-flex w-100" data-admin-tab-content>
             <?php foreach ($groupedElements as $title => $group) : ?>
               <div class="rounded-4 py-0 px-3 bg-body-secondary w-100">
@@ -46,7 +49,6 @@ echo $this->partial('common/header');
               </div>
             <?php endforeach; ?>
           </div>
-
         </div>
       </form>
     </div>

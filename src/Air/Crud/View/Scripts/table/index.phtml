@@ -25,8 +25,8 @@ $isSelectControl = $this->isSelectControl;
 /** @var bool $manageable */
 $manageable = $this->manageable;
 
-/** @var bool $viewable */
-$viewable = $this->viewable;
+/** @var bool $quickManage */
+$quickManage = $this->quickManage;
 
 echo $this->partial('common/header');
 ?>
@@ -58,7 +58,7 @@ echo $this->partial('common/header');
                 <?php if ($isSelectControl) : ?>
                   ondblclick="$('[data-admin-table-row-select=<?php echo $row->id; ?>]').click()"
 
-                <?php elseif ($viewable) : ?>
+                <?php elseif ($quickManage) : ?>
                   ondblclick="modal.record('<?php echo $controller; ?>', '<?php echo $row->id; ?>')"
 
                 <?php elseif ($manageable) : ?>
