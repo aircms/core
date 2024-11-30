@@ -36,19 +36,20 @@ class Phrase extends ModelAbstract
 
   /**
    * @param string $key
+   * @param Language|null $language
    * @return string
    * @throws CallUndefinedMethod
    * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws CollectionCantBeWithoutPrimary
    * @throws CollectionCantBeWithoutProperties
    * @throws CollectionNameDoesNotExists
+   * @throws ConfigWasNotProvided
+   * @throws DriverClassDoesNotExists
+   * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws PropertyIsSetIncorrectly
    * @throws ReflectionException
    */
-  public static function t(string $key): string
+  public static function t(string $key, ?Language $language = null): string
   {
     if (!self::$phrases) {
       self::$phrases = [];
@@ -59,7 +60,11 @@ class Phrase extends ModelAbstract
       }
     }
 
-    $languageData = Language::getLanguage()->getData();
+    if (!$language) {
+      $language = Language::getLanguage();
+    }
+
+    $languageData = $language->getData();
     $key = trim($key);
 
     if (isset(self::$phrases[$key . $languageData['id']])) {

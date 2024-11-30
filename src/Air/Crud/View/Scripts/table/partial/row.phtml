@@ -3,6 +3,7 @@
 /** @var array $headerRow */
 
 use Air\Model\ModelAbstract;
+use Air\Type\File;
 
 $header = $this->header;
 
@@ -87,8 +88,9 @@ foreach ($header as $key => $col) : ?>
                data-admin-embed-modal-alt="<?php echo $row[$key]->image?->getAlt() ?? ''; ?>"
                data-admin-embed-modal-title="<?php echo $row[$key]->image?->getTitle() ?? ''; ?>"
                data-admin-embed-modal-src="<?php echo $row[$key]->image?->getSrc() ?? ''; ?>"
+               data-admin-embed-modal-mime="<?php echo $row[$key]->image?->getMime() ?? ''; ?>"
 
-               data-admin-async-image="<?php echo $row[$key]->image?->getSrc() ?? ''; ?>"
+               data-admin-async-image="<?php echo $row[$key]->image?->getThumbnail() ?? ''; ?>"
                data-mdb-ripple-init></div>
         <?php endif; ?>
         <span><?php echo $model?->{$col['field']}; ?></span>
@@ -109,8 +111,9 @@ foreach ($header as $key => $col) : ?>
                data-admin-embed-modal-alt="<?php echo $model->image?->getAlt() ?? ''; ?>"
                data-admin-embed-modal-title="<?php echo $model->image?->getTitle() ?? ''; ?>"
                data-admin-embed-modal-src="<?php echo $model->image?->getSrc() ?? ''; ?>"
+               data-admin-embed-modal-mime="<?php echo $model->image?->getMime() ?? ''; ?>"
 
-               data-admin-async-image="<?php echo $model->image?->getSrc() ?? ''; ?>"
+               data-admin-async-image="<?php echo $model->image?->getThumbnail() ?? ''; ?>"
                data-mdb-ripple-init></div>
         <?php endif; ?>
         <span><?php echo $model?->{$col['field']}; ?></span>
@@ -118,22 +121,25 @@ foreach ($header as $key => $col) : ?>
     </td>
 
   <?php elseif ($type == 'image') : ?>
+    <?php $file = $row[$key] ?? new File(); ?>
+
     <td class="admin-table-row-image pe-0">
       <div class="bg-image rounded-4 shadow-5-strong"
            role="button"
            data-admin-embed-modal
-           data-admin-embed-modal-alt="<?php echo $row[$key]?->getAlt() ?? ''; ?>"
-           data-admin-embed-modal-title="<?php echo $row[$key]?->getTitle() ?? ''; ?>"
-           data-admin-embed-modal-src="<?php echo $row[$key]?->getSrc() ?? ''; ?>"
+           data-admin-embed-modal-alt="<?php echo $file->getAlt(); ?>"
+           data-admin-embed-modal-title="<?php echo $file->getTitle(); ?>"
+           data-admin-embed-modal-src="<?php echo $file->getSrc(); ?>"
+           data-admin-embed-modal-mime="<?php echo $file?->getMime() ?? ''; ?>"
 
-           data-admin-async-image="<?php echo $row[$key]?->getSrc() ?? ''; ?>"
+           data-admin-async-image="<?php echo $file->getThumbnail(); ?>"
            data-mdb-ripple-init></div>
     </td>
 
   <?php elseif ($type == 'images') : ?>
     <td class="admin-table-row-image">
       <div class="d-flex gap-2">
-        <?php /** @var \Air\Type\File $image */ ?>
+        <?php /** @var File $image */ ?>
         <?php foreach ($row[$key] as $index => $image) : ?>
 
           <?php if ($index > ($col['max'] ?? 5)) {
@@ -146,7 +152,9 @@ foreach ($header as $key => $col) : ?>
                data-admin-embed-modal-alt="<?php echo $image?->getAlt() ?? ''; ?>"
                data-admin-embed-modal-title="<?php echo $image?->getTitle() ?? ''; ?>"
                data-admin-embed-modal-src="<?php echo $image?->getSrc() ?? ''; ?>"
-               data-admin-async-image="<?php echo $image?->getSrc() ?? ''; ?>"
+               data-admin-embed-modal-mime="<?php echo $image?->getMime() ?? ''; ?>"
+
+               data-admin-async-image="<?php echo $image?->getThumbnail() ?? ''; ?>"
                data-mdb-ripple-init></div>
         <?php endforeach; ?>
       </div>

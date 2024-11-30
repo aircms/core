@@ -248,9 +248,9 @@ abstract class Multiple extends AuthCrud
    * @return bool
    * @throws Exception
    */
-  protected function getViewable(): bool
+  protected function getQuickManage(): bool
   {
-    return (bool)$this->getMods('viewable');
+    return (bool)$this->getMods('quick-manage');
   }
 
   /**
@@ -306,7 +306,7 @@ abstract class Multiple extends AuthCrud
   {
     $controls = [];
 
-    if ($this->getViewable()) {
+    if ($this->getQuickManage()) {
       $controls[] = ['type' => 'view'];
     }
 
@@ -602,17 +602,20 @@ abstract class Multiple extends AuthCrud
   /**
    * @param ModelAbstract $model
    * @param array $formData
+   * @param ModelAbstract $oldModel
    * @return void
    */
-  protected function didChanged(ModelAbstract $model, array $formData): void
+  protected function didChanged(ModelAbstract $model, array $formData, ModelAbstract $oldModel): void
   {
   }
 
   /**
    * @param ModelAbstract $model
    * @param array $formData
+   * @param ModelAbstract $oldModel
+   * @return void
    */
-  protected function didSaved(ModelAbstract $model, array $formData)
+  protected function didSaved(ModelAbstract $model, array $formData, ModelAbstract $oldModel)
   {
   }
 
@@ -742,7 +745,7 @@ abstract class Multiple extends AuthCrud
       'icon' => $this->getIcon(),
       'title' => $this->getTitle(),
       'manageable' => $this->getManageable(),
-      'viewable' => $this->getViewable(),
+      'quickManage' => $this->getQuickManage(),
       'positioning' => $this->getPositioning(),
       'export' => $this->getExportHeader(),
 
@@ -835,6 +838,7 @@ abstract class Multiple extends AuthCrud
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
    * @throws FilterClassWasNotFound
    * @throws ValidatorClassWasNotFound
+   * @throws Exception
    */
   public function manage(string $id = null)
   {
@@ -847,6 +851,7 @@ abstract class Multiple extends AuthCrud
     if ($this->getRequest()->isPost()) {
       if ($form->isValid($this->getRequest()->getPostAll())) {
 
+        $oldModel = new $modelClassName($model->getData());
         $oldData = [];
 
         $formData = $form->getCleanValues();
@@ -876,12 +881,12 @@ abstract class Multiple extends AuthCrud
         $model->save();
 
         if ($isCreating) {
-          $this->didChanged($model, $formData);
+          $this->didChanged($model, $formData, $oldModel);
         } else {
           $this->didCreated($model, $formData);
         }
 
-        $this->didSaved($model, $formData);
+        $this->didSaved($model, $formData, $oldModel);
 
         $this->getView()->setLayoutEnabled(false);
         $this->getView()->setAutoRender(false);
@@ -922,7 +927,9 @@ abstract class Multiple extends AuthCrud
       'icon' => $this->getAdminMenuItem()['icon'] ?? null,
       'title' => $this->getTitle(),
       'form' => $form,
-      'mode' => 'manage'
+      'mode' => 'manage',
+      'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false,
+      'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false
     ]);
 
     $this->getView()->setScript('form/index');
@@ -955,6 +962,7 @@ abstract class Multiple extends AuthCrud
       'title' => $this->getTitle(),
       'form' => $form,
       'mode' => 'manage',
+      'isQuickManage' => true,
       'isSelectControl' => true,
     ]);
 
