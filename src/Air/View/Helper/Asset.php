@@ -40,7 +40,7 @@ class Asset extends HelperAbstract
 
       $assetsHtml[] = match ($type) {
         'js' => $this->js($asset),
-        'svg', 'jpg', 'jpeg', 'png', 'webp', 'json', 'woff', 'woff2' => $this->filter($asset),
+        'ico', 'svg', 'jpg', 'jpeg', 'png', 'webp', 'json', 'woff', 'woff2' => $this->filter($asset),
         default => $this->css($asset),
       };
     }
