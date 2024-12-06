@@ -22,25 +22,29 @@ class MultipleModel extends ElementAbstract
   public string $model = '';
 
   /**
-   * @var string
+   * @var array
    */
-  public string $field = 'title';
+  public array $field = ['title'];
 
   /**
-   * @return string
+   * @return array
    */
-  public function getField(): string
+  public function getField(): array
   {
     return $this->field;
   }
 
   /**
-   * @param string $field
+   * @param array|string $field
    * @return void
    */
-  public function setField(string $field): void
+  public function setField(array|string $field): void
   {
-    $this->field = $field;
+    if (is_string($field)) {
+      $this->field = [$field];
+    } else {
+      $this->field = $field;
+    }
   }
 
   /**

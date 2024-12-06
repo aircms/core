@@ -41,7 +41,7 @@ class FaIcon extends Multiple
   /**
    * @return array[]
    */
-  protected function getFilterWithValues(): array
+  protected function getFilterWithValues(array $filter = []): array
   {
     return [
       ['type' => 'search', 'by' => ['search'], 'value' => $this->search],

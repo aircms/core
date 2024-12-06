@@ -1,7 +1,6 @@
 <?php
 
 use Air\Form\Element\MultipleModel;
-use Air\Type\File;
 
 /** @var MultipleModel $element */
 $element = $this->element;
@@ -51,7 +50,11 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
             <?php endif; ?>
 
 
-            <div class="h6 m-0 max-lines-3 small"><?php echo $item->{$element->getField()}; ?></div>
+            <div class="h6 m-0 max-lines-3 small">
+              <?php foreach ($element->getField() as $field) : ?>
+                <?php echo $item->{$field}; ?>
+              <?php endforeach; ?>
+            </div>
 
             <a class="btn btn-danger btn-lg px-3 py-3 d-flex align-items-center ms-3"
                data-admin-form-multiple-model-item-delete>
@@ -88,7 +91,11 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
     <?php endif; ?>
 
 
-    <div class="h6 m-0 max-lines-2 small">{{<?php echo $element->getField(); ?>}}</div>
+    <div class="h6 m-0 max-lines-2 small">
+      <?php foreach ($element->getField() as $field) : ?>
+        {{<?php echo $field; ?>}}
+      <?php endforeach; ?>
+    </div>
 
     <a class="btn btn-danger btn-lg px-3 py-3 d-flex align-items-center ms-3"
        data-admin-form-multiple-model-item-delete>

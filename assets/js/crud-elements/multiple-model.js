@@ -52,11 +52,21 @@ $(document).ready(() => {
     const containerTemplate = $(`[data-admin-form-multiple-model-template="${elementName}"]`).html();
 
     modal.model(modelName, (row) => {
-      const modelHtml = containerTemplate
-        .replaceAll('{{image}}', row.image && row.image.src ? row.image.src : '')
-        .replaceAll('{{title}}', row.title)
-        .replaceAll('{{systemTitle}}', row.systemTitle)
-        .replaceAll('{{id}}', row.id);
+
+      let modelHtml = containerTemplate;
+      Object.keys(row).forEach((key) => {
+        if (key === 'image') {
+          modelHtml = modelHtml.replaceAll('{{image}}', row.image && row.image.src ? row.image.src : '');
+        } else {
+          modelHtml = modelHtml.replaceAll('{{' + key + '}}', row[key]);
+        }
+      });
+
+      // const modelHtml = containerTemplate
+      //   .replaceAll('{{image}}', row.image && row.image.src ? row.image.src : '')
+      //   .replaceAll('{{title}}', row.title)
+      //   .replaceAll('{{systemTitle}}', row.systemTitle)
+      //   .replaceAll('{{id}}', row.id);
 
       modelList.append(modelHtml);
 

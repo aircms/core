@@ -31,8 +31,7 @@ const nav = new class {
       const href = $(event.currentTarget).attr('href');
 
       if ($(event.currentTarget).data('force')) {
-        location.href = href;
-        return;
+        return true;
       }
       $(event.currentTarget).blur();
 

@@ -12,13 +12,13 @@ use Air\Form\Generator;
 use Air\Model\ModelAbstract;
 
 /**
- * @mod-manageable true
+ * @mod-quick-manage true
  */
 class Phrase extends Multiple
 {
   protected function getItemsPerPage(): int
   {
-    return 20;
+    return 100;
   }
 
   protected function getTitle(): string
@@ -30,7 +30,18 @@ class Phrase extends Multiple
   {
     return [
       'key' => ['title' => Locale::t('Key'), 'by' => 'key'],
-      'value' => ['title' => Locale::t('Value'), 'by' => 'value'],
+      'value' => ['title' => Locale::t('Value'), 'source' => function (\Air\Crud\Model\Phrase $phrase) {
+        return text(
+          value: $phrase->value,
+          class: 'form-control',
+          attributes: ['style' => 'width: 600px;'],
+          data: [
+            'phrase-key' => $phrase->key,
+            'phrase-language' => $phrase->language->id,
+            'phrase-value' => $phrase->value
+          ],
+        );
+      }],
       'isEdited' => ['title' => Locale::t('Edited'), 'by' => 'isEdited', 'type' => 'bool'],
       'language' => ['title' => Locale::t('Language'), 'by' => 'language', 'type' => 'model', 'field' => 'title'],
     ];
@@ -80,5 +91,33 @@ class Phrase extends Multiple
 
     $model->isEdited = true;
     $model->save();
+  }
+
+  protected function getHeaderButtons(): array
+  {
+    return [
+      ...parent::getHeaderButtons(),
+      ...[[
+        'title' => 'Save all',
+        'url' => '" data-save-phrases-url="/' . $this->getEntity() . '/save" data-save-phrases="true',
+      ]]
+    ];
+  }
+
+  public function save(): void
+  {
+    $this->getView()->setLayoutEnabled(false);
+    $this->getView()->setAutoRender(false);
+
+    foreach ($this->getParam('phrases') ?? [] as $phrase) {
+      $_phrase = \Air\Crud\Model\Phrase::fetchOne([
+        'language' => $phrase['language'],
+        'key' => $phrase['key']
+      ]);
+
+      $_phrase->value = $phrase['value'];
+      $_phrase->isEdited = true;
+      $_phrase->save();
+    }
   }
 }

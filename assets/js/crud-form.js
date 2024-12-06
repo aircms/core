@@ -50,6 +50,11 @@ $(document).ready(() => {
   });
 
   $(document).on('click', '[data-admin-from-manage-back]', () => {
+    if (nav.getQueryParams()?.returnUrl) {
+      nav.nav(decodeURIComponent(nav.getQueryParams().returnUrl));
+      return;
+    }
+
     if (nav.history.length < 2) {
       nav.nav('/' + location.pathname.replaceAll('/', ' ').trim().split(' ')[0]);
     } else {

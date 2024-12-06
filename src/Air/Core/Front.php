@@ -568,9 +568,11 @@ final class Front
   public function inject(Controller $controller, Router $router, Request $request): array
   {
     $reflection = new ReflectionMethod($controller, $router->getAction());
-    $injector = $router->getInjector();
 
+    $injector = $router->getInjector();
     $docComment = $reflection->getDocComment();
+
+    $params = [];
 
     if ($docComment) {
       $docComment = str_replace('*', '', $reflection->getDocComment());
@@ -584,8 +586,6 @@ final class Front
         }
         return null;
       }, explode("\n", $docComment)));
-
-      $params = [];
 
       foreach ($docComment as $line) {
 
@@ -615,6 +615,15 @@ final class Front
       }
     }
 
+    if (!count($params)) {
+      foreach ($request->getParams() as $paramName => $paramValue) {
+        $params[$paramName] = [
+          'main' => 'id',
+          'cond' => []
+        ];
+      }
+    }
+
     $args = [];
 
     foreach ($reflection->getParameters() as $parameter) {
@@ -624,7 +633,6 @@ final class Front
       if (isset($injector[$var])) {
         $args[$var] = $injector[$var]($router->getUrlParams()[$var] ?? null);
       } else {
-
         $value = $router->getUrlParams()[$var] ?? $request->getParam($var);
         $defaultValue = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null;
 
@@ -701,7 +709,7 @@ final class Front
               } else {
                 $args[$var] = new $className($value);
               }
-            } catch (Exception) {
+            } catch (Throwable) {
               $args[$var] = $value;
             }
         }

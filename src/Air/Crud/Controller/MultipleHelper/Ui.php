@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Air\Crud\Trait;
+namespace Air\Crud\Controller\MultipleHelper;
 
 trait Ui
 {
@@ -15,23 +15,11 @@ trait Ui
   const string LIGHT = 'light';
   const string DARK = 'dark';
 
-  /**
-   * @param mixed $label
-   * @param string $style
-   * @return string
-   */
   public static function badge(mixed $label, string $style = 'primary'): string
   {
     return span(content: (string)$label, class: ['badge', 'badge-' . $style]);
   }
 
-  /**
-   * @param string $label
-   * @param string $url
-   * @param string|null $confirm
-   * @param string $style
-   * @return string
-   */
   public static function btn(string $label, string $url, ?string $confirm = null, string $style = 'primary'): string
   {
     return a(
@@ -42,13 +30,6 @@ trait Ui
     );
   }
 
-  /**
-   * @param string $label
-   * @param string $url
-   * @param string|null $confirm
-   * @param string $style
-   * @return string
-   */
   public static function link(string $label, string $url, ?string $confirm = null, string $style = 'primary'): string
   {
     if (str_contains($url, '@')) {
@@ -66,34 +47,21 @@ trait Ui
     );
   }
 
-  /**
-   * @param string $label
-   * @param string $style
-   * @return string
-   */
   public static function label(string $label, string $style = 'primary'): string
   {
     return span(content: $label, class: 'text-' . $style);
   }
 
-  /**
-   * @param array $strings
-   * @param string $separator
-   * @return string
-   */
   public static function multiple(array $strings, string $separator = '<br>'): string
   {
     return implode($separator, array_filter($strings));
   }
 
-  public static function multipleLine(array $strings): string
+  public static function multipleLine(array $strings, string $separator = ' '): string
   {
-    return implode(' ', array_filter($strings));
+    return implode($separator, array_filter($strings));
   }
 
-  /**
-   * @return string
-   */
   public static function navBack(): string
   {
     return "<script>nav.back()</script>";

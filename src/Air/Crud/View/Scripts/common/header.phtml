@@ -17,6 +17,9 @@ $filter = $this->filter ?? [];
 /** @var bool $manageable */
 $manageable = $this->manageable;
 
+/** @var bool $manageableMultiple */
+$manageableMultiple = $this->manageableMultiple;
+
 $request = Front::getInstance()->getRequest();
 
 /** @var bool $positioning */
@@ -25,13 +28,17 @@ $positioning = $this->positioning;
 /** @var bool $isQuickManage */
 $isQuickManage = $this->isQuickManage;
 
+/** @var bool $isPrintable */
+$isPrintable = $this->printable;
+
 /** @var bool $isSingleControl */
 $isSingleControl = $this->isSingleControl;
 
 /** @var bool $isPositioningControl */
 $isPositioningControl = $this->isPositioningControl;
 
-$export = $this->export ?? [];
+/** @var bool $exportable */
+$exportable = $this->exportable;
 $headerButtons = $this->headerButtons ?? [];
 
 /** @var string $controller */
@@ -82,6 +89,27 @@ $controller = $this->controller;
           </a>
         <?php endif; ?>
 
+        <?php if ($manageableMultiple) : ?>
+          <a
+            href="<?php echo $this->uri(['controller' => $controller, 'action' => 'manageMultiple'], $request->getParams()); ?>"
+            class="btn btn-primary ms-2 px-3"
+            data-mdb-ripple-init>
+            <i class="fas fa-edit me-1"></i>
+            <?php echo \Air\Crud\Locale::t('Bulk manage'); ?>
+          </a>
+        <?php endif; ?>
+
+        <?php if ($isPrintable) : ?>
+          <a class="btn btn-info ms-2 px-3"
+             href="<?php echo $this->uri(['controller' => $controller, 'action' => 'print'], $request->getParams()); ?>"
+             target="_blank"
+             data-force="true"
+             data-mdb-ripple-init>
+            <i class="fas fa-print me-1"></i>
+            <?php echo \Air\Crud\Locale::t('Print'); ?>
+          </a>
+        <?php endif; ?>
+
         <?php if ($positioning && !$isPositioningControl) : ?>
           <a class="btn btn-info ms-2 px-3"
              href="<?php echo $this->uri(['controller' => $controller, 'action' => 'position'], $request->getParams()); ?>"
@@ -105,7 +133,7 @@ $controller = $this->controller;
 
         <?php endif; ?>
 
-        <?php if (count($export)) : ?>
+        <?php if ($exportable) : ?>
           <a
             href="<?php echo $this->uri(['controller' => $controller, 'action' => 'export'], $request->getParams()); ?>"
             class="btn btn-secondary ms-2 px-3"
@@ -127,7 +155,7 @@ $controller = $this->controller;
             <?php endif; ?>
              data-mdb-ripple-init>
             <?php if ($headerButton['style']['icon'] ?? false) : ?>
-              <i class="fas fa-<?php echo $headerButton['style']['icon']; ?>"></i>
+              <i class="fas fa-<?php echo $headerButton['style']['icon']; ?> me-1"></i>
             <?php endif; ?>
             <?php echo $headerButton['title']; ?>
           </a>
