@@ -5,6 +5,7 @@ namespace Air\Core;
 use Air\Core;
 use Air\Core\Request\File;
 use Air\Filter\FilterAbstract;
+use Throwable;
 
 /**
  * Class Request
@@ -131,7 +132,7 @@ class Request
   /**
    * @return void
    */
-  public function fillRequestFromServer()
+  public function fillRequestFromServer(): void
   {
     $this->_getParams = $_GET ?? [];
     $this->_postParams = $_POST ?? [];
@@ -143,7 +144,7 @@ class Request
         if (count($this->_postParams)) {
           $this->_params = $this->_postParams;
         }
-      } catch (\Throwable) {}
+      } catch (Throwable) {}
     }
 
     foreach (getallheaders() as $key => $value) {
@@ -203,7 +204,7 @@ class Request
   /**
    * @return void
    */
-  public function fillRequestFromCli()
+  public function fillRequestFromCli(): void
   {
     $this->_getParams = $_GET;
 

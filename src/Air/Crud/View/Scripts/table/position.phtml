@@ -1,5 +1,6 @@
 <?php
 
+use Air\Crud\Model\Language;
 use Air\Model\ModelAbstract;
 
 /** @var ModelAbstract[] $rows */
@@ -42,12 +43,16 @@ echo $this->partial('common/header');
 
               <?php endif; ?>
 
-              <?php if ($item->getMeta()->hasProperty('enabled')) : ?>
+              <?php if ($item->getMeta()->hasProperty('image')) : ?>
                 <div class="bg-image rounded-4 me-3"
                      data-admin-async-image="<?php echo $item->image->getSrc(); ?>"></div>
               <?php endif; ?>
 
               <div class="h6 m-0 max-lines-2"><?php echo $item->{$positioning}; ?></div>
+
+              <?php if ($item->getMeta()->hasProperty('language') && $item->language instanceof Language) : ?>
+                <div class="text-muted small rounded-2 px-1 bg-dark-subtle"><?php echo $item->language->key; ?></div>
+              <?php endif; ?>
 
               <div data-admin-position-form-counter
                 class="rounded-4 ms-3 h5 m-0 bg-primary-subtle counter d-flex align-items-center justify-content-center">

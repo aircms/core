@@ -616,7 +616,7 @@ final class Front
     }
 
     if (!count($params)) {
-      foreach ($request->getParams() as $paramName => $paramValue) {
+      foreach ([...$request->getGetAll(), ...$request->getPostAll()] as $paramName => $paramValue) {
         $params[$paramName] = [
           'main' => 'id',
           'cond' => []
@@ -680,6 +680,8 @@ final class Front
                   } catch (Exception) {
                     $value = (string)$value;
                   }
+
+                  $allCond = [];
 
                   if ($params[$parameter->getName()]['main'] === 'id') {
                     try {
