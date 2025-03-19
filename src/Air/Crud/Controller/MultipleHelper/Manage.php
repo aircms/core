@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller\MultipleHelper;
 
+use Air\Crud\Controller\Single;
 use Air\Crud\Model\History;
 use Air\Crud\Model\Language;
 use Air\Form\Element\Hidden;
@@ -12,7 +13,6 @@ use Air\Form\Generator;
 use Air\Map;
 use Air\Model\ModelAbstract;
 use Air\Model\ModelInterface;
-use Exception;
 use Throwable;
 
 trait Manage
@@ -205,7 +205,8 @@ trait Manage
       'form' => $form,
       'mode' => 'manage',
       'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false,
-      'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false
+      'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false,
+      'isSingle' => is_subclass_of($this, Single::class)
     ]);
 
     $this->getView()->setScript('form/index');

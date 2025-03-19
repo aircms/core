@@ -208,5 +208,8 @@ return [
   'System settings' => 'Налаштування системи',
   'Ooops...' => 'Ой...',
   'This page is not permitted for you' => 'Ця сторінка вам не дозволена',
-  'User with this login is already exists' => 'Користувач із таким логіном вже існує'
+  'User with this login is already exists' => 'Користувач із таким логіном вже існує',
+  'Email / Settings' => 'Email / Налаштування',
+  'Email / Templates' => 'Email / Шаблони',
+  'Email / Queue' => 'Email / Черга'
 ];

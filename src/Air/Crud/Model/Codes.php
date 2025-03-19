@@ -19,9 +19,6 @@ use Air\Model\ModelAbstract;
  */
 class Codes extends ModelAbstract
 {
-  /**
-   * @return string
-   */
   public static function render(): string
   {
     $codes = [];

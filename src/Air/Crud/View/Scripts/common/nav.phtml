@@ -63,6 +63,15 @@ $phrases = $route($config['admin']['phrases'] ?? null);
 /** @var string $robotsTxt */
 $robotsTxt = $route($config['admin']['robotsTxt'] ?? null);
 
+/** @var string $emailQueue */
+$emailQueue = $route($config['admin']['emailQueue'] ?? null);
+
+/** @var string $emailTemplates */
+$emailTemplates = $route($config['admin']['emailTemplates'] ?? null);
+
+/** @var string $emailSettings */
+$emailSettings = $route($config['admin']['emailSettings'] ?? null);
+
 /** @var string $cache */
 $cache = $route($config['admin']['cache'] ?? null);
 ?>
@@ -216,6 +225,34 @@ $cache = $route($config['admin']['cache'] ?? null);
                 </a>
               </li>
             <?php endif; ?>
+            <li class="dropdown-divider"></li>
+          <?php endif; ?>
+
+          <?php if ($emailSettings) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $emailSettings; ?>">
+                <i class="fas fa-cogs me-1"></i> <?php echo \Air\Crud\Locale::t('Email / Settings'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <?php if ($emailTemplates) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $emailTemplates; ?>">
+                <i class="fas fa-page me-1"></i> <?php echo \Air\Crud\Locale::t('Email / Templates'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <?php if ($emailQueue) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $emailQueue; ?>">
+                <i class="fas fa-database me-1"></i> <?php echo \Air\Crud\Locale::t('Email / Queue'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <?php if ($emailSettings || $emailTemplates || $emailQueue) : ?>
             <li class="dropdown-divider"></li>
           <?php endif; ?>
 

@@ -39,9 +39,6 @@ class Codes extends Multiple
     ];
   }
 
-  /**
-   * @return string
-   */
   public function getModelClassName(): string
   {
     return \Air\Crud\Model\Codes::class;
@@ -64,14 +61,10 @@ class Codes extends Multiple
     return Front::getInstance()->getConfig()['air']['admin']['codes'];
   }
 
-  /**
-   * @param \Air\Crud\Model\Codes $model
-   * @return Form
-   * @throws ClassWasNotFound
-   * @throws PropertyWasNotFound
-   */
   protected function getForm($model = null): Form
   {
+    /** @var \Air\Crud\Model\Codes $model */
+
     return Generator::full($model, [
       Locale::t('General') => [
         new Textarea('description', [

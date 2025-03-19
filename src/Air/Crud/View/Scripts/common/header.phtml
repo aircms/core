@@ -12,6 +12,9 @@ $icon = $this->icon;
 /** @var string $mode */
 $mode = $this->mode;
 
+/** @var bool $isSingle */
+$isSingle = $this->isSingle;
+
 $filter = $this->filter ?? [];
 
 /** @var bool $manageable */
@@ -58,7 +61,7 @@ $controller = $this->controller;
       <div class="d-flex">
         <?php if ($mode === 'manage') : ?>
 
-          <?php if (!$isQuickManage) : ?>
+          <?php if (!$isQuickManage && !$isSingle) : ?>
             <a class="btn btn-secondary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-back>
               <i class="fa fa-arrow-left me-1"></i>
               <?php echo \Air\Crud\Locale::t('Go back'); ?>

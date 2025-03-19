@@ -8,6 +8,9 @@ use Air\Core\Exception\ActionMethodWasNotFound;
 use Air\Core\Exception\ControllerClassWasNotFound;
 use Air\Crud\Controller\Cache;
 use Air\Crud\Controller\Codes;
+use Air\Crud\Controller\EmailQueue;
+use Air\Crud\Controller\EmailSettings;
+use Air\Crud\Controller\EmailTemplate;
 use Air\Crud\Controller\FaIcon;
 use Air\Crud\Controller\FontsUi;
 use Air\Crud\Controller\Language;
@@ -519,6 +522,15 @@ final class Front
 
     } else if (($this->getConfig()['air']['admin']['notAllowed'] ?? false) === $controller) {
       return NotAllowed::class;
+
+    } else if (($this->getConfig()['air']['admin']['emailTemplates'] ?? false) === $controller) {
+      return EmailTemplate::class;
+
+    } else if (($this->getConfig()['air']['admin']['emailSettings'] ?? false) === $controller) {
+      return EmailSettings::class;
+
+    } else if (($this->getConfig()['air']['admin']['emailQueue'] ?? false) === $controller) {
+      return EmailQueue::class;
     }
 
     if ($this->config['air']['modules'] ?? false) {
