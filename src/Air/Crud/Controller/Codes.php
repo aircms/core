@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 use Air\Crud\Locale;
 use Air\Form\Element\Textarea;
 use Air\Form\Form;
 use Air\Form\Generator;
-use Air\Model\Meta\Exception\PropertyWasNotFound;
+use Air\Map;
 
 /**
  * @mod-manageable true
@@ -18,19 +17,16 @@ use Air\Model\Meta\Exception\PropertyWasNotFound;
  */
 class Codes extends Multiple
 {
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
+  public static function render(): string
+  {
+    return implode('', Map::execute(\Air\Crud\Model\Codes::all(), 'description'));
+  }
+
   protected function getTitle(): string
   {
     return Locale::t('Codes');
   }
 
-  /**
-   * @return array[]
-   * @throws ClassWasNotFound
-   */
   protected function getHeader(): array
   {
     return [
@@ -44,18 +40,11 @@ class Codes extends Multiple
     return \Air\Crud\Model\Codes::class;
   }
 
-  /**
-   * @return string[]
-   */
   protected function getAdminMenuItem(): array
   {
     return ['icon' => 'code'];
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   protected function getEntity(): string
   {
     return Front::getInstance()->getConfig()['air']['admin']['codes'];

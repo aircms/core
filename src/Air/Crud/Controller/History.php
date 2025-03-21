@@ -4,64 +4,41 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Throwable;
-use Exception;
 
 /**
  * @mod-sorting {"dateTime": -1}
  */
 class History extends Multiple
 {
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   protected function getTitle(): string
   {
     return Locale::t('Admin history');
   }
 
-  /**
-   * @return array
-   */
   public function getControls(): array
   {
     // TODO: Сделать просмотр подробностей
     return [];
   }
 
-  /**
-   * @return array
-   * @throws Exception
-   */
   protected function getHeaderButtons(): array
   {
     // TODO: Сделать удаление логов по фильтру
     return parent::getHeaderButtons();
   }
 
-  /**
-   * @return string
-   */
   public function getModelClassName(): string
   {
     return \Air\Crud\Model\History::class;
   }
 
-  /**
-   * @return string[]
-   */
   protected function getAdminMenuItem(): array
   {
     return ['icon' => 'clock'];
   }
 
-  /**
-   * @return array[]
-   * @throws ClassWasNotFound
-   */
   public function getFilter(): array
   {
     return [
@@ -78,16 +55,13 @@ class History extends Multiple
     ];
   }
 
-  /**
-   * @return array
-   */
   public function getHeader(): array
   {
     return [
       'admin' => [
         'title' => Locale::t('User'),
         'source' => function (\Air\Crud\Model\History $adminHistory) {
-          return $adminHistory->admin['login'];
+          return $adminHistory->admin['login'] ?? $adminHistory->admin[0];
         }],
       'dateTime' => ['title' => Locale::t('Date/Time'), 'type' => 'dateTime'],
       'type' => [
@@ -103,10 +77,8 @@ class History extends Multiple
           };
 
           $style = match ($adminHistory->type) {
-            \Air\Crud\Model\History::TYPE_READ_TABLE => self::INFO,
-            \Air\Crud\Model\History::TYPE_READ_ENTITY => self::INFO,
-            \Air\Crud\Model\History::TYPE_WRITE_ENTITY => self::WARNING,
-            \Air\Crud\Model\History::TYPE_CREATE_ENTITY => self::WARNING,
+            \Air\Crud\Model\History::TYPE_READ_TABLE, \Air\Crud\Model\History::TYPE_READ_ENTITY => self::INFO,
+            \Air\Crud\Model\History::TYPE_WRITE_ENTITY, \Air\Crud\Model\History::TYPE_CREATE_ENTITY => self::WARNING,
             default => self::DANGER,
           };
 

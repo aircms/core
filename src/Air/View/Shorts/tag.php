@@ -330,11 +330,11 @@ function script(
   $attributes = (array)$attributes ?? [];
 
   if ($async) {
-    $attributes[] = 'async';
+    $attributes['async'] = '';
   }
 
   if ($defer) {
-    $attributes[] = 'defer';
+    $attributes['defer'] = '';
   }
 
   if ($src) {

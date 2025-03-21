@@ -9,17 +9,8 @@ use Air\Core\Front;
 
 class Asset extends HelperAbstract
 {
-  /**
-   * @var array|null
-   */
   public static ?array $config = null;
 
-  /**
-   * @param string|array $assets
-   * @param string|null $type
-   * @return string
-   * @throws ClassWasNotFound
-   */
   public function call(string|array $assets, string $type = null): string
   {
     if (!self::$config) {
@@ -48,23 +39,15 @@ class Asset extends HelperAbstract
     return implode("\n", $assetsHtml);
   }
 
-  /**
-   * @param string $uri
-   * @return string
-   */
   public function js(string $uri): string
   {
     return script(
       src: $this->filter($uri),
-      defer: $this->config['defer'] ?? false,
-      async: $this->config['async'] ?? false
+      defer: self::$config['defer'] ?? false,
+      async: self::$config['async'] ?? false
     );
   }
 
-  /**
-   * @param string $uri
-   * @return string
-   */
   public function css(string $uri): string
   {
     return tag(tagName: 'link', attributes: [
@@ -73,23 +56,14 @@ class Asset extends HelperAbstract
     ]);
   }
 
-  /**
-   * @param string $uri
-   * @return string
-   */
   public function filter(string $uri): string
   {
     return $this->underscore($this->prefix($uri));
   }
 
-  /**
-   * @param string $uri
-   * @return string
-   */
   public function underscore(string $uri): string
   {
-    if ($this->config['underscore'] ?? false) {
-
+    if (self::$config['underscore'] ?? false) {
       if (str_contains($uri, '?')) {
         return $uri . '&_=' . microtime();
       }
@@ -98,21 +72,14 @@ class Asset extends HelperAbstract
     return $uri;
   }
 
-  /**
-   * @param string $uri
-   * @return string
-   */
   public function prefix(string $uri): string
   {
-    if (!empty($this->config['prefix'])) {
-
+    if (!empty(self::$config['prefix'])) {
       if (!str_starts_with($uri, '//') && !str_starts_with($uri, 'http://') && !str_starts_with($uri, 'https://')) {
-
         if (!str_starts_with($uri, '/')) {
           $uri = '/' . $uri;
         }
-
-        $uri = $this->config['prefix'] . $uri;
+        $uri = self::$config['prefix'] . $uri;
       }
     }
     return $uri;
