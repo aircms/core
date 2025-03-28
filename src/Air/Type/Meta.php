@@ -247,9 +247,9 @@ class Meta
     }
 
     $defaults = [
-      'title' => null,
-      'description' => null,
-      'image' => null
+      'title' => '',
+      'description' => '',
+      'image' => ''
     ];
 
     if ($object) {

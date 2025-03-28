@@ -9,12 +9,15 @@ use Air\Core\Front;
 
 class FontsUi extends Controller
 {
-  public static function asset(): string
+  public static function asset(): string|null
   {
-    return tag(tagName: 'link', attributes: [
-      'href' => '/' . Front::getInstance()->getConfig()['air']['fontsUi'],
-      'rel' => 'stylesheet'
-    ]);
+    if (\Air\Crud\Model\Font::quantity()) {
+      return tag(tagName: 'link', attributes: [
+        'href' => '/' . Front::getInstance()->getConfig()['air']['fontsUi'],
+        'rel' => 'stylesheet'
+      ]);
+    }
+    return null;
   }
 
   public function index(): string
