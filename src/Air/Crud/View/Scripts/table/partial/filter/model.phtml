@@ -80,7 +80,7 @@ $hasLanguage = $model->getMeta()->hasProperty('language');
            role="button"
            data-value="<?php echo $rec->id; ?>"
            data-admin-select-option
-           <?php if ($hasLanguage) : ?>data-admin-select-option-language="<?php echo $rec->language->id; ?>"<?php endif; ?>
+           <?php if ($hasLanguage) : ?>data-admin-select-option-language="<?php echo $rec->language?->id; ?>"<?php endif; ?>
            <?php if ($filter['value'] === $rec->id) : ?>data-selected<?php endif; ?>>
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
