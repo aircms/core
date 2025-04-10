@@ -4,30 +4,13 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Core\Exception\DomainMustBeProvided;
-use Air\Core\Exception\RouterVarMustBeProvided;
 use Air\Paginator;
-use Exception;
 
 class FaIcon extends Multiple
 {
-  /**
-   * @var string
-   */
   public string $search = '';
-
-  /**
-   * @var string
-   */
   public string $style = \Air\Type\FaIcon::STYLE_SOLID;
 
-  /**
-   * @return void
-   * @throws ClassWasNotFound
-   * @throws DomainMustBeProvided
-   * @throws RouterVarMustBeProvided
-   */
   public function init(): void
   {
     parent::init();
@@ -38,9 +21,6 @@ class FaIcon extends Multiple
     $this->style = $filter['style'] ?? \Air\Type\FaIcon::STYLE_SOLID;
   }
 
-  /**
-   * @return array[]
-   */
   protected function getFilterWithValues(array $filter = []): array
   {
     return [
@@ -66,10 +46,6 @@ class FaIcon extends Multiple
     ];
   }
 
-  /**
-   * @return void
-   * @throws Exception
-   */
   public function select(): void
   {
     $paginator = new Paginator(

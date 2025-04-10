@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Crud\Controller\MultipleHelper\Accessor\Filter;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
+use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 use Air\Crud\Locale;
+use Air\Type\FaIcon;
 use Throwable;
 
 /**
@@ -14,13 +18,7 @@ class History extends Multiple
 {
   protected function getTitle(): string
   {
-    return Locale::t('Admin history');
-  }
-
-  public function getControls(): array
-  {
-    // TODO: Сделать просмотр подробностей
-    return [];
+    return 'Admin history';
   }
 
   protected function getHeaderButtons(): array
@@ -34,74 +32,61 @@ class History extends Multiple
     return \Air\Crud\Model\History::class;
   }
 
-  protected function getAdminMenuItem(): array
+  protected function getIcon(): string
   {
-    return ['icon' => 'clock'];
+    return FaIcon::ICON_CLOCK;
   }
 
   public function getFilter(): array
   {
     return [
-      ['type' => 'search', 'by' => ['search']],
-      [
-        'type' => 'select', 'by' => 'type',
-        'options' => [
-          ['value' => \Air\Crud\Model\History::TYPE_READ_TABLE, 'title' => Locale::t('Read table')],
-          ['value' => \Air\Crud\Model\History::TYPE_READ_ENTITY, 'title' => Locale::t('Read entity')],
-          ['value' => \Air\Crud\Model\History::TYPE_CREATE_ENTITY, 'title' => Locale::t('Create entity')],
-          ['value' => \Air\Crud\Model\History::TYPE_WRITE_ENTITY, 'title' => Locale::t('Write entity')],
-        ]
-      ]
+      Filter::search(),
+      Filter::select('Action', 'type', options: [
+        \Air\Crud\Model\History::TYPE_READ_TABLE,
+        \Air\Crud\Model\History::TYPE_READ_ENTITY,
+        \Air\Crud\Model\History::TYPE_CREATE_ENTITY,
+        \Air\Crud\Model\History::TYPE_WRITE_ENTITY,
+      ])
     ];
   }
 
   public function getHeader(): array
   {
     return [
-      'admin' => [
-        'title' => Locale::t('User'),
-        'source' => function (\Air\Crud\Model\History $adminHistory) {
-          return $adminHistory->admin['login'] ?? $adminHistory->admin[0];
-        }],
-      'dateTime' => ['title' => Locale::t('Date/Time'), 'type' => 'dateTime'],
-      'type' => [
-        'title' => Locale::t('Action'),
-        'source' => function (\Air\Crud\Model\History $adminHistory) {
-
-          $label = match ($adminHistory->type) {
+      Header::source(Locale::t('User'), function (\Air\Crud\Model\History $adminHistory) {
+        return $adminHistory->admin['login'] ?? $adminHistory->admin[0];
+      }),
+      Header::dateTime(by: 'dateTime'),
+      Header::source(Locale::t('Action'), function (\Air\Crud\Model\History $adminHistory) {
+        return Ui::badge(
+          match ($adminHistory->type) {
             \Air\Crud\Model\History::TYPE_READ_TABLE => Locale::t('Table view'),
             \Air\Crud\Model\History::TYPE_READ_ENTITY => Locale::t('Record details'),
             \Air\Crud\Model\History::TYPE_WRITE_ENTITY => Locale::t('Edit record'),
             \Air\Crud\Model\History::TYPE_CREATE_ENTITY => Locale::t('Creating record'),
             default => Locale::t('Unknown'),
-          };
-
-          $style = match ($adminHistory->type) {
-            \Air\Crud\Model\History::TYPE_READ_TABLE, \Air\Crud\Model\History::TYPE_READ_ENTITY => self::INFO,
-            \Air\Crud\Model\History::TYPE_WRITE_ENTITY, \Air\Crud\Model\History::TYPE_CREATE_ENTITY => self::WARNING,
-            default => self::DANGER,
-          };
-
-          return self::badge($label, $style);
-        }
-      ],
-      'section' => [
-        'title' => Locale::t('Section'),
-        'source' => function (\Air\Crud\Model\History $adminHistory) {
-          $content = [self::label($adminHistory->section)];
-          try {
-            $fields = [];
-            foreach ($adminHistory->entity as $values) {
-              if (is_string($values)) {
-                $fields[] = $values;
-              }
-            }
-            $content[] .= implode(', ', $fields);
-          } catch (Throwable) {
+          },
+          match ($adminHistory->type) {
+            \Air\Crud\Model\History::TYPE_READ_TABLE, \Air\Crud\Model\History::TYPE_READ_ENTITY => Ui::INFO,
+            \Air\Crud\Model\History::TYPE_WRITE_ENTITY, \Air\Crud\Model\History::TYPE_CREATE_ENTITY => Ui::WARNING,
+            default => Ui::DANGER,
           }
-          return self::multiple($content);
+        );
+      }),
+      Header::source(Locale::t('Section'), function (\Air\Crud\Model\History $adminHistory) {
+        $content = [Ui::label($adminHistory->section)];
+        try {
+          $fields = [];
+          foreach ($adminHistory->entity as $values) {
+            if (is_string($values)) {
+              $fields[] = $values;
+            }
+          }
+          $content[] .= implode(', ', $fields);
+        } catch (Throwable) {
         }
-      ],
+        return Ui::multiple($content);
+      })
     ];
   }
 }

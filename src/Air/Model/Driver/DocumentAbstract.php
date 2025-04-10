@@ -5,51 +5,22 @@ declare(strict_types=1);
 namespace Air\Model\Driver;
 
 use Air\Cache;
-use Air\Type\Meta;
-use ArrayAccess;
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Model\Driver\Exception\PropertyHasDifferentType;
-use Air\Model\Driver\Exception\PropertyWasNotFound;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\Meta\Property;
 use Air\Model\ModelAbstract;
+use ArrayAccess;
 use MongoDB\BSON\ObjectId;
 
 abstract class DocumentAbstract implements ArrayAccess
 {
-  /**
-   * @var ModelAbstract|null
-   */
   private ?ModelAbstract $model;
-
-  /**
-   * @var array
-   */
   private array $data = [];
 
-  /**
-   * @param ModelAbstract $model
-   */
   public function __construct(ModelAbstract $model)
   {
     $this->model = $model;
   }
 
-  /**
-   * @param array $data
-   * @param bool $fromSet
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function populate(array $data, bool $fromSet = true): void
   {
     foreach ($this->getModel()->getMeta()->getProperties() as $property) {
@@ -59,17 +30,6 @@ abstract class DocumentAbstract implements ArrayAccess
     }
   }
 
-  /**
-   * @param array $data
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function populateWithoutQuerying(array $data): void
   {
     foreach ($this->getModel()->getMeta()->getProperties() as $property) {
@@ -79,36 +39,16 @@ abstract class DocumentAbstract implements ArrayAccess
     }
   }
 
-  /**
-   * @return ModelAbstract|null
-   */
   public function getModel(): ?ModelAbstract
   {
     return $this->model;
   }
 
-  /**
-   * @param ModelAbstract $model
-   */
   public function setModel(ModelAbstract $model): void
   {
     $this->model = $model;
   }
 
-  /**
-   * @param Property $property
-   * @param mixed $value
-   * @param bool $fromSet
-   * @param bool $isPopulateWithoutQuerying
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function setProperty(
     Property $property,
     mixed    $value,
@@ -123,20 +63,6 @@ abstract class DocumentAbstract implements ArrayAccess
     $this->data[$property->getName()] = $this->_castDataType($property, $value, $fromSet);
   }
 
-  /**
-   * @param Property $property
-   * @param $value
-   * @param bool $isSet
-   * @param bool $toArray
-   * @return mixed
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   * @throws ClassWasNotFound
-   */
   protected function _castDataType(Property $property, $value, bool $isSet = true, bool $toArray = false): mixed
   {
     if (in_array($property->getType(), ['integer', 'float', 'double', 'array', 'string', 'boolean', 'NULL'])) {
@@ -330,25 +256,11 @@ abstract class DocumentAbstract implements ArrayAccess
     );
   }
 
-  /**
-   * @param $name
-   * @return bool
-   */
   public function __isset($name)
   {
     return isset($this->data[$name]);
   }
 
-  /**
-   * @return array
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function toArray(): array
   {
     $arrayData = [];
@@ -358,19 +270,6 @@ abstract class DocumentAbstract implements ArrayAccess
     return $arrayData;
   }
 
-  /**
-   * @param string $name
-   * @param bool $toArray
-   * @return mixed
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   * @throws \Air\Model\Meta\Exception\PropertyWasNotFound
-   */
   public function getProperty(string $name, bool $toArray = false): mixed
   {
     $key = [__FUNCTION__, $this->getModel()->getModelClassName(), $this->getData()[$name] ?? '0', $name, $toArray];
@@ -383,26 +282,16 @@ abstract class DocumentAbstract implements ArrayAccess
     });
   }
 
-  /**
-   * @return array
-   */
   public function getData(): array
   {
     return $this->data;
   }
 
-  /**
-   * @param array $data
-   */
   public function setData(array $data): void
   {
     $this->data = $data;
   }
 
-  /**
-   * @param mixed $offset
-   * @return bool
-   */
   public function offsetExists(mixed $offset): bool
   {
     foreach ($this->getModel()->getMeta()->getProperties() as $property) {
@@ -413,92 +302,31 @@ abstract class DocumentAbstract implements ArrayAccess
     return false;
   }
 
-  /**
-   * @param mixed $offset
-   * @return mixed
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function offsetGet(mixed $offset): mixed
   {
     return $this->__get($offset);
   }
 
-  /**
-   * @param string $name
-   * @return mixed
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function __get(string $name)
   {
     return $this->getProperty($name);
   }
 
-  /**
-   * @param string $name
-   * @param mixed $value
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   * @throws \Air\Model\Meta\Exception\PropertyWasNotFound
-   */
   public function __set(string $name, mixed $value)
   {
     $property = $this->getModel()->getMeta()->getPropertyWithName($name);
     $this->setProperty($property, $value, true);
   }
 
-  /**
-   * @param mixed $offset
-   * @param mixed $value
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function offsetSet(mixed $offset, mixed $value): void
   {
     $this->__set($offset, $value);
   }
 
-  /**
-   * @param mixed $offset
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyHasDifferentType
-   * @throws PropertyWasNotFound
-   */
   public function offsetUnset(mixed $offset): void
   {
     $this->__set($offset, null);
   }
 
-  /**
-   * @return int
-   */
   abstract public function getTimestamp(): int;
 }

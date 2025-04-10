@@ -14,7 +14,7 @@ use Air\Model\ModelAbstract;
  * @property string $title
  * @property array $data
  * @property string $level
- * @property integer $created
+ * @property integer $createdAt
  */
 class Log extends ModelAbstract
 {

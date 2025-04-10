@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Air\Type;
 
 use Exception;
-use Air\Core\Exception\ClassWasNotFound;
 
 class PageItem
 {
@@ -13,81 +12,39 @@ class PageItem
   const string TYPE_HTML = 'html';
   const string TYPE_EMBED = 'embed';
 
-  /**
-   * @var string
-   */
   public string $type = '';
-
-  /**
-   * @var int
-   */
   public int $width = 0;
-
-  /**
-   * @var int
-   */
   public int $height = 0;
-
-  /**
-   * @var int
-   */
   public int $x = 0;
-
-  /**
-   * @var int
-   */
   public int $y = 0;
-
-  /**
-   * @var int
-   */
   public int $deep = 0;
 
   /**
    * @var File|array{html: string, color: string}|string
    */
   public mixed $value = null;
-
-  /**
-   * @var int
-   */
   public int $transparent = 100;
 
-  /**
-   * @return string
-   */
   public function getType(): string
   {
     return $this->type;
   }
 
-  /**
-   * @return int
-   */
   public function getWidth(): int
   {
     return $this->width;
   }
 
-  /**
-   * @return int
-   */
   public function getHeight(): int
   {
     return $this->height;
   }
 
-  /**
-   * @return int
-   */
   public function getX(): int
   {
     return $this->x;
   }
 
-  /**
-   * @return int
-   */
   public function getY(): int
   {
     return $this->y;
@@ -101,26 +58,16 @@ class PageItem
     return $this->value;
   }
 
-  /**
-   * @return int
-   */
   public function getDeep(): int
   {
     return $this->deep;
   }
 
-  /**
-   * @return int
-   */
   public function getTransparent(): int
   {
     return $this->transparent;
   }
 
-  /**
-   * @param array|null $item
-   * @throws Exception
-   */
   public function __construct(?array $item = [])
   {
     if (!in_array(($item['type'] ?? false), [self::TYPE_FILE, self::TYPE_HTML, self::TYPE_EMBED])) {
@@ -161,10 +108,6 @@ class PageItem
     }
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   public function asCss(): string
   {
     $css =

@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
-use Air\Crud\Locale;
+use Air\Crud\Controller\MultipleHelper\Accessor\Control;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
+use Air\Crud\Controller\MultipleHelper\Accessor\HeaderButton;
+use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 use Air\Email;
+use Air\Type\FaIcon;
 
 /**
  * @mod-sorting {"when": -1}
@@ -17,7 +21,7 @@ class EmailQueue extends Multiple
 {
   protected function getTitle(): string
   {
-    return Locale::t('Email / Queue');
+    return 'Email / Queue';
   }
 
   protected function getModelClassName(): string
@@ -25,9 +29,9 @@ class EmailQueue extends Multiple
     return \Air\Crud\Model\EmailQueue::class;
   }
 
-  protected function getAdminMenuItem(): array|null
+  protected function getIcon(): string
   {
-    return ['icon' => 'database'];
+    return FaIcon::ICON_DATABASE;
   }
 
   protected function getEntity(): string
@@ -56,36 +60,24 @@ class EmailQueue extends Multiple
   public function getHeader(): array
   {
     return [
-      'status' => [
-        'title' => 'Status',
-        'source' => function (\Air\Crud\Model\EmailQueue $emailQueue) {
-          return self::multiple([
-            self::badge(date('Y-m-d H:i', $emailQueue->when), self::DARK),
-            match ($emailQueue->status) {
-              \Air\Crud\Model\EmailQueue::STATUS_NEW => self::badge('Planned', self::WARNING),
-              \Air\Crud\Model\EmailQueue::STATUS_SUCCESS => self::badge('Success', self::SUCCESS),
-              \Air\Crud\Model\EmailQueue::STATUS_FAIL => self::badge('Fail', self::DANGER),
-            }
-          ]);
-        }
-      ],
-      'destination' => [
-        'title' => 'Destination',
-        'source' => function (\Air\Crud\Model\EmailQueue $emailQueue) {
-          return self::multiple([
-            self::badge($emailQueue->toName, self::INFO),
-            self::badge($emailQueue->toAddress, self::INFO),
-          ]);
-        }
-      ],
-      'subject' => [
-        'title' => 'Subject',
-        'type' => 'text'
-      ],
-      'body' => [
-        'title' => 'Body',
-        'type' => 'longtext'
-      ],
+      Header::source('Status', function (\Air\Crud\Model\EmailQueue $emailQueue) {
+        return Ui::multiple([
+          Ui::badge(date('Y-m-d H:i', $emailQueue->when), Ui::DARK),
+          match ($emailQueue->status) {
+            \Air\Crud\Model\EmailQueue::STATUS_NEW => Ui::badge('Planned', Ui::WARNING),
+            \Air\Crud\Model\EmailQueue::STATUS_SUCCESS => Ui::badge('Success', Ui::SUCCESS),
+            \Air\Crud\Model\EmailQueue::STATUS_FAIL => Ui::badge('Fail', Ui::DANGER),
+          }
+        ]);
+      }),
+      Header::source('Destination', function (\Air\Crud\Model\EmailQueue $emailQueue) {
+        return Ui::multiple([
+          Ui::badge($emailQueue->toName, Ui::INFO),
+          Ui::badge($emailQueue->toAddress, Ui::INFO),
+        ]);
+      }),
+      Header::text(by: 'subject'),
+      Header::longtext(by: 'body')
     ];
   }
 
@@ -113,25 +105,32 @@ class EmailQueue extends Multiple
 
   protected function getHeaderButtons(): array
   {
-    return [[
-      'title' => 'Delete all successful ones?',
-      'url' => ['controller' => $this->getEntity(), 'action' => 'clear'],
-      'confirm' => 'Are you sure want to remove all successful emails?',
-      'style' => ['icon' => 'xmark', 'color' => 'danger']
-    ], [
-      'title' => 'Clear all Emails?',
-      'url' => ['controller' => $this->getEntity(), 'action' => 'clear'],
-      'confirm' => 'Are you sure want to remove all emails?',
-      'style' => ['icon' => 'xmark', 'color' => 'danger']
-    ]];
+    return [
+      HeaderButton::item(
+        title: 'Delete all successful ones?',
+        url: ['controller' => $this->getEntity(), 'action' => 'clear'],
+        confirm: 'Are you sure want to remove all successful emails?',
+        style: Ui::DANGER,
+        icon: FaIcon::ICON_XMARK
+      ),
+      HeaderButton::item(
+        title: 'Clear all Emails?',
+        url: ['controller' => $this->getEntity(), 'action' => 'clearAllForce'],
+        confirm: 'Are you sure want to remove all successful emails?',
+        style: Ui::DANGER,
+        icon: FaIcon::ICON_XMARK
+      ),
+    ];
   }
 
   protected function getControls(): array
   {
-    return [[
-      'title' => 'Details',
-      'url' => ['controller' => $this->getEntity(), 'action' => 'manage'],
-      'icon' => 'file-page',
-    ]];
+    return [
+      Control::item(
+        title: 'Details',
+        url: ['controller' => $this->getEntity(), 'action' => 'manage'],
+        icon: FaIcon::ICON_PAGE
+      )
+    ];
   }
 }

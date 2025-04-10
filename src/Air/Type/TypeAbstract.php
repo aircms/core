@@ -4,30 +4,13 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\ModelAbstract;
-use App\Module\Admin\Form\Type;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionProperty;
 use Throwable;
 
 abstract class TypeAbstract
 {
-  /**
-   * @param array|null $item
-   * @throws ReflectionException
-   * @throws Throwable
-   * @throws ClassWasNotFound
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function __construct(?array $item = [])
   {
     foreach (array_keys(get_class_vars(static::class)) as $var) {
@@ -82,11 +65,6 @@ abstract class TypeAbstract
     }
   }
 
-  /**
-   * @param mixed $class
-   * @return array
-   * @throws ReflectionException
-   */
   public function getUsedNamespaces(mixed $class): array
   {
     $usedNamespaces = [
@@ -110,11 +88,6 @@ abstract class TypeAbstract
     return $usedNamespaces;
   }
 
-  /**
-   * @param string $property
-   * @return array|null
-   * @throws ReflectionException
-   */
   public function getPropertyType(string $property): ?array
   {
     $rp = new ReflectionProperty(static::class, $property);
@@ -160,9 +133,6 @@ abstract class TypeAbstract
     return [$type, $type === 'array'];
   }
 
-  /**
-   * @return array
-   */
   public function toArray(): array
   {
     $array = [];
@@ -181,10 +151,6 @@ abstract class TypeAbstract
     return $array;
   }
 
-  /**
-   * @return array
-   * @throws ReflectionException
-   */
   public function toRaw(): array
   {
     $array = [];

@@ -6,6 +6,7 @@ namespace Air\Crud\Controller\MultipleHelper;
 
 use Air\Core\Front;
 use Air\Model\ModelAbstract;
+use ReflectionClass;
 
 trait ModelMeta
 {
@@ -13,21 +14,17 @@ trait ModelMeta
 
   protected function getModelClassName(): string
   {
-    $controllerClassPars = explode('\\', get_class($this));
-
-    $entity = end($controllerClassPars);
-
     return implode('\\', [
       Front::getInstance()->getConfig()['air']['loader']['namespace'],
       'Model',
-      $entity
+      $this->getEntity()
     ]);
   }
 
   protected function getEntity(): string
   {
-    $controllerClassPars = explode('\\', get_class($this));
-    return end($controllerClassPars);
+    $reflectionClass = new ReflectionClass($this);
+    return $reflectionClass->getShortName();
   }
 
   protected function getFormClassName(): string
@@ -35,5 +32,12 @@ trait ModelMeta
     $controllerClassPars = explode('\\', get_class($this));
     $controllerClassPars[count($controllerClassPars) - 2] = 'Form';
     return implode('\\', $controllerClassPars);
+  }
+
+  protected function getModelClass(): ModelAbstract
+  {
+    /** @var ModelAbstract $modelClassName */
+    $modelClassName = $this->getModelClassName();
+    return new $modelClassName();
   }
 }

@@ -6,35 +6,29 @@ namespace Air\Form\Element;
 
 class Text extends TextAbstract
 {
-  public ?string $type = 'text';
+  const string TYPE_TEXT = 'text';
+  const string TYPE_NUMBER = 'number';
+  const string TYPE_COLOR = 'color';
+  const string TYPE_EMAIL = 'email';
+  const string TYPE_TEL = 'tel';
+  const string TYPE_PASSWORD = 'password';
 
-  /**
-   * @var string|null
-   */
+  public string $type = self::TYPE_TEXT;
   public ?string $elementTemplate = 'form/element/text';
 
-  /**
-   * @return string|null
-   */
   public function getType(): ?string
   {
     return $this->type;
   }
 
-  /**
-   * @param string|null $type
-   */
   public function setType(?string $type): void
   {
     $this->type = $type;
   }
 
-  /**
-   * @return mixed
-   */
   public function getValue(): mixed
   {
-    if ($this->type === 'number') {
+    if ($this->type === self::TYPE_NUMBER) {
       return intval(parent::getValue());
     }
     return parent::getValue();

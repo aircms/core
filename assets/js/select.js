@@ -42,5 +42,37 @@ $(document).ready(() => {
         setTimeout(() => select.closest('form').submit(), 200);
       }
     });
+
+    $(select).find('[data-admin-select-language]').on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      $(this).parent().find('[data-admin-select-language]').addClass('badge-secondary').removeClass('badge-primary');
+      $(this).addClass('badge-primary').removeClass('badge-secondary');
+
+      const languageId = $(this).data('admin-select-language');
+      const select = $(this).closest('[data-admin-select]');
+
+      select.find('[data-admin-select-option][data-value]').addClass('d-none');
+      select.find('[data-admin-select-option-language="' + languageId + '"]').removeClass('d-none');
+      select.find('[data-admin-select-language-reset]').removeClass('badge-primary').addClass('badge-secondary');
+    });
+
+    let language = getLanguage();
+    if (language) {
+      const languageButton = $(select).find('[data-admin-select-language="' + language + '"]').click();
+    }
+
+    $(select).find('[data-admin-select-language-reset]').on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const select = $(this).closest('[data-admin-select]');
+
+      select.find('[data-admin-select-language-reset]').addClass('badge-primary').removeClass('badge-secondary');
+      $(this).parent().find('[data-admin-select-language]').addClass('badge-secondary').removeClass('badge-primary');
+
+      select.find('[data-admin-select-option]').removeClass('d-none');
+    });
   });
 });

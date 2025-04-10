@@ -6,10 +6,6 @@ namespace Air\Validator;
 
 class Phone extends ValidatorAbstract
 {
-  /**
-   * @param string $value
-   * @return bool
-   */
   public function isValid($value): bool
   {
     $value = $value ?? '';
@@ -19,14 +15,5 @@ class Phone extends ValidatorAbstract
     }
 
     return strlen(trim($value)) >= 10;
-  }
-
-  /**
-   * @param string $phone
-   * @return string
-   */
-  public function normalizePhoneNumber(string $phone): string
-  {
-    return '+' . trim(str_replace(['+', '-', ' ', '-', '(', ')', '.', ','], '', $phone));
   }
 }

@@ -8,7 +8,7 @@ $log = $this->log;
 
 <div class="w-100 overflow-hidden overflow-y-auto">
   <span class="badge badge-<?php if ($log->level === 'info') : ?>info<?php else: ?>danger<?php endif; ?> fs-6 py-2 me-2">
-    <?php echo date('Y/m/d H:i', $log->created); ?>
+    <?php echo date('Y/m/d H:i', $log->createdAt); ?>
   </span>
   <span class="badge badge-<?php if ($log->level === 'info') : ?>info<?php else: ?>danger<?php endif; ?> fs-6 py-2">
     <?php echo $log->title; ?>

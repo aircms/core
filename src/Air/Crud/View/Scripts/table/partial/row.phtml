@@ -16,7 +16,7 @@ foreach ($header as $key => $col) : ?>
 
   <?php $type = $col['type'] ?? 'text'; ?>
   <?php $size = $col['size'] ?? ''; ?>
-
+  <?php if (is_numeric($key)) $key = $col['by'] ?? $key; ?>
 
   <?php if ($type == 'bool') : ?>
     <td class="text-center admin-table-row-bool">
@@ -39,7 +39,7 @@ foreach ($header as $key => $col) : ?>
 
 
   <?php elseif ($type == 'longtext') : ?>
-    <td class="<?php echo $size; ?>">
+    <td class="admin-table-row-default <?php echo $size; ?>">
       <?php $longText = htmlspecialchars(mb_substr(strip_tags($row->$key), 0, 150));
       echo $longText . (strlen($row->$key) > 150 ? '...' : ''); ?>
     </td>
@@ -72,7 +72,7 @@ foreach ($header as $key => $col) : ?>
 
   <?php elseif ($type == 'dateTime') : ?>
     <td class="admin-table-row-datetime text-truncate">
-      <?php echo date('Y/m/d H:i', $row->$key); ?>
+      <?php echo date('Y/m/d H:i', $row->$key ?? $row->{$col['by']}); ?>
     </td>
 
   <?php elseif ($type == 'model') : ?>
@@ -161,12 +161,12 @@ foreach ($header as $key => $col) : ?>
     </td>
 
   <?php elseif ($type == 'custom') : ?>
-    <td class="<?php echo $size; ?>">
+    <td class="admin-table-row-default <?php echo $size; ?>">
       <?php echo $col['source']($row); ?>
     </td>
 
   <?php else : ?>
-    <td class="<?php echo $size; ?>">
+    <td class="admin-table-row-default <?php echo $size; ?>">
       <?php echo $row[$key]; ?>
     </td>
 

@@ -4,27 +4,14 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 use Air\Crud\Locale;
-use Air\Form\Exception\FilterClassWasNotFound;
-use Air\Form\Exception\ValidatorClassWasNotFound;
 use Throwable;
 
 class RichContent extends ElementAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/rich-content';
 
-  /**
-   * @param $value
-   * @return bool
-   * @throws FilterClassWasNotFound
-   * @throws ValidatorClassWasNotFound
-   * @throws ClassWasNotFound
-   */
   public function isValid($value): bool
   {
     $isValid = parent::isValid($value);
@@ -41,10 +28,6 @@ class RichContent extends ElementAbstract
     return true;
   }
 
-  /**
-   * @return array|string[]
-   * @throws ClassWasNotFound
-   */
   public function getEnabledElements(): array
   {
     $enabled = ['file', 'files', 'quote', 'text', 'html', 'embed'];
@@ -57,9 +40,6 @@ class RichContent extends ElementAbstract
     return $enabled;
   }
 
-  /**
-   * @return \Air\Type\RichContent[]
-   */
   public function getValue(): array
   {
     $value = parent::getValue();

@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller\MultipleHelper;
 
+use Air\Crud\Controller\Language;
+use Air\Crud\Controller\MultipleHelper\Accessor\Control;
+use Air\Crud\Controller\MultipleHelper\Accessor\Filter;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
+use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 use Air\Crud\Locale;
 use Air\Crud\Model\History;
 use Air\Model\ModelAbstract;
 use Air\Model\Paginator;
+use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\Regex;
+use ReflectionClass;
 
 trait Table
 {
@@ -51,9 +58,9 @@ trait Table
         }
 
       } else if ($filter['type'] == 'model') {
-        $conditions[$filter['by'] ?? 'id'] = $filter['value'];
+        $conditions[$filter['by']] = $filter['value'];
 
-      } else if ($filter['type'] == 'dateTime') {
+      } else if ($filter['type'] == 'dateTime' || $filter['type'] == 'date') {
 
         $from = strtotime($filter['value']['from']);
         $to = strtotime($filter['value']['to']);
@@ -64,7 +71,7 @@ trait Table
           $dateTime['$gte'] = $from;
         }
         if ($to) {
-          $dateTime['$lt'] = $to;
+          $dateTime['$lte'] = $to;
         }
 
         if (count($dateTime)) {
@@ -98,7 +105,57 @@ trait Table
 
   protected function getFilter(): array
   {
-    return $this->getMods('filter');
+    if ($filters = $this->getMods('filter')) {
+      return $filters;
+    }
+
+    $filters = [];
+
+    $modelClassName = $this->getModelClassName();
+
+    /** @var ModelAbstract $model */
+    /** @var ModelAbstract $modelClassName */
+    $model = new $modelClassName();
+
+    if ($model->getMeta()->hasProperty('title') ||
+      $model->getMeta()->hasProperty('subTitle') ||
+      $model->getMeta()->hasProperty('description')) {
+      $filters[] = Filter::search();
+    }
+    if ($model->getMeta()->hasProperty('enabled')) {
+      $filters[] = Filter::enabled();
+    }
+    if ($model->getMeta()->hasProperty('createdAt')) {
+      $filters[] = Filter::createdAt();
+    }
+
+    $reflectionClass = new ReflectionClass($model);
+    $constants = $reflectionClass->getConstants();
+
+    foreach ($model->getMeta()->getProperties() as $property) {
+      if ($property->getIsModel()) {
+        $filters[] = Filter::model(by: $property->getName());
+      }
+
+      $options = [];
+      $upperProp = strtoupper($property->getName());
+      foreach ($constants as $constantName => $constantValue) {
+        if (str_starts_with(strtoupper($constantName), $upperProp . '_')) {
+          $title = ucfirst(strtolower(str_replace(['_', '-'], ' ', $constantValue)));
+          $options[$title] = $constantValue;
+        }
+      }
+
+      if (count($options)) {
+        $filters[] = Filter::select(
+          Header::getTitleBasedOnModelOrPropertyName($property->getName()),
+          $property->getName(),
+          options: $options
+        );
+      }
+    }
+
+    return $filters;
   }
 
   protected function getSorting(): array
@@ -134,20 +191,61 @@ trait Table
 
       $modelClassName = $this->getModelClassName();
 
-      if (class_exists($modelClassName)) {
+      /** @var ModelAbstract $model */
+      /** @var ModelAbstract $modelClassName */
+      $model = new $modelClassName();
 
-        /** @var ModelAbstract $model */
-        /** @var ModelAbstract $modelClassName */
-        $model = new $modelClassName;
+      if ($model->getMeta()->hasProperty('image')) {
+        $headers[] = Header::image();
+      }
 
-        if ($model->getMeta()->hasProperty('image')) {
-          $headers['image'] = ['title' => Locale::t('Image'), 'type' => 'image', 'static' => true];
+      if ($model->getMeta()->hasProperty('title') && $model->getMeta()->hasProperty('description')) {
+        $headers[] = Header::title(Header::LG);
+        $headers[] = Header::longtext(by: 'description');
+
+      } else if ($model->getMeta()->hasProperty('title')) {
+        $headers[] = Header::title();
+
+      } else if ($model->getMeta()->hasProperty('description')) {
+        $headers[] = Header::longtext(by: 'description', size: Header::XL);
+      }
+
+      $reflectionClass = new ReflectionClass($model);
+      $constants = $reflectionClass->getConstants();
+
+      foreach ($model->getMeta()->getProperties() as $property) {
+        if ($property->getIsModel() && !$property->getIsMultiple()) {
+          $headers[] = Header::model($property->getRawType(), by: $property->getName());
         }
-        if ($model->getMeta()->hasProperty('title')) {
-          $headers['title'] = ['title' => Locale::t('Title'), 'static' => true];
+
+        $options = [];
+        $upperProp = strtoupper($property->getName());
+        foreach ($constants as $constantName => $constantValue) {
+          if (str_starts_with(strtoupper($constantName), $upperProp . '_')) {
+            $title = ucfirst(strtolower(str_replace(['_', '-'], ' ', $constantValue)));
+            $options[$title] = $constantValue;
+          }
         }
-        if ($model->getMeta()->hasProperty('enabled')) {
-          $headers['enabled'] = ['title' => Locale::t('Activity'), 'type' => 'bool'];
+
+        if (count($options)) {
+          $headers[] = Header::source(
+            Header::getTitleBasedOnModelOrPropertyName($property->getName()),
+            fn(ModelAbstract $model) => Ui::badge($model->{$property->getName()})
+          );
+        }
+      }
+
+      if ($model->getMeta()->hasProperty('enabled')) {
+        $headers[] = Header::enabled();
+      }
+      if ($model->getMeta()->hasProperty('createdAt') && $model->getMeta()->hasProperty('updatedAt')) {
+        $headers[] = Header::createdAndUpdated();
+      } else {
+        if ($model->getMeta()->hasProperty('createdAt')) {
+          $headers[] = Header::createdAt();
+        }
+        if ($model->getMeta()->hasProperty('updatedAt')) {
+          $headers[] = Header::updatedAt();
         }
       }
     }
@@ -156,27 +254,31 @@ trait Table
 
   protected function getControls(): array
   {
-    $controls = [];
+    $controls = [
+      Control::copy(),
+    ];
+    if (Language::isAvailable()) {
+      $controls[] = Control::localizedCopy();
+    }
     if ($this->getQuickManage()) {
-      $controls[] = ['type' => 'view'];
+      $controls[] = Control::view();
     }
     if ($this->getPrintable()) {
-      $controls[] = ['type' => 'print'];
+      $controls[] = Control::print();
     }
     if ($this->getManageable()) {
-      $controls[] = ['type' => 'edit'];
+      $controls[] = Control::manage();
     }
     $modelClassName = $this->getModelClassName();
     /** @var ModelAbstract $model */
     $model = new $modelClassName();
     if ($model->getMeta()->hasProperty('enabled')) {
-      $controls[] = ['type' => 'enabled'];
+      $controls[] = Control::enabled();
     }
     $customControls = ($this->getMods('controls') ?? []);
     if (count($customControls)) {
       $controls = [...$controls, ...$customControls];
     }
-
     return $controls;
   }
 
@@ -208,7 +310,15 @@ trait Table
 
   protected function getItemsPerPage(): int
   {
-    return $this->getMods('items-per-page') ?? 50;
+    if ($itemsPerPage = $this->getMods('items-per-page')) {
+      return intval($itemsPerPage);
+    }
+    return 50;
+  }
+
+  protected function getBlock(): ?string
+  {
+    return null;
   }
 
   public function index()
@@ -217,7 +327,7 @@ trait Table
 
     $this->getView()->setVars([
       'icon' => $this->getIcon(),
-      'title' => $this->getTitle(),
+      'title' => Locale::t($this->getTitle()),
       'manageable' => $this->getManageable(),
       'manageableMultiple' => $this->getManageableMultiple(),
       'quickManage' => $this->getQuickManage(),
@@ -230,6 +340,7 @@ trait Table
       'headerButtons' => $this->getHeaderButtons(),
       'controls' => $this->getControls(),
       'paginator' => $this->getPaginator(),
+      'block' => $this->getBlock(),
       'controller' => $this->getRouter()->getController(),
     ]);
 

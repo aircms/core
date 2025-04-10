@@ -19,14 +19,9 @@ class Auth
   const string SOURCE_ROOT = 'root';
   const string SOURCE_DATABASE = 'database';
 
-  /**
-   * @var Auth|null
-   */
   private static ?Auth $instance = null;
+  private string $cookieName = 'authIdentity';
 
-  /**
-   * @return Auth
-   */
   public static function getInstance(): Auth
   {
     if (!self::$instance) {
@@ -36,24 +31,11 @@ class Auth
     return self::$instance;
   }
 
-  /**
-   * @var string
-   */
-  private string $cookieName = 'authIdentity';
-
-  /**
-   * @throws ClassWasNotFound
-   */
   private function __construct()
   {
     $this->cookieName = Front::getInstance()->getConfig()['air']['admin']['auth']['cookieName'] ?? $this->cookieName;
   }
 
-  /**
-   * @param string $controller
-   * @param Admin $admin
-   * @return bool
-   */
   private function isControllerAllowedForUser(string $controller, Admin $admin): bool
   {
     if ($admin->isRoot) {
@@ -68,16 +50,6 @@ class Auth
     return false;
   }
 
-  /**
-   * @param string $login
-   * @param string $password
-   * @return string|null
-   * @throws ClassWasNotFound
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   private function getLoginSource(string $login, string $password): ?string
   {
     $config = Front::getInstance()->getConfig()['air']['admin']['auth'];
@@ -96,16 +68,6 @@ class Auth
     return null;
   }
 
-  /**
-   * @param string $login
-   * @param string $password
-   * @return bool
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function authorize(string $login, string $password): bool
   {
     return Cookie::set($this->cookieName, [
@@ -115,9 +77,6 @@ class Auth
     ]);
   }
 
-  /**
-   * @return bool
-   */
   public function isLoggedIn(): bool
   {
     try {
@@ -145,14 +104,6 @@ class Auth
     return false;
   }
 
-  /**
-   * @return bool
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function isCurrentRouteAllowedAuthorizedUser(): bool
   {
     $credentials = Cookie::get($this->cookieName);
@@ -190,16 +141,6 @@ class Auth
     return false;
   }
 
-  /**
-   * @param string $login
-   * @param string $password
-   * @return bool
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function isValid(string $login, string $password): bool
   {
     return in_array($this->getLoginSource($login, $password), [
@@ -208,18 +149,11 @@ class Auth
     ]);
   }
 
-  /**
-   * @return bool
-   * @throws ClassWasNotFound
-   */
   public function remove(): bool
   {
     return Cookie::remove($this->cookieName);
   }
 
-  /**
-   * @return string|null
-   */
   public function getName(): string|null
   {
     try {

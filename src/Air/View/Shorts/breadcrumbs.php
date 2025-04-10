@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @param string $mainClass
- * @param string $itemClass
- * @param string $itemClassActive
- * @param array $items
- * @return string
- */
 function breadcrumbs(
   string $mainClass = 'breadcrumb',
   string $itemClass = 'breadcrumb-item',

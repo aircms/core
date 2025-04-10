@@ -27,15 +27,12 @@ const nav = new class {
       loader.show();
     });
 
-    const _nav = (event) => {
-      const href = $(event.currentTarget).attr('href');
-
-      if ($(event.currentTarget).data('force')) {
+    const _nav = (href, force) => {
+      if (force) {
+        location.href = href;
         return true;
       }
-      $(event.currentTarget).blur();
-
-      if (href.length && href.slice(0, 1) !== '#') {
+      if (href.length && !href.startsWith('#') && !href.startsWith('javascript')) {
         this.nav(href);
         return false;
       }
@@ -43,11 +40,18 @@ const nav = new class {
 
     $(document).on('click', '[href]', (event) => {
       $('[data-admin-contextmenu-target]').remove();
-      if ($(event.currentTarget).data('confirm')) {
-        modal.question($(event.currentTarget).data('confirm')).then(() => _nav(event));
+
+      const href = $(event.currentTarget).attr('href');
+      const confirm = $(event.currentTarget).data('confirm');
+      const force = $(event.currentTarget).data('force');
+
+      $(event.currentTarget).blur();
+
+      if (confirm) {
+        modal.question(confirm).then(() => _nav(href, force));
         return false;
       }
-      return _nav(event);
+      return _nav(href, force);
     });
     this.start();
   }

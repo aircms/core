@@ -11,26 +11,10 @@ use Throwable;
 
 class GoogleOAuth
 {
-  /**
-   * @var string
-   */
   private string $clientId;
-
-  /**
-   * @var string
-   */
   private string $clientSecret;
-
-  /**
-   * @var string
-   */
   private string $redirectUrl;
 
-  /**
-   * @param string $clientId
-   * @param string $clientSecret
-   * @param string $redirectUrl
-   */
   public function __construct(string $clientId, string $clientSecret, string $redirectUrl)
   {
     $this->clientId = $clientId;
@@ -38,9 +22,6 @@ class GoogleOAuth
     $this->redirectUrl = $redirectUrl;
   }
 
-  /**
-   * @return string
-   */
   public function authUrl(): string
   {
     $params = [
@@ -54,12 +35,6 @@ class GoogleOAuth
     return 'https://accounts.google.com/o/oauth2/auth?' . http_build_query($params);
   }
 
-  /**
-   * @param string $code
-   * @return Profile
-   * @throws InvalidCode
-   * @throws UnableToGetUserByAccessToken
-   */
   public function auth(string $code): Profile
   {
     $response = Request::run('https://accounts.google.com/o/oauth2/token', [

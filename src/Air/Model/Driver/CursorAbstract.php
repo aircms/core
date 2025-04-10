@@ -4,51 +4,20 @@ declare(strict_types=1);
 
 namespace Air\Model\Driver;
 
+use Air\Model\Driver\Exception\UnsupportedCursorOperation;
+use Air\Model\ModelAbstract;
 use ArrayAccess;
 use Countable;
 use Iterator;
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Model\Driver\Exception\UnsupportedCursorOperation;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
-use Air\Model\ModelAbstract;
 
 abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
 {
-  /**
-   * @var ModelAbstract[]
-   */
   protected array $documents = [];
-
-  /**
-   * @var string|ModelAbstract
-   */
   private string|ModelAbstract $model;
-
-  /**
-   * @var int
-   */
   private int $cursorIndex = 0;
-
-  /**
-   * @var array
-   */
   private array $cursorData;
-
-  /**
-   * @var array|null
-   */
   private ?array $config;
 
-  /**
-   * CursorAbstract constructor.
-   *
-   * @param ModelAbstract $model
-   * @param array $data
-   * @param array $config
-   */
   public function __construct(ModelAbstract $model, array $data, array $config = [])
   {
     $this->model = $model;
@@ -56,24 +25,11 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
     $this->config = $config;
   }
 
-  /**
-   * @return array|null
-   */
   public function getConfig(): ?array
   {
     return $this->config;
   }
 
-  /**
-   * @return array
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws Exception\PropertyHasDifferentType
-   * @throws Exception\PropertyWasNotFound
-   * @throws ClassWasNotFound
-   */
   public function toArray(): array
   {
     $arrayData = [];
@@ -83,31 +39,16 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
     return $arrayData;
   }
 
-  /**
-   * @return int
-   */
   public function getCursorIndex(): int
   {
     return $this->cursorIndex;
   }
 
-  /**
-   * @param int $cursorIndex
-   * @return void
-   */
   public function setCursorIndex(int $cursorIndex): void
   {
     $this->cursorIndex = $cursorIndex;
   }
 
-  /**
-   * @return int
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function save(): int
   {
     $savedCount = 0;
@@ -117,10 +58,6 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
     return $savedCount;
   }
 
-  /**
-   * @param int $offset
-   * @return bool
-   */
   public function offsetExists($offset): bool
   {
     if (is_numeric($offset)) {
@@ -130,47 +67,21 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
     return false;
   }
 
-  /**
-   * @return array
-   */
   public function getCursorData(): array
   {
     return $this->cursorData;
   }
 
-  /**
-   * @param array $cursorData
-   * @return void
-   */
   public function setCursorData(array $cursorData): void
   {
     $this->cursorData = $cursorData;
   }
 
-  /**
-   * @param mixed $offset
-   * @return mixed
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function offsetGet(mixed $offset): mixed
   {
     return $this->getRowWithIndex($this->getCursorData(), $offset);
   }
 
-  /**
-   * @param array $data
-   * @param int $index
-   * @return mixed
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function getRowWithIndex(array $data, int $index): mixed
   {
     if (isset($this->documents[$index])) {
@@ -193,9 +104,6 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
     return null;
   }
 
-  /**
-   * @return ModelAbstract
-   */
   public function getModel(): ModelAbstract
   {
     return $this->model;
@@ -204,40 +112,21 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
 
   /*************** \ArrayIterator implementation ***********/
 
-  /**
-   * @param ModelAbstract $model
-   * @return void
-   */
   public function setModel(ModelAbstract $model): void
   {
     $this->model = $model;
   }
 
-  /**
-   * @param array $data
-   * @return array
-   */
   public function processDataRow(array $data): array
   {
     return $data;
   }
 
-  /**
-   * @param mixed|null $offset
-   * @param mixed|null $value
-   * @return void
-   * @throws UnsupportedCursorOperation
-   */
   public function offsetSet(mixed $offset = null, mixed $value = null): void
   {
     throw new UnsupportedCursorOperation("offsetSet - " . $offset);
   }
 
-  /**
-   * @param mixed|null $offset
-   * @return void
-   * @throws UnsupportedCursorOperation
-   */
   public function offsetUnset(mixed $offset = null): void
   {
     throw new UnsupportedCursorOperation("offsetUnset - " . $offset);
@@ -246,30 +135,16 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
 
   /*************** \Iterator implementation ***********/
 
-  /**
-   * @return ModelAbstract|$this
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function current(): static|ModelAbstract
   {
     return $this->getRowWithIndex($this->getCursorData(), $this->cursorIndex);
   }
 
-  /**
-   * return null
-   */
   public function next(): void
   {
     $this->cursorIndex++;
   }
 
-  /**
-   * @return int|null
-   */
   public function key(): mixed
   {
     if (isset($this->cursorData[$this->cursorIndex])) {
@@ -278,17 +153,11 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
     return null;
   }
 
-  /**
-   * @return bool
-   */
   public function valid(): bool
   {
     return isset($this->cursorData[$this->cursorIndex]);
   }
 
-  /**
-   * @return void
-   */
   public function rewind(): void
   {
     $this->cursorIndex = 0;
@@ -297,9 +166,6 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
 
   /*************** \Countable implementation ***********/
 
-  /**
-   * @return int
-   */
   public function count(): int
   {
     return count($this->cursorData);

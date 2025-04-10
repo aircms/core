@@ -1,3 +1,17 @@
+const getLanguage = () => {
+  let language = null;
+  if ($('[data-admin-manage-switch-language]').length) {
+    language = $('[data-admin-manage-switch-language]').data('admin-manage-switch-language');
+  }
+  if (!language && $('[name="language"]').length) {
+    language = $('[name="language"]').val();
+  }
+  if (!language && $('[name="filter[language]"]').length) {
+    language = $('[name="filter[language]"]').val();
+  }
+  return language.length ? language : null;
+};
+
 $(document).ready(() => {
 
   const updateValue = (name) => {
@@ -50,9 +64,10 @@ $(document).ready(() => {
     const modelName = container.data('admin-form-multiple-model-name');
     const elementName = container.data('admin-form-multiple-model');
     const containerTemplate = $(`[data-admin-form-multiple-model-template="${elementName}"]`).html();
+    const language = getLanguage();
+    const filter = language ? {filter: {language}} : {};
 
     modal.model(modelName, (row) => {
-
       let modelHtml = containerTemplate;
       Object.keys(row).forEach((key) => {
         if (key === 'image') {
@@ -61,12 +76,6 @@ $(document).ready(() => {
           modelHtml = modelHtml.replaceAll('{{' + key + '}}', row[key]);
         }
       });
-
-      // const modelHtml = containerTemplate
-      //   .replaceAll('{{image}}', row.image && row.image.src ? row.image.src : '')
-      //   .replaceAll('{{title}}', row.title)
-      //   .replaceAll('{{systemTitle}}', row.systemTitle)
-      //   .replaceAll('{{id}}', row.id);
 
       modelList.append(modelHtml);
 
@@ -81,7 +90,7 @@ $(document).ready(() => {
       }
       updateValue(elementName);
       notify.success('Added ' + row.title);
-    });
+    }, filter);
   });
 
   wait.on('[data-admin-form-multiple-model-list]', (selectList) => {

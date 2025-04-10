@@ -4,30 +4,13 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Crud\Auth;
-use Exception;
 use Air\Core\Controller;
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Core\Exception\DomainMustBeProvided;
-use Air\Core\Exception\RouterVarMustBeProvided;
 use Air\Core\Front;
+use Air\Crud\Auth;
 use Air\Filter\Trim;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 
 class Login extends Controller
 {
-  /**
-   * @return string|array
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws Exception
-   */
   public function index(): string|array
   {
     if ($this->getRequest()->isPost()) {
@@ -51,11 +34,6 @@ class Login extends Controller
     return $this->getView()->render('login');
   }
 
-  /**
-   * @return void
-   * @throws ClassWasNotFound
-   * @throws DomainMustBeProvided
-   */
   public function logout(): void
   {
     Auth::getInstance()->remove();

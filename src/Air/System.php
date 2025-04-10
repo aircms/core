@@ -9,12 +9,6 @@ use Throwable;
 
 class System
 {
-  /**
-   * @param bool $format
-   *
-   * @return int|string
-   * @throws SystemProcNotReadable
-   */
   public static function uptime(bool $format = false): int|string
   {
     $uptime = explode(' ', self::readProc('uptime'));
@@ -37,9 +31,6 @@ class System
     return trim($interval);
   }
 
-  /**
-   * @return array
-   */
   public static function disk(): array
   {
     return [
@@ -48,10 +39,6 @@ class System
     ];
   }
 
-  /**
-   * @return array
-   * @throws SystemProcNotReadable
-   */
   public static function memory(): array
   {
     $memInfo = [];
@@ -70,10 +57,6 @@ class System
     return $memInfo;
   }
 
-  /**
-   * @return float
-   * @throws SystemProcNotReadable
-   */
   public static function cpuLoadAverage(): float
   {
     $statData1 = self::getServerLoadLinuxData();
@@ -93,19 +76,11 @@ class System
     return 0;
   }
 
-  /**
-   * @return int
-   * @throws SystemProcNotReadable
-   */
   public static function cpuCoreCount(): int
   {
     return substr_count(self::readProc('cpuinfo'), 'processor');
   }
 
-  /**
-   * @return string
-   * @throws SystemProcNotReadable
-   */
   public static function cpuName(): string
   {
     $procCpuInfo = self::readProc('cpuinfo');
@@ -126,19 +101,11 @@ class System
     ]);
   }
 
-  /**
-   * @return string
-   * @throws SystemProcNotReadable
-   */
   public static function version(): string
   {
     return self::readProc('version');
   }
 
-  /**
-   * @return array|null
-   * @throws SystemProcNotReadable
-   */
   private static function getServerLoadLinuxData(): ?array
   {
     $stats = preg_replace("/[[:blank:]]+/", " ", self::readProc('stat'));
@@ -160,12 +127,6 @@ class System
     return null;
   }
 
-  /**
-   * @param string $proc
-   *
-   * @return string
-   * @throws SystemProcNotReadable
-   */
   private static function readProc(string $proc): string
   {
     try {

@@ -5,10 +5,6 @@ declare(strict_types=1);
 use Air\Core\Exception\ClassWasNotFound;
 use Air\Type\File;
 
-/**
- * @param string $tagName
- * @return bool
- */
 function isNonClosingTag(string $tagName): bool
 {
   return in_array(trim(strtolower($tagName)), [
@@ -23,19 +19,11 @@ function isNonClosingTag(string $tagName): bool
   ]);
 }
 
-/**
- * @param Closure|string|array|Generator|null $content
- * @return string
- */
 function render(Closure|string|array|null|Generator $content = null): string
 {
   return implode('', $content);
 }
 
-/**
- * @param Closure|string|array|Generator|null $content
- * @return array
- */
 function content(Closure|string|array|null|Generator $content = null): array
 {
   if ($content) {
@@ -73,11 +61,6 @@ function content(Closure|string|array|null|Generator $content = null): array
   return [];
 }
 
-/**
- * @param File|string $image
- * @return string
- * @throws ClassWasNotFound
- */
 function image(File|string $image): string
 {
   if ($image instanceof File) {
@@ -87,15 +70,6 @@ function image(File|string $image): string
   }
 }
 
-/**
- * @param string $tagName
- * @param Closure|string|array|Generator|null $content
- * @param string|array|null $class
- * @param array|string|null $attributes
- * @param File|string|null $bgImage
- * @return string
- * @throws ClassWasNotFound
- */
 function tag(
   string                              $tagName,
   Closure|string|array|null|Generator $content = null,
@@ -182,6 +156,22 @@ function div(
     attributes: $attributes,
     data: $data,
     bgImage: $bgImage
+  );
+}
+
+function pre(
+  Closure|string|array|null $content = null,
+  string|array              $class = null,
+  array|string              $attributes = null,
+  array|string              $data = null,
+): string
+{
+  return tag(
+    tagName: 'pre',
+    content: $content,
+    class: $class,
+    attributes: $attributes,
+    data: $data,
   );
 }
 
@@ -353,13 +343,41 @@ function img(
   string|array $class = null,
   array|string $attributes = null,
   string       $alt = null,
-  string       $title = null
+  string       $title = null,
+  ?int         $width = 0,
+  ?int         $height = 0,
 ): string
 {
   $attributes = (array)$attributes ?? [];
 
   if ($src instanceof File) {
-    $attributes['src'] = $src->getSrc();
+
+    if ($src->isImage()) {
+      $pathInfo = pathinfo($src->getSrc());
+      $dirname = $pathInfo['dirname'];
+      $filename = $pathInfo['filename'];
+      $extension = $pathInfo['extension'];
+
+      $sizePart = '';
+      if ($width && $height) {
+        $sizePart = "_r_{$width}x{$height}";
+      } elseif ($width) {
+        $sizePart = "_r_{$width}";
+      }
+
+      if ($width) {
+        $attributes['width'] = $width;
+      }
+
+      if ($height) {
+        $attributes['height'] = $height;
+      }
+
+      $attributes['src'] = "{$dirname}/{$filename}{$sizePart}.{$extension}";
+    } else {
+      $attributes['src'] = $src->getSrc();
+    }
+
     $attributes['alt'] = $src->getAlt();
     $attributes['title'] = $src->getTitle();
   } else {
@@ -493,7 +511,7 @@ function iframe(
   );
 }
 
-function doctype()
+function doctype(): string
 {
   return '<!DOCTYPE html>';
 }
@@ -503,7 +521,7 @@ function main(
   array|string              $attributes = null,
   array|string              $data = null,
   Closure|string|array|null $content = null,
-)
+): string
 {
   $attributes = $attributes ?? [];
   $attributes['role'] = 'main';
@@ -578,9 +596,14 @@ function section(
   );
 }
 
-function br()
+function br(): string
 {
   return tag('br');
+}
+
+function hr(): string
+{
+  return tag('hr');
 }
 
 function p(
@@ -597,4 +620,11 @@ function p(
     attributes: $attributes,
     data: $data
   );
+}
+
+function check($var, Closure|string|array|null|Generator $content = null)
+{
+  if ($var) {
+    return $content;
+  }
 }

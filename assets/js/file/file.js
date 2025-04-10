@@ -73,20 +73,20 @@ class File {
             const form = $('[data-admin-file-edit-captions-form]');
             setTimeout(() => form.find('[name="alt"]').focus(), 500);
 
-            const titleElement = $(`[name="title"]`);
-            let descriptionElement = $(`[name="description"]`);
+            const titleElement = getTitle(this.element);
+            let descriptionElement = getTitle(this.element, 'description');
 
-            if (!descriptionElement.length) {
-              descriptionElement = $(`[name="subTitle"]`);
+            if (!descriptionElement) {
+              descriptionElement = getTitle(this.element, 'subTitle');
             }
 
-            if (titleElement.length || descriptionElement.length) {
+            if (titleElement || descriptionElement) {
               const fillAutomaticallyButton = $('[data-admin-file-edit-captions-form-automarically]');
               fillAutomaticallyButton.removeClass('d-none');
 
               fillAutomaticallyButton.on('click', () => {
-                form.find('[name="alt"]').val(titleElement.val());
-                form.find('[name="title"]').val(descriptionElement.val());
+                form.find('[name="alt"]').val(titleElement);
+                form.find('[name="title"]').val(descriptionElement);
               });
             }
 

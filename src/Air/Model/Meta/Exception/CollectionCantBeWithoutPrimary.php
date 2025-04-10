@@ -9,11 +9,8 @@ use Air\Model\ModelAbstract;
 
 class CollectionCantBeWithoutPrimary extends Exception
 {
-  /**
-   * @param ModelAbstract $model
-   */
   public function __construct(ModelAbstract $model)
   {
-    parent::__construct("CollectionCantBeWithoutPrimary: " . var_export($model, true));
+    parent::__construct(var_export($model, true));
   }
 }

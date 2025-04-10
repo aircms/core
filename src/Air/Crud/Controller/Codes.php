@@ -5,34 +5,29 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
-use Air\Crud\Locale;
-use Air\Form\Element\Textarea;
+use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 use Air\Form\Form;
 use Air\Form\Generator;
+use Air\Form\Input;
 use Air\Map;
+use Air\Type\FaIcon;
 
 /**
- * @mod-manageable true
  * @mod-sortable title
+ * @mod-quick-manage
  */
 class Codes extends Multiple
 {
   public static function render(): string
   {
-    return implode('', Map::execute(\Air\Crud\Model\Codes::all(), 'description'));
+    return Ui::multiple(
+      Map::execute(\Air\Crud\Model\Codes::all(), 'description')
+    );
   }
 
   protected function getTitle(): string
   {
-    return Locale::t('Codes');
-  }
-
-  protected function getHeader(): array
-  {
-    return [
-      'title' => ['title' => Locale::t('Title'), 'by' => 'title'],
-      'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
-    ];
+    return 'Codes';
   }
 
   public function getModelClassName(): string
@@ -40,9 +35,9 @@ class Codes extends Multiple
     return \Air\Crud\Model\Codes::class;
   }
 
-  protected function getAdminMenuItem(): array
+  protected function getIcon(): string
   {
-    return ['icon' => 'code'];
+    return FaIcon::ICON_CODE;
   }
 
   protected function getEntity(): string
@@ -52,17 +47,8 @@ class Codes extends Multiple
 
   protected function getForm($model = null): Form
   {
-    /** @var \Air\Crud\Model\Codes $model */
-
     return Generator::full($model, [
-      Locale::t('General') => [
-        new Textarea('description', [
-          'value' => $model->description,
-          'label' => Locale::t('Code'),
-          'description' => Locale::t('Code will be used in HEAD section'),
-          'allowNull' => false,
-        ]),
-      ],
+      Input::textarea('description', description: 'Code will be used in HEAD section')
     ]);
   }
 }

@@ -33,11 +33,6 @@ use Exception;
  */
 class Font extends ModelAbstract
 {
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   * @throws Exception
-   */
   public function asCss(): string
   {
     if ($this->isGoogleFont()) {
@@ -92,18 +87,11 @@ class Font extends ModelAbstract
     return $css;
   }
 
-  /**
-   * @return bool
-   */
   public function isGoogleFont(): bool
   {
     return !!strlen($this->googleFontName) && !!strlen($this->googleFontImportUrl);
   }
 
-  /**
-   * @return string|false
-   * @throws ClassWasNotFound
-   */
   public static function href(): string|false
   {
     $fontsUi = Front::getInstance()->getConfig()['air']['fontsUi'] ?? false;

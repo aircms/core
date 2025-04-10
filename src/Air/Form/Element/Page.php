@@ -5,28 +5,12 @@ declare(strict_types=1);
 namespace Air\Form\Element;
 
 use Air\Crud\Locale;
-use Exception;
-use Air\Form\Exception\FilterClassWasNotFound;
-use Air\Form\Exception\ValidatorClassWasNotFound;
 
 class Page extends PageAbstract
 {
-  /**
-   * @var bool
-   */
   public static bool $templatesRendered = false;
-
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/page';
 
-  /**
-   * @param $value
-   * @return bool
-   * @throws FilterClassWasNotFound
-   * @throws ValidatorClassWasNotFound
-   */
   public function isValid($value): bool
   {
     $isValid = parent::isValid($value);
@@ -48,10 +32,6 @@ class Page extends PageAbstract
     return true;
   }
 
-  /**
-   * @return \Air\Type\Page|null
-   * @throws Exception
-   */
   public function getValue(): ?\Air\Type\Page
   {
     $page = parent::getValue();

@@ -6,52 +6,29 @@ namespace Air\Validator;
 
 class Number extends ValidatorAbstract
 {
-  /**
-   * @var int|null
-   */
   public ?int $min = null;
-
-  /**
-   * @var int|null
-   */
   public ?int $max = null;
 
-  /**
-   * @return int
-   */
   public function getMin(): int
   {
     return $this->min;
   }
 
-  /**
-   * @param int $min
-   */
   public function setMin(int $min): void
   {
     $this->min = $min;
   }
 
-  /**
-   * @return int
-   */
   public function getMax(): int
   {
     return $this->max;
   }
 
-  /**
-   * @param int $max
-   */
   public function setMax(int $max): void
   {
     $this->max = $max;
   }
 
-  /**
-   * @param int $value
-   * @return bool
-   */
   public function isValid($value): bool
   {
     if (empty($value) && $this->allowNull) {
@@ -67,5 +44,20 @@ class Number extends ValidatorAbstract
     }
 
     return true;
+  }
+
+  public static function valid(
+    string $errorMessage = '',
+    int    $min = null,
+    int    $max = null,
+    bool   $allowNull = false
+  ): static
+  {
+    return new static([
+      'errorMessage' => $errorMessage,
+      'min' => $min,
+      'max' => $max,
+      'allowNull' => $allowNull,
+    ]);
   }
 }

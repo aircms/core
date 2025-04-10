@@ -6,14 +6,8 @@ namespace Air\Form\Element;
 
 class MultipleKeyValue extends KeyValueAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/multiple-key-value';
 
-  /**
-   * @return array
-   */
   public function getValue(): array
   {
     $value = parent::getValue();

@@ -2,16 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @param string $dataId
- * @param mixed $slides
- * @param Closure $renderer
- * @param Closure|string|array|null $additionalContent
- * @param string|null $mainClass
- * @param string|null $slideClass
- * @param bool $slideInsideValue
- * @return string
- */
 function swiper(
   mixed                     $slides,
   Closure                   $renderer,

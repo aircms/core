@@ -115,9 +115,9 @@ const modal = new class {
     });
   }
 
-  html(title, content, options) {
+  html(title, content, options, cb) {
     return new Promise(resolve => {
-      this.open(this.templates.html, {title, content}, this.mergeOpts(options, {}));
+      this.open(this.templates.html, {title, content}, this.mergeOpts(options, {}), cb);
       resolve();
     });
   }
@@ -142,8 +142,8 @@ const modal = new class {
     });
   }
 
-  iframe(src) {
-    this.html(locale('Embed'), this.replace(this.embedTemplates.iframe, {src}), {size: 'xxLarge'}).then(() => {
+  iframe(src, title, cb) {
+    this.html(title || locale('Embed'), this.replace(this.embedTemplates.iframe, {src}), {size: 'xxLarge'}, cb).then(() => {
       $(this.selector).find('iframe').on('load', (e) => {
         setTimeout(() => $(e.currentTarget).addClass('show'), 300);
       });
@@ -195,7 +195,11 @@ const modal = new class {
 
   record(model, id) {
     const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/manage?id=` + id + '&isQuickManage=1');
-    modal.html(locale('View row'), modalHtml, {size: 'xxLarge'}).then(() => {
+    modal.html(locale('View row'), modalHtml, {size: 'xxLarge'}, () => {
+      if ($('[data-admin-table-form]').length) {
+        nav.reload();
+      }
+    }).then(() => {
       $('[data-admin-model-modal]').on('load', (e) => {
         $('[data-modal-loader]').removeClass('show');
         setTimeout(() => $('[data-modal-loader]').remove(), 300);
@@ -204,8 +208,8 @@ const modal = new class {
     });
   }
 
-  model(model, cb) {
-    const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/select`);
+  model(model, cb, filter = {}) {
+    const modalHtml = this.templates.model.replaceAll('{{url}}', `/${model.split('\\').slice(-1)[0]}/select?` + $.param(filter));
     modal.html(locale('Select row'), modalHtml, {size: 'xxLarge'}).then(() => {
       $('[data-admin-model-modal]').on('load', (e) => {
         $(e.currentTarget).addClass('show');

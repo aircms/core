@@ -1,5 +1,6 @@
 <?php
 
+use Air\Crud\Model\Language;
 use Air\Model\ModelAbstract;
 use Air\Crud\Locale;
 
@@ -48,10 +49,24 @@ $hasLanguage = $model->getMeta()->hasProperty('language');
          type="hidden"
          data-admin-select-input/>
   <ul class="dropdown-menu w-100 admin-select-searchable overflow-y-auto">
-    <li>
+    <li class="d-flex align-items-center gap-2">
       <a class="dropdown-item" role="button" data-admin-select-option>
         <?php echo $title; ?>
       </a>
+      <?php if ($hasLanguage) : ?>
+        <div class="d-flex gap-2 pe-2">
+          <div class="badge badge-primary" role="button" data-admin-select-language-reset>
+            <?php echo Locale::t('All'); ?>
+          </div>
+          <?php foreach (Language::fetchAll() as $language) : ?>
+            <div class="badge badge-secondary d-flex align-items-center gap-2" role="button"
+                 data-admin-select-language="<?php echo $language->id; ?>">
+              <img src="<?php echo $language->image->getSrc(); ?>" style="height: 10px;">
+              <span class="lh-1"><?php echo strtoupper($language->key); ?></span>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
     </li>
     <li class="p-2">
       <div class="form-outline" data-mdb-input-init>
@@ -65,14 +80,16 @@ $hasLanguage = $model->getMeta()->hasProperty('language');
            role="button"
            data-value="<?php echo $rec->id; ?>"
            data-admin-select-option
+           <?php if ($hasLanguage) : ?>data-admin-select-option-language="<?php echo $rec->language->id; ?>"<?php endif; ?>
            <?php if ($filter['value'] === $rec->id) : ?>data-selected<?php endif; ?>>
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
               <?php if ($hasImage) : ?>
                 <div class="admin-select-image bg-image rounded-4 me-3"
-                     style="background-image: url('<?php echo $rec->image?->getSrc(); ?>')"></div>
+                     data-admin-async-image="<?php echo $rec->image?->getSrc(); ?>"></div>
               <?php endif; ?>
-              <div class="flex-grow-1 text-wrap max-lines-2 pe-3 admin-select-button-title d-flex align-items-center gap-2">
+              <div
+                class="flex-grow-1 text-wrap max-lines-2 pe-3 admin-select-button-title d-flex align-items-center gap-2">
                 <?php if (isset($filter['source'])) : ?>
                   <?php echo $filter['source']($rec); ?>
                 <?php else : ?>
@@ -81,12 +98,15 @@ $hasLanguage = $model->getMeta()->hasProperty('language');
               </div>
             </div>
             <div class="d-flex align-items-center gap-2 justify-content-between">
+              <?php if ($hasLanguage && $rec->language?->key) : ?>
+                <div class="badge badge-primary d-flex gap-2">
+                  <img src="<?php echo $rec->language->image->getSrc(); ?>" style="height: 10px;">
+                  <?php echo strtoupper($rec->language->key); ?>
+                </div>
+              <?php endif; ?>
               <?php if ($hasEnabled) : ?>
                 <i
                   class="fas fa-<?php if ($rec->enabled) : ?>check text-success<?php else: ?>ban text-danger<?php endif; ?>"></i>
-              <?php endif; ?>
-              <?php if ($hasLanguage) : ?>
-                <span><?php echo $rec->language->key; ?></span>
               <?php endif; ?>
             </div>
           </div>

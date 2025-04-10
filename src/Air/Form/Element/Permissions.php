@@ -4,31 +4,19 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 use Air\Crud\Locale;
 
 class Permissions extends ElementAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/permissions';
 
-  /**
-   * @param string $name
-   * @param array $userOptions
-   */
   public function __construct(string $name, array $userOptions = [])
   {
     $userOptions['allowNull'] = true;
     parent::__construct($name, $userOptions);
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   public function getPermissions(): array
   {
     $config = Front::getInstance()->getConfig()['air'];
@@ -77,10 +65,6 @@ class Permissions extends ElementAbstract
     return $_permissions;
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   public function getValue(): array
   {
     $selectedPermissions = [];
@@ -114,11 +98,6 @@ class Permissions extends ElementAbstract
     return $selectedPermissions;
   }
 
-  /**
-   * @param array $route
-   * @return bool
-   * @throws ClassWasNotFound
-   */
   public function isPermitted(array $route): bool
   {
     foreach ($this->getValue() as $permittedRoute) {

@@ -1,19 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Core\Exception;
 
-/**
- * Class ActionMethodWasNotFound
- * @package Air\Exception
- */
-class ActionMethodWasNotFound extends \Exception
+use Exception;
+
+class ActionMethodWasNotFound extends Exception
 {
-  /**
-   * ActionMethodWasNotFound constructor.
-   * @param string $actionClassName
-   */
   public function __construct(string $actionClassName)
   {
-    parent::__construct('ActionMethodWasNotFound: ' . $actionClassName, 404);
+    parent::__construct($actionClassName, 404);
   }
 }

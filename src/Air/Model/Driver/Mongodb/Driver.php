@@ -4,44 +4,22 @@ declare(strict_types=1);
 
 namespace Air\Model\Driver\Mongodb;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Model\Driver\CursorAbstract;
 use Air\Model\Driver\DriverAbstract;
-use Air\Model\Driver\Exception\IndexOutOfRange;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
-use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\ModelAbstract;
 use Air\Type\TypeAbstract;
 use MongoDB\BSON\ObjectId;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Command;
-use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
-use ReflectionException;
-use ReflectionProperty;
 use Throwable;
 
 class Driver extends DriverAbstract
 {
-  /**
-   * @var Manager[]
-   */
   private ?array $manager = null;
 
-  /**
-   * @return int
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyWasNotFound
-   */
   public function save(): int
   {
     $bulk = new BulkWrite();
@@ -87,10 +65,6 @@ class Driver extends DriverAbstract
     return $result->getModifiedCount();
   }
 
-  /**
-   * @param array $cond
-   * @return array
-   */
   private function replaceIdToObjectId(array $cond = []): array
   {
     if (!is_array($cond)) {
@@ -105,11 +79,6 @@ class Driver extends DriverAbstract
     return $cond;
   }
 
-  /**
-   * @param array $data
-   * @return array
-   * @throws ReflectionException
-   */
   private function normalizeDataTypes(array $data = []): array
   {
     foreach ($data as $name => $value) {
@@ -151,9 +120,6 @@ class Driver extends DriverAbstract
     return $data;
   }
 
-  /**
-   * @return Manager
-   */
   public function getManager(): Manager
   {
     $managerConfigKey = md5(var_export([], true));
@@ -187,9 +153,6 @@ class Driver extends DriverAbstract
     return $this->manager[$managerConfigKey];
   }
 
-  /**
-   * @return string
-   */
   public function getCollectionNamespace(): string
   {
     return implode('.', [
@@ -198,12 +161,6 @@ class Driver extends DriverAbstract
     ]);
   }
 
-  /**
-   * @param array $cond
-   * @param int|null $limit
-   * @return int
-   * @throws ReflectionException
-   */
   public function remove(array $cond = [], int $limit = null): int
   {
     if ($this->getModel()->id) {
@@ -233,11 +190,6 @@ class Driver extends DriverAbstract
     return $result->getDeletedCount();
   }
 
-  /**
-   * @param array $cond
-   * @param array $sort
-   * @return array
-   */
   private function processQuery(array $cond = [], array $sort = []): array
   {
     if ($cond === null) {
@@ -250,10 +202,6 @@ class Driver extends DriverAbstract
     return [$cond, $sort];
   }
 
-  /**
-   * @param array $map
-   * @return array
-   */
   private function getProjection(array $map = []): array
   {
     $projection = [];
@@ -263,20 +211,6 @@ class Driver extends DriverAbstract
     return $projection;
   }
 
-  /**
-   * @param array $cond
-   * @param array $sort
-   * @param array $map
-   * @return mixed
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws Exception
-   * @throws IndexOutOfRange
-   * @throws ReflectionException
-   */
   public function fetchOne(array $cond = [], array $sort = [], array $map = []): mixed
   {
     list($cond, $sort) = $this->processQuery($cond, $sort);
@@ -298,15 +232,6 @@ class Driver extends DriverAbstract
     return null;
   }
 
-  /**
-   * @param array $cond
-   * @param array $sort
-   * @param int|null $count
-   * @param int|null $offset
-   * @param array $map
-   * @return array|CursorAbstract
-   * @throws ReflectionException
-   */
   public function fetchAll(
     array $cond = [],
     array $sort = [],
@@ -330,10 +255,6 @@ class Driver extends DriverAbstract
     return new Cursor($this->getModel(), $query, $this->getConfig());
   }
 
-  /**
-   * @param array $cond
-   * @return int
-   */
   public function count(array $cond = []): int
   {
     list($cond) = $this->processQuery($cond);
@@ -360,17 +281,6 @@ class Driver extends DriverAbstract
     return 0;
   }
 
-  /**
-   * @param array|null $data
-   * @return int
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyWasNotFound
-   * @throws ReflectionException
-   */
   public function batchInsert(array $data = null): int
   {
     $bulk = new BulkWrite();
@@ -416,33 +326,11 @@ class Driver extends DriverAbstract
     return 0;
   }
 
-  /**
-   * @param array $data
-   * @return int
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyWasNotFound
-   * @throws ReflectionException
-   */
   public function insert(array $data = []): int
   {
     return self::batchInsert([$data]);
   }
 
-  /**
-   * @param array $cond
-   * @param array $data
-   * @return int
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   */
   public function update(array $cond = [], array $data = []): int
   {
     list($cond) = $this->processQuery($cond);

@@ -18,9 +18,6 @@ $title = Front::getInstance()->getConfig()['air']['admin']['title'];
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
-/** @var string $title */
-$lang = Front::getInstance()->getConfig()['air']['admin']['locale'];
-
 /** @var string $favicon */
 $favicon = Front::getInstance()->getConfig()['air']['admin']['favicon'];
 
@@ -31,7 +28,7 @@ $isSelectControl = $this->isSelectControl ?? false;
 $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $lang; ?>">
+<html>
 <head>
   <?php
 
@@ -127,6 +124,7 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/crud-elements/meta.js',
     'js/crud-elements/icon.js',
     'js/crud-elements/fa-icon.js',
+    'js/crud-elements/url.js',
 
     'js/general.js',
 

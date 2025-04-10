@@ -6,14 +6,8 @@ namespace Air\Form\Element;
 
 class Icon extends ElementAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/icon';
 
-  /**
-   * @var array
-   */
   public array $icons = [
     "10k",
     "10mp",

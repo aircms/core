@@ -8,12 +8,8 @@ use Exception;
 
 class CallUndefinedMethod extends Exception
 {
-  /**
-   * @param string $className
-   * @param string $methodName
-   */
   public function __construct(string $className, string $methodName)
   {
-    parent::__construct('CallUndefinedMethod: ' . $className . '::' . $methodName);
+    parent::__construct($className . '::' . $methodName);
   }
 }

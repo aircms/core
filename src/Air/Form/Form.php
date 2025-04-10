@@ -4,83 +4,35 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Crud\Locale;
 use Air\Form\Element\ElementAbstract;
 use Air\Form\Element\Hidden;
 use Air\Form\Element\Tab;
-use Air\Form\Exception\FilterClassWasNotFound;
-use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Model\ModelAbstract;
 use Air\View\View;
-use Exception;
 
 class Form
 {
-  /**
-   * @var ElementAbstract[]
-   */
   public array $elements = [];
-
-  /**
-   * @var string
-   */
   public string $firstTabLabel = '';
-
-  /**
-   * @var string
-   */
   public string $submit = 'Save';
-
-  /**
-   * @var string
-   */
   public string $template = 'index.phtml';
-
-  /**
-   * @var View|null
-   */
   public ?View $view = null;
-
-  /**
-   * @var string
-   */
   public string $method = 'POST';
-
-  /**
-   * @var string|null
-   */
   public ?string $action = null;
-
-  /**
-   * @var mixed
-   */
   public mixed $data;
-
-  /**
-   * @var string|null
-   */
   public ?string $returnUrl = null;
 
-  /**
-   * @return ElementAbstract[]
-   */
   public function getElements(): array
   {
     return $this->elements;
   }
 
-  /**
-   * @return string
-   */
   public function getFirstTabLabel(): string
   {
     return $this->firstTabLabel;
   }
 
-  /**
-   * @return ElementAbstract[][]
-   */
   public function getGroupedElements(): array
   {
     $groupTitle = $this->getFirstTabLabel();
@@ -110,18 +62,11 @@ class Form
     return $elements;
   }
 
-  /**
-   * @param string $name
-   * @return ElementAbstract
-   */
   public function getElement(string $name): ElementAbstract
   {
     return $this->elements[$name];
   }
 
-  /**
-   * @param ElementAbstract[] $elements
-   */
   public function addElements(array $elements): void
   {
     if (count($elements)) {
@@ -132,7 +77,7 @@ class Form
 
         foreach ($elements as $separator => $groupElements) {
 
-          $this->addElement(new Tab($separator));
+          $this->addElement(new Tab(Locale::t($separator)));
 
           foreach ($groupElements as $element) {
             $this->elements[$element->getName()] = $element;
@@ -146,17 +91,11 @@ class Form
     }
   }
 
-  /**
-   * @param ElementAbstract $element
-   */
   public function addElement(ElementAbstract $element): void
   {
     $this->elements[$element->getName()] = $element;
   }
 
-  /**
-   * @return array
-   */
   public function getValues(): array
   {
     $values = [];
@@ -168,9 +107,6 @@ class Form
     return $values;
   }
 
-  /**
-   * @return array
-   */
   public function getCleanValues(): array
   {
     $values = [];
@@ -182,125 +118,76 @@ class Form
     return $values;
   }
 
-  /**
-   * @return string
-   */
   public function getSubmit(): string
   {
     return $this->submit;
   }
 
-  /**
-   * @param string $submit
-   */
   public function setSubmit(string $submit): void
   {
     $this->submit = $submit;
   }
 
-  /**
-   * @return string
-   */
   public function getTemplate(): string
   {
     return $this->template;
   }
 
-  /**
-   * @param string $template
-   */
   public function setTemplate(string $template): void
   {
     $this->template = $template;
   }
 
-  /**
-   * @return View
-   */
   public function getView(): View
   {
     return $this->view;
   }
 
-  /**
-   * @param View $view
-   */
   public function setView(View $view): void
   {
     $this->view = $view;
   }
 
-  /**
-   * @return string
-   */
   public function getMethod(): string
   {
     return $this->method;
   }
 
-  /**
-   * @param string $method
-   */
   public function setMethod(string $method): void
   {
     $this->method = $method;
   }
 
-  /**
-   * @return string|null
-   */
   public function getAction(): ?string
   {
     return $this->action;
   }
 
-  /**
-   * @param string $action
-   */
   public function setAction(string $action): void
   {
     $this->action = $action;
   }
 
-  /**
-   * @return array|ModelAbstract[]
-   */
   public function getData(): array
   {
     return $this->data;
   }
 
-  /**
-   * @param mixed $data
-   * @return void
-   */
   public function setData(mixed $data): void
   {
     $this->data = $data;
   }
 
-  /**
-   * @return string
-   */
   public function getReturnUrl(): string
   {
     return $this->returnUrl;
   }
 
-  /**
-   * @param string $returnUrl
-   */
   public function setReturnUrl(string $returnUrl): void
   {
     $this->returnUrl = $returnUrl;
   }
 
-  /**
-   * @param array $data
-   * @return bool
-   * @throws FilterClassWasNotFound
-   * @throws ValidatorClassWasNotFound|ClassWasNotFound
-   */
   public function isValid(array $data = []): bool
   {
     $isValid = true;
@@ -318,29 +205,17 @@ class Form
     return $isValid;
   }
 
-  /**
-   * @param array $options
-   * @param array $elements
-   * @throws ClassWasNotFound
-   */
   public function __construct(array $options = [], array $elements = [])
   {
-    $this->firstTabLabel = Locale::t('General');
-
+    $this->firstTabLabel = 'General';
     foreach ($options as $name => $value) {
-
       if (is_callable([$this, 'set' . ucfirst($name)])) {
         call_user_func_array([$this, 'set' . ucfirst($name)], [$value]);
       }
     }
-
     $this->init($this->data ?? [], $elements);
   }
 
-  /**
-   * @return string
-   * @throws Exception
-   */
   public function __toString(): string
   {
     if (!$this->view) {
@@ -355,10 +230,6 @@ class Form
     return $this->view->render();
   }
 
-  /**
-   * @param null $model
-   * @param ElementAbstract[]|null $elements
-   */
   public function init($model = null, array $elements = []): void
   {
     if ($model && is_subclass_of($model, ModelAbstract::class)) {
@@ -381,9 +252,6 @@ class Form
     }
   }
 
-  /**
-   * @return array
-   */
   public function getErrorMessages(): array
   {
     $errorMessages = [];
@@ -395,11 +263,13 @@ class Form
     return $errorMessages;
   }
 
-  /**
-   * @return array
-   */
   public function getErrorFields(): array
   {
     return array_keys($this->getErrorMessages());
+  }
+
+  public static function inputs(mixed $data = null, array $elements = []): static
+  {
+    return new static(['data' => $data], $elements);
   }
 }

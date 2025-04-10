@@ -4,78 +4,50 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
-use Air\Core\Exception\ClassWasNotFound;
+use Air\Core\Front;
 use Air\Crud\Locale;
+use Air\Crud\Model\Language;
 use Air\Filter\Lowercase;
 use Air\Filter\Trim;
 use Air\Form\Element\Checkbox;
 use Air\Form\Element\Date;
 use Air\Form\Element\DateTime;
 use Air\Form\Element\ElementAbstract;
+use Air\Form\Element\Embed;
 use Air\Form\Element\FaIcon;
 use Air\Form\Element\Icon;
+use Air\Form\Element\Meta;
+use Air\Form\Element\Model;
+use Air\Form\Element\MultipleModel;
 use Air\Form\Element\MultiplePage;
 use Air\Form\Element\Page;
-use Air\Form\Element\Embed;
-use Air\Form\Element\Meta;
-use Air\Form\Element\MultipleModel;
 use Air\Form\Element\Quote;
 use Air\Form\Element\RichContent;
-use Air\Form\Element\Model;
+use Air\Form\Element\Select;
 use Air\Form\Element\Storage;
 use Air\Form\Element\Text;
 use Air\Form\Element\Textarea;
 use Air\Form\Element\Tiny;
-use Air\Model\Meta\Exception\PropertyWasNotFound;
+use Air\Form\Element\Url;
 use Air\Model\ModelAbstract;
 
 final class Generator
 {
-  /**
-   * @param ModelAbstract|null $model
-   * @param array $elements
-   * @return Form
-   * @throws ClassWasNotFound
-   * @throws PropertyWasNotFound
-   */
   public static function minimal(ModelAbstract $model = null, array $elements = []): Form
   {
     return new Form(['data' => $model], self::defaultElement($model, $elements));
   }
 
-  /**
-   * @param ModelAbstract|null $model
-   * @param array $elements
-   * @return Form
-   * @throws PropertyWasNotFound
-   * @throws ClassWasNotFound
-   */
   public static function full(ModelAbstract $model = null, array $elements = []): Form
   {
     return new Form(['data' => $model], self::defaultElement($model, $elements, true));
   }
 
-  /**
-   * @param ModelAbstract $model
-   * @param array $elements
-   * @return Form
-   * @throws ClassWasNotFound
-   * @throws PropertyWasNotFound
-   */
   public static function fullRequired(ModelAbstract $model, array $elements = []): Form
   {
     return new Form(['data' => $model], self::defaultElement($model, $elements, true, false));
   }
 
-  /**
-   * @param ModelAbstract|null $model
-   * @param array $userElements
-   * @param bool|null $includeReferences
-   * @param bool $allowNull
-   * @return array
-   * @throws ClassWasNotFound
-   * @throws PropertyWasNotFound
-   */
   public static function defaultElement(
     ModelAbstract $model = null,
     array         $userElements = [],
@@ -83,9 +55,14 @@ final class Generator
     bool          $allowNull = true
   ): array
   {
+    if (count($userElements) && isset($userElements[0])) {
+      $userElements = [
+        'General' => $userElements
+      ];
+    }
+
     $formElements = [
-      Locale::t('General') => [
-        'language' => null,
+      'General' => [
         'enabled' => null,
         'url' => null,
         'date' => null,
@@ -96,37 +73,51 @@ final class Generator
         'quote' => null,
         'icon' => null,
         'faIcon' => null,
-      ],
-      Locale::t('Documents') => [
-        'page' => null,
-        'pages' => null,
-      ],
-      Locale::t('Images') => [
         'image' => null,
         'images' => null,
         'file' => null,
         'files' => null,
+        'name' => null,
+        'login' => null,
+        'password' => null,
       ],
-      Locale::t('Content') => [
+      'Documents' => [
+        'page' => null,
+        'pages' => null,
+      ],
+      'Content' => [
         'content' => null,
         'richContent' => null,
         'embed' => null,
       ],
-      Locale::t('META settings') => [
+      'META settings' => [
         'meta' => null,
       ],
     ];
 
+    if (Front::getInstance()->getConfig()['air']['admin']['languages'] ?? false) {
+      $formElements['General']['language'] = null;
+    }
+
+    foreach ($model->getMeta()->getProperties() as $property) {
+      if ($property->getIsEnum()) {
+        $formElements['General'][$property->getName()] = null;
+      }
+    }
+
     if ($includeReferences) {
-      $formElements[Locale::t('References')] = [];
+      $formElements['References'] = [];
 
       foreach ($model->getMeta()->getProperties() as $property) {
+        if ($property->getName() === 'language' && $property->getType() === Language::class) {
+          continue;
+        }
         $type = $property->getType();
         if (str_ends_with($type, '[]')) {
           $type = substr($type, 0, strlen($type) - 2);
         }
         if (class_exists($type) && is_subclass_of($type, ModelAbstract::class)) {
-          $formElements[Locale::t('References')][$property->getName()] = null;
+          $formElements['References'][$property->getName()] = null;
         }
       }
     }
@@ -174,15 +165,16 @@ final class Generator
     return array_filter($formElements);
   }
 
-  /**
-   * @param string $name
-   * @return string|null
-   */
-  private static function getElementClassName(string $name): ?string
+  private static function getElementClassName(string $name, ModelAbstract $model): ?string
   {
+    if ($model->getMeta()->hasProperty($name) && $model->getMeta()->getPropertyWithName($name)->getIsEnum()) {
+      return Select::class;
+    }
+
     return match ($name) {
       'language' => Model::class,
-      'url', 'title', 'subTitle' => Text::class,
+      'url' => Url::class,
+      'title', 'subTitle', 'name', 'login', 'password' => Text::class,
       'enabled' => Checkbox::class,
       'date' => Date::class,
       'dateTime' => DateTime::class,
@@ -201,30 +193,24 @@ final class Generator
     };
   }
 
-  /**
-   * @param string $name
-   * @param ModelAbstract $model
-   * @param ElementAbstract|null $userElement
-   * @param bool $allowNull
-   * @return ElementAbstract|null
-   */
   private static function addElement(
     string          $name,
     ModelAbstract   $model,
     ElementAbstract $userElement = null,
-    bool            $allowNull = true
   ): ?ElementAbstract
   {
     $hasProperty = $model->getMeta()->hasProperty($name);
-    $elementClassName = self::getElementClassName($name);
-    $methodExists = method_exists(self::class, $name);
+    $elementClassName = self::getElementClassName($name, $model);
 
-    if (!$hasProperty || !$elementClassName || !$methodExists) {
+    if (!$hasProperty || !$elementClassName) {
       return null;
     }
 
-    $elementOptions = call_user_func([self::class, $name]);
-    $elementOptions['allowNull'] = $allowNull;
+    if (method_exists(self::class, $name)) {
+      $elementOptions = call_user_func([self::class, $name]);
+    } else {
+      $elementOptions = self::other($name, $model);
+    }
 
     if ($userElement) {
       $elementClassName = $userElement::class;
@@ -234,14 +220,6 @@ final class Generator
     return new $elementClassName($name, $elementOptions);
   }
 
-  /**
-   * @param string $name
-   * @param ModelAbstract $model
-   * @param ElementAbstract|null $userElement
-   * @param bool $allowNull
-   * @return ElementAbstract|null
-   * @throws PropertyWasNotFound
-   */
   private static function addModelElement(
     string           $name,
     ModelAbstract    $model,
@@ -282,10 +260,6 @@ final class Generator
     return new $elementClassName($name, $elementOptions);
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function language(): array
   {
     return [
@@ -294,10 +268,17 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
+  private static function url(): array
+  {
+    return [
+      'label' => 'URL',
+      'filters' => [Trim::class, Lowercase::class],
+      'allowNull' => false,
+      'hint' => 'URL',
+      'description' => Locale::t('Use only lower-case letters a-z and digits 0-9')
+    ];
+  }
+
   private static function enabled(): array
   {
     return [
@@ -306,24 +287,6 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
-  private static function url(): array
-  {
-    return [
-      'label' => 'URL',
-      'filters' => [Trim::class, Lowercase::class],
-      'hint' => 'URL',
-      'description' => Locale::t('Use only lower-case letters a-z and digits 0-9')
-    ];
-  }
-
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function date(): array
   {
     return [
@@ -331,10 +294,6 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function dateTime(): array
   {
     return [
@@ -342,10 +301,6 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function title(): array
   {
     return [
@@ -356,95 +311,70 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function subTitle(): array
   {
     return [
       'label' => Locale::t('Sub title'),
       'filters' => [Trim::class],
+      'allowNull' => false,
       'description' => Locale::t('This is a slightly expanded version of the title')
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function description(): array
   {
     return [
       'label' => Locale::t('Description'),
       'filters' => [Trim::class],
+      'allowNull' => false,
       'description' => Locale::t('Come up with a concise description')
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function image(): array
   {
     return [
       'label' => Locale::t('Image'),
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function images(): array
   {
     return [
       'label' => Locale::t('Images'),
       'multiple' => true,
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function file(): array
   {
     return [
       'label' => Locale::t('File'),
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function files(): array
   {
     return [
       'label' => Locale::t('Files'),
       'multiple' => true,
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function meta(): array
   {
     return [
       'label' => Locale::t('Meta'),
       'description' => Locale::t('Complete your web page meta tags, including title, description, and keywords, to enhance ' .
-        'visibility on search engines and attract your target audience.')
+        'visibility on search engines and attract your target audience.'),
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function quote(): array
   {
     return [
@@ -453,23 +383,16 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function content(): array
   {
     return [
       'label' => Locale::t('Content'),
       'description' => Locale::t('Input and edit text with diverse styles, sizes, along with intuitive formatting options such' .
-        ' as bold, italic, and underline, as well as support for various data types like links.')
+        ' as bold, italic, and underline, as well as support for various data types like links.'),
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function embed(): array
   {
     return [
@@ -478,22 +401,15 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function richContent(): array
   {
     return [
       'label' => Locale::t('Rich content'),
-      'description' => Locale::t('Input and edit a different content types, such as Html, Text, Images, Quote and Code snippets.')
+      'description' => Locale::t('Input and edit a different content types, such as Html, Text, Images, Quote and Code snippets.'),
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function page(): array
   {
     return [
@@ -503,10 +419,6 @@ final class Generator
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function pages(): array
   {
     return [...self::page(), ...[
@@ -514,29 +426,58 @@ final class Generator
     ]];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function icon(): array
   {
     return [
       'label' => Locale::t('Icon (Google Symbol)'),
       'description' => Locale::t('Use icons name from Google Symbols<br><a href="https://fonts.google.com/icons"' .
-        ' class="text-info text-decoration-underline" target="_blank">Google Symbols</a>')
+        ' class="text-info text-decoration-underline" target="_blank">Google Symbols</a>'),
+      'allowNull' => false,
     ];
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   private static function faIcon(): array
   {
     return [
       'label' => Locale::t('Font Awesome v6.6'),
       'description' => Locale::t('Use icons name from Font Awesome<br><a href="https://fontawesome.com/search"' .
-        ' class="text-info text-decoration-underline" target="_blank">Font Awesome</a>')
+        ' class="text-info text-decoration-underline" target="_blank">Font Awesome</a>'),
+      'allowNull' => false,
+    ];
+  }
+
+  private static function other(string $name, ModelAbstract $model): array
+  {
+    $title = preg_replace('/([a-z])([A-Z])/', '$1 $2', $name);
+    return [
+      'label' => Locale::t(ucfirst(strtolower($title))),
+      'description' => Locale::t('Select a value from the enumeration'),
+      'options' => $model->getMeta()->getPropertyWithName($name)->getEnum(),
+      'allowNull' => false,
+    ];
+  }
+
+  private static function name(): array
+  {
+    return [
+      'label' => Locale::t('Name'),
+      'allowNull' => false,
+    ];
+  }
+
+  private static function login(): array
+  {
+    return [
+      'label' => Locale::t('Login'),
+      'allowNull' => false,
+    ];
+  }
+
+  private static function password(): array
+  {
+    return [
+      'label' => Locale::t('Password'),
+      'allowNull' => false,
     ];
   }
 }

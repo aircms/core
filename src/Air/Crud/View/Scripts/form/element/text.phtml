@@ -6,7 +6,7 @@ use Air\Form\Element\Text;
 $element = $this->element;
 ?>
 <div class="form-outline bg-body-tertiary" data-mdb-input-init>
-  <input class="form-control form-control-lg"
+  <input class="form-control form-control-lg <?php echo $element->getType(); ?>"
          type="<?php echo $element->getType(); ?>"
          id="<?php echo $element->getName(); ?>"
          name="<?php echo $element->getName(); ?>"

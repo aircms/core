@@ -4,21 +4,12 @@ declare(strict_types=1);
 
 namespace Air\View\Helper;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
-use Air\Crud\Controller\FontsUi;
 use Air\Crud\Model\Codes;
 use Air\Crud\Model\Font;
 
 class Head extends HelperAbstract
 {
-  /**
-   * @param string $charset
-   * @param string $viewport
-   * @param string|null $favicon
-   * @return string
-   * @throws ClassWasNotFound
-   */
   public function call(
     string       $charset = 'UTF-8',
     string       $viewport = 'width=device-width, initial-scale=1.0, minimum-scale=1.0',

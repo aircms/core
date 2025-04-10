@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use ReflectionClass;
-use ReflectionException;
-use Throwable;
 
 class FaIcon extends TypeAbstract
 {
@@ -26,52 +19,29 @@ class FaIcon extends TypeAbstract
   const string STYLE_SHARP_THIN = 'fa-sharp fa-thin';
   const string STYLE_SHARP_DUOTONE = 'fa-sharp-duotone fa-solid';
 
-  /**
-   * @var string|null
-   */
   public ?string $icon = null;
-
-  /**
-   * @var string
-   */
   public string $style = self::STYLE_REGULAR;
 
-  /**
-   * @return string|null
-   */
   public function getIcon(): ?string
   {
     return $this->icon;
   }
 
-  /**
-   * @param string|null $icon
-   */
   public function setIcon(?string $icon): void
   {
     $this->icon = $icon;
   }
 
-  /**
-   * @return string
-   */
   public function getStyle(): string
   {
     return $this->style;
   }
 
-  /**
-   * @param string $style
-   * @return void
-   */
   public function setStyle(string $style): void
   {
     $this->style = $style;
   }
 
-  /**
-   * @return array
-   */
   public static function getIcons(): array
   {
     $reflectionClass = new ReflectionClass(self::class);
@@ -81,25 +51,11 @@ class FaIcon extends TypeAbstract
     }, ARRAY_FILTER_USE_KEY);
   }
 
-  /**
-   * @return bool
-   */
   public function isBrand(): bool
   {
     return in_array($this->getIcon(), self::BRANDS);
   }
 
-  /**
-   * @param string|array $iconData
-   * @return self
-   * @throws ClassWasNotFound
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
-   */
   public static function icon(string|array $iconData): self
   {
     if (is_string($iconData)) {
@@ -107,7 +63,6 @@ class FaIcon extends TypeAbstract
     }
     return new self($iconData);
   }
-
 
   const string ICON_0 = "0";
   const string ICON_1 = "1";

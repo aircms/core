@@ -5,28 +5,11 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Controller;
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Core\Exception\DomainMustBeProvided;
-use Air\Core\Exception\Stop;
 use Air\Core\Front;
 use Air\Crud\Auth;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 
 abstract class AuthCrud extends Controller
 {
-  /**
-   * @return void
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DomainMustBeProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws Stop
-   */
   public function init(): void
   {
     parent::init();

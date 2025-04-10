@@ -1,113 +1,65 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Core;
 
-/**
- * Class Response
- * @package Air
- */
 class Response
 {
-  /**
-   * @var int
-   */
-  private $_statusCode = 200;
+  private int $statusCode = 200;
+  private string $statusMessage = '';
+  private mixed $body = null;
+  private array $headers = [];
 
-  /**
-   * @var string
-   */
-  private $_statusMessage = '';
-
-  /**
-   * @var mixed
-   */
-  private $_body = null;
-
-  /**
-   * @var array
-   */
-  private $_headers = [];
-
-  /**
-   * @return int
-   */
   public function getStatusCode(): int
   {
-    return $this->_statusCode;
+    return $this->statusCode;
   }
 
-  /**
-   * @param int $statusCode
-   */
-  public function setStatusCode(int $statusCode)
+  public function setStatusCode(int $statusCode): void
   {
-    $this->_statusCode = $statusCode;
+    $this->statusCode = $statusCode;
   }
 
-  /**
-   * @return string
-   */
   public function getStatusMessage(): string
   {
-    return $this->_statusMessage;
+    return $this->statusMessage;
   }
 
-  /**
-   * @param string $statusMessage
-   */
-  public function setStatusMessage(string $statusMessage)
+  public function setStatusMessage(string $statusMessage): void
   {
-    $this->_statusMessage = $statusMessage;
+    $this->statusMessage = $statusMessage;
   }
 
-  /**
-   * @return mixed
-   */
-  public function getBody()
+  public function getBody(): mixed
   {
-    return $this->_body;
+    return $this->body;
   }
 
-  /**
-   * @param mixed $body
-   */
-  public function setBody($body)
+  public function setBody($body): void
   {
-    $this->_body = $body;
+    $this->body = $body;
   }
 
-  /**
-   * @return array
-   */
   public function getHeaders(): array
   {
-    return $this->_headers;
+    return $this->headers;
   }
 
-  /**
-   * @param array $headers
-   */
-  public function setHeaders(array $headers)
+  public function setHeaders(array $headers): void
   {
-    $this->_headers = $headers;
+    $this->headers = $headers;
   }
 
-  /**
-   * @param array $headers
-   */
-  public function addHeaders(array $headers)
+  public function addHeaders(array $headers): void
   {
     foreach ($headers as $key => $val) {
-      $this->_headers[$key] = $val;
+      $this->headers[$key] = $val;
     }
   }
 
-  /**
-   * @param string $key
-   * @param string $value
-   */
-  public function setHeader(string $key, string $value)
+  public function setHeader(string $key, string $value): void
   {
-    $this->_headers[$key] = $value;
+    $this->headers[$key] = $value;
   }
 }

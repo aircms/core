@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @param string|null $title
- * @param Closure|array|string|null $content
- * @param bool $opened
- * @param string|null $mainClass
- * @param string|null $titleClass
- * @param string|null $bodyClass
- * @return string
- */
 function document(
   array|string         $htmlAttributes = null,
   array|string         $htmlData = null,

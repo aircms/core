@@ -9,12 +9,8 @@ use Air\Model\ModelAbstract;
 
 class PropertyIsSetIncorrectly extends Exception
 {
-  /**
-   * @param ModelAbstract $model
-   * @param string $line
-   */
   public function __construct(ModelAbstract $model, string $line)
   {
-    parent::__construct("PropertyIsSetIncorrectly: line: '" . $line . "', model: " . var_export($model, true));
+    parent::__construct("Line: '" . $line . "', model: " . var_export($model, true));
   }
 }

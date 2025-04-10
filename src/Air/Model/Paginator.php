@@ -4,45 +4,16 @@ declare(strict_types=1);
 
 namespace Air\Model;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Model\Driver\CursorAbstract;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 
 class Paginator
 {
-  /**
-   * @var ModelAbstract |null
-   */
   private ?ModelAbstract $model;
-
-  /**
-   * @var array|null
-   */
   private ?array $cond;
-
-  /**
-   * @var array|null
-   */
   private ?array $sort;
-
-  /**
-   * @var int
-   */
   private int $page = 0;
-
-  /**
-   * @var int
-   */
   private int $itemsPerPage = 10;
 
-  /**
-   * @param ModelAbstract $model
-   * @param array|null $cond
-   * @param array|null $sort
-   */
   public function __construct(ModelAbstract $model, array $cond = null, array $sort = null)
   {
     $this->model = $model;
@@ -50,14 +21,6 @@ class Paginator
     $this->sort = $sort;
   }
 
-  /**
-   * @return CursorAbstract|array
-   * @throws ClassWasNotFound
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function getItems(): CursorAbstract|array
   {
     /** @var ModelAbstract $modelClassName */
@@ -69,46 +32,26 @@ class Paginator
     return $modelClassName::fetchAll($this->cond, $this->sort, $limit, $offset);
   }
 
-  /**
-   * @return int
-   */
   public function getItemsPerPage(): int
   {
     return $this->itemsPerPage;
   }
 
-  /**
-   * @param int $itemsPerPage
-   */
   public function setItemsPerPage(int $itemsPerPage): void
   {
     $this->itemsPerPage = $itemsPerPage;
   }
 
-  /**
-   * @return int
-   */
   public function getPage(): int
   {
     return $this->page;
   }
 
-  /**
-   * @param int $page
-   */
   public function setPage(int $page): void
   {
     $this->page = $page;
   }
 
-  /**
-   * @return int
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function count(): int
   {
     /** @var ModelAbstract $modelClassName */
@@ -116,14 +59,6 @@ class Paginator
     return $modelClassName::count($this->cond);
   }
 
-  /**
-   * @return array|null
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function calculate(): ?array
   {
     $totalCount = $this->model::count($this->cond);

@@ -7,7 +7,7 @@ function table(
   string|array                        $class = null,
   array|string                        $attributes = [],
   array|string                        $data = [],
-)
+): string
 {
   return tag(
     tagName: 'table',
@@ -23,7 +23,7 @@ function tr(
   string|array                        $class = null,
   array|string                        $attributes = [],
   array|string                        $data = [],
-)
+): string
 {
   return tag(
     tagName: 'tr',
@@ -39,7 +39,7 @@ function td(
   string|array              $class = null,
   array|string              $attributes = [],
   array|string              $data = [],
-)
+): string
 {
   return tag(
     tagName: 'td',

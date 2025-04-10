@@ -6,7 +6,7 @@ use Air\Form\Element\MultipleGroup;
 $element = $this->element;
 ?>
 
-<div data-admin-form-element-group-multiple="<?php echo $element->getName(); ?>">
+<div class="d-flex flex-column gap-3" data-admin-form-element-group-multiple="<?php echo $element->getName(); ?>">
   <?php echo $this->partial('form/element/multiple-group/toolbar'); ?>
   <?php foreach ($element->getGroups() as $group) : ?>
     <?php echo $this->partial('form/element/multiple-group/container', [

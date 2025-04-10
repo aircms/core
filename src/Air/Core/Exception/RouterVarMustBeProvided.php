@@ -1,21 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Core\Exception;
 
 use Exception;
 
-/**
- * Class RouterVarMustBeProvided
- * @package Air\Exception
- */
 class RouterVarMustBeProvided extends Exception
 {
-  /**
-   * RouterVarMustBeProvided constructor.
-   * @param string $var
-   */
   public function __construct(string $var)
   {
-    parent::__construct('RouterVarMustBeProvided: ' . $var, 500);
+    parent::__construct($var, 500);
   }
 }

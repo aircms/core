@@ -4,97 +4,56 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
-use Exception;
-use Air\Core\Exception\ClassWasNotFound;
-
 class Page
 {
   const int WIDTH = 360;
   const int HEIGHT = 560;
   const int GUTTER = 10;
 
-  /**
-   * @var string|null
-   */
   public ?string $backgroundColor = null;
-
-  /**
-   * @var File|null
-   */
   public ?File $backgroundImage = null;
-
-  /**
-   * @var int
-   */
   public int $width = self::WIDTH;
-
-  /**
-   * @var int
-   */
   public int $height = self::HEIGHT;
 
   /**
    * @var PageItem[]|null
    */
   public ?array $items = [];
-
-  /**
-   * @var int
-   */
   public int $gutter = self::GUTTER;
 
-  /**
-   * @return string|null
-   */
   public function getBackgroundColor(): ?string
   {
     return $this->backgroundColor;
   }
 
-  /**
-   * @return File|null
-   */
   public function getBackgroundImage(): ?File
   {
     return $this->backgroundImage;
   }
 
   /**
-   * @return array|PageItem[]|null
+   * @return PageItem[]|null
    */
   public function getItems(): ?array
   {
     return $this->items;
   }
 
-  /**
-   * @return int
-   */
   public function getWidth(): int
   {
     return $this->width;
   }
 
-  /**
-   * @return int
-   */
   public function getHeight(): int
   {
     return $this->height;
   }
 
-  /**
-   * @return int
-   */
   public function getGutter(): int
   {
     return $this->gutter;
   }
 
-  /**
-   * @param array|null $page
-   * @throws Exception
-   */
   public function __construct(?array $page = [])
   {
     if ($page['backgroundColor'] ?? false) {
@@ -122,10 +81,6 @@ class Page
     }
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   public function asCss(): string
   {
     $imageSrc = null;

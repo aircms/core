@@ -9,11 +9,8 @@ use Air\Model\ModelAbstract;
 
 class CollectionCantBeWithoutProperties extends Exception
 {
-  /**
-   * @param ModelAbstract $model
-   */
   public function __construct(ModelAbstract $model)
   {
-    parent::__construct("CollectionCantBeWithoutProperties: " . var_export($model, true));
+    parent::__construct(var_export($model, true));
   }
 }

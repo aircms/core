@@ -26,29 +26,14 @@ use Air\Type\File;
  */
 class Language extends ModelAbstract
 {
-  /**
-   * @var Language|null
-   */
   private static self|null $defaultLanguage = null;
 
-  /**
-   * @param Language $language
-   * @return void
-   */
   public static function setDefaultLanguage(self $language): void
   {
     self::$defaultLanguage = $language;
   }
 
-  /**
-   * @return self
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
-  public static function getLanguage(): self
+  public static function getLanguage(): ?self
   {
     if (self::$defaultLanguage) {
       return self::$defaultLanguage;

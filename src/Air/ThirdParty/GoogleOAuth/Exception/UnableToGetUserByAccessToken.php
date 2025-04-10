@@ -8,11 +8,8 @@ use Exception;
 
 class UnableToGetUserByAccessToken extends Exception
 {
-  /**
-   * @param string $accessToken
-   */
   public function __construct(string $accessToken)
   {
-    parent::__construct('UnableToGetUserByAccessToken: ' . $accessToken, 400);
+    parent::__construct($accessToken, 400);
   }
 }

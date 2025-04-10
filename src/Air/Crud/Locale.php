@@ -4,37 +4,35 @@ declare(strict_types=1);
 
 namespace Air\Crud;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 
 class Locale
 {
-  /**
-   * @var array|null
-   */
   public static ?array $keys = null;
 
-  /**
-   * @param string $key
-   * @return string
-   * @throws ClassWasNotFound
-   */
   public static function t(string $key): string
   {
     if (!self::$keys) {
       self::$keys = self::phrases();
     }
-    return self::$keys[$key] ?? $key;
+    if (isset(self::$keys[$key])) {
+      return self::$keys[$key];
+    }
+
+    self::$keys[$key] = $key;
+
+    if ($filename = Front::getInstance()->getConfig()['air']['admin']['locale'] ?? false) {
+      file_put_contents($filename, json_encode(self::$keys, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
+
+    return $key;
   }
 
-  /**
-   * @return array
-   * @throws ClassWasNotFound
-   */
   public static function phrases(): array
   {
-    $lang = Front::getInstance()->getConfig()['air']['admin']['locale'];
-    $filename = realpath(__DIR__ . '/../../../locale/' . $lang . '.php');
-    return require $filename;
+    if ($filename = (Front::getInstance()->getConfig()['air']['admin']['locale'] ?? false)) {
+      return json_decode(file_get_contents($filename), true);
+    }
+    return [];
   }
 }

@@ -8,11 +8,11 @@ use Air\Crud\Model\Language;
 
 class Route
 {
-  public static function assemble(array $route = [], array $params = [], bool $onlyUri = false): string
+  public static function assemble(array $route = [], array $params = [], bool $onlyUri = true): string
   {
     if (!isset($params['language'])) {
       $language = Language::getLanguage();
-      if (!$language->isDefault) {
+      if ($language && !$language->isDefault) {
         $params['language'] = $language->key;
       }
     }

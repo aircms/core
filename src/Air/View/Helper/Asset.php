@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Air\View\Helper;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 
 class Asset extends HelperAbstract
@@ -16,10 +15,9 @@ class Asset extends HelperAbstract
     if (!self::$config) {
       self::$config = array_merge([
         'underscore' => false,
-        'date' => true,
         'prefix' => '',
         'defer' => false,
-        'async' => false,
+        'async' => false
       ], Front::getInstance()->getConfig()['air']['asset'] ?? []);
     }
 
@@ -70,15 +68,6 @@ class Asset extends HelperAbstract
       }
       return $uri . '?_=' . microtime();
     }
-
-    if ((self::$config['date'] ?? false) && str_starts_with($uri, '/assets/ui')) {
-      $changeTime = filectime($_SERVER['DOCUMENT_ROOT'] . $uri);
-      if (str_contains($uri, '?')) {
-        return $uri . '&_=' . $changeTime;
-      }
-      return $uri . '?_=' . $changeTime;
-    }
-
     return $uri;
   }
 

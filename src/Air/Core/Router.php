@@ -8,172 +8,87 @@ use Air\Core\Exception\DomainMustBeProvided;
 use Air\Core\Exception\RouterDomainWasNotFound;
 use Air\Core\Exception\RouterWasNotFound;
 
-/**
- * Class Router
- * @package Air
- */
 class Router
 {
-  /**
-   * @var Request|null
-   */
   private ?Request $request = null;
-
-  /**
-   * @var string
-   */
   private string $module = '';
-
-  /**
-   * @var string
-   */
   private string $controller = '';
-
-  /**
-   * @var string
-   */
   private string $action = '';
-
-  /**
-   * @var array
-   */
   private array $routes = [];
-
-  /**
-   * @var array
-   */
   private array $urlParams = [];
-
-  /**
-   * @var array
-   */
   private array $injector = [];
-
-  /**
-   * @var array
-   */
   private array $config = [];
 
-  /**
-   * @return string
-   */
   public function getModule(): string
   {
     return $this->module;
   }
 
-  /**
-   * @param string $module
-   */
   public function setModule(string $module): void
   {
     $this->module = $module;
   }
 
-  /**
-   * @return string
-   */
   public function getController(): string
   {
     return $this->controller;
   }
 
-  /**
-   * @param string $controller
-   */
-  public function setController(string $controller)
+  public function setController(string $controller): void
   {
     $this->controller = $controller;
   }
 
-  /**
-   * @return string
-   */
   public function getAction(): string
   {
     return $this->action;
   }
 
-  /**
-   * @param string $action
-   */
   public function setAction(string $action): void
   {
     $this->action = $action;
   }
 
-  /**
-   * @return array
-   */
   public function getRoutes(): array
   {
     return $this->routes;
   }
 
-  /**
-   * @param array $routes
-   */
   public function setRoutes(array $routes): void
   {
     $this->routes = $routes;
   }
 
-  /**
-   * @return array
-   */
   public function getUrlParams(): array
   {
     return $this->urlParams;
   }
 
-  /**
-   * @param array $urlParams
-   */
   public function setUrlParams(array $urlParams): void
   {
     $this->urlParams = $urlParams;
   }
 
-  /**
-   * @return array
-   */
   public function getInjector(): array
   {
     return $this->injector;
   }
 
-  /**
-   * @param array $injector
-   */
   public function setInjector(array $injector): void
   {
     $this->injector = $injector;
   }
 
-  /**
-   * @return array
-   */
   public function getConfig(): array
   {
     return $this->config;
   }
 
-  /**
-   * @param array $config
-   */
   public function setConfig(array $config): void
   {
     $this->config = $config;
   }
 
-  /**
-   * @param array $requestedRoute
-   * @param array $params
-   * @param bool $reset
-   * @param bool $onlyUri
-   * @return string
-   * @throws DomainMustBeProvided
-   */
   public function assemble(
     array $requestedRoute = [],
     array $params = [],
@@ -273,27 +188,16 @@ class Router
     return $this->getRequest()->getScheme() . '://' . $selectedDomain . $port . $uri;
   }
 
-  /**
-   * @return Request
-   */
   public function getRequest(): Request
   {
     return $this->request;
   }
 
-  /**
-   * @param Request $request
-   */
   public function setRequest(Request $request): void
   {
     $this->request = $request;
   }
 
-  /**
-   * @return void
-   * @throws RouterDomainWasNotFound
-   * @throws RouterWasNotFound
-   */
   public function parse(): void
   {
     $domain = $this->getRequest()->getDomain();

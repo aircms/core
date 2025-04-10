@@ -48,14 +48,20 @@ echo $this->partial('common/header');
                      data-admin-async-image="<?php echo $item->image->getSrc(); ?>"></div>
               <?php endif; ?>
 
-              <div class="h6 m-0 max-lines-2"><?php echo $item->{$positioning}; ?></div>
+              <div class="h6 m-0 max-lines-2">
+                <?php if ($item->getMeta()->hasProperty($positioning)) : ?>
+                  <?php echo $item->{$positioning}; ?>
+                <?php else: ?>
+                  <?php echo $positioning($item); ?>
+                <?php endif; ?>
+              </div>
 
               <?php if ($item->getMeta()->hasProperty('language') && $item->language instanceof Language) : ?>
                 <div class="text-muted small rounded-2 px-1 bg-dark-subtle"><?php echo $item->language->key; ?></div>
               <?php endif; ?>
 
               <div data-admin-position-form-counter
-                class="rounded-4 ms-3 h5 m-0 bg-primary-subtle counter d-flex align-items-center justify-content-center">
+                   class="rounded-4 ms-3 h5 m-0 bg-primary-subtle counter d-flex align-items-center justify-content-center">
                 <?php echo $item->position + 1; ?>
               </div>
             </div>

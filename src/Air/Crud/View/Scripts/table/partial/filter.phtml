@@ -43,6 +43,9 @@ if ($visibleFilterCount > 4) {
           <?php elseif ($filterItem['type'] == 'dateTime') : ?>
             <?php echo $this->partial('table/partial/filter/dateTime', ['filter' => $filterItem]); ?>
 
+          <?php elseif ($filterItem['type'] == 'date') : ?>
+            <?php echo $this->partial('table/partial/filter/date', ['filter' => $filterItem]); ?>
+
           <?php elseif ($filterItem['type'] == 'model') : ?>
             <?php echo $this->partial('table/partial/filter/model', ['filter' => $filterItem]); ?>
           <?php endif; ?>

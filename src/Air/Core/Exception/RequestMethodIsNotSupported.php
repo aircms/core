@@ -1,21 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Core\Exception;
 
 use Exception;
 
-/**
- * Class RequestMethodIsNotSupported
- * @package Air\Exception
- */
 class RequestMethodIsNotSupported extends Exception
 {
-  /**
-   * RequestMethodIsNotSupported constructor.
-   * @param string $method
-   */
   public function __construct(string $method)
   {
-    parent::__construct('RequestMethodIsNotSupported: ' . $method, 500);
+    parent::__construct($method, 500);
   }
 }

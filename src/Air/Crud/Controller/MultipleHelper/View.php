@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller\MultipleHelper;
 
+use Air\Crud\Locale;
 use Air\Model\ModelAbstract;
 
 trait View
 {
-  public function view(string $id): void
+  public function view(ModelAbstract $model): void
   {
-    /** @var ModelAbstract $modelClassName */
-    $modelClassName = $this->getModelClassName();
-    $model = $modelClassName::fetchObject(['id' => $id]);
-
     $form = $this->getForm($model);
 
     $form->setReturnUrl($this->getRouter()->assemble([
@@ -22,7 +19,7 @@ trait View
 
     $this->getView()->setVars([
       'icon' => $this->getAdminMenuItem()['icon'] ?? null,
-      'title' => $this->getTitle(),
+      'title' => Locale::t($this->getTitle()),
       'form' => $form,
       'mode' => 'manage',
       'isQuickManage' => true,

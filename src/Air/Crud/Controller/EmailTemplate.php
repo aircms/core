@@ -5,26 +5,35 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
-use Air\Form\Element\Text;
-use Air\Form\Element\Tiny;
 use Air\Form\Form;
 use Air\Form\Generator;
+use Air\Form\Input;
+use Air\Type\FaIcon;
 
 /**
- * @mod-manageable true
- *
  * @mod-controls {"type": "copy"}
- *
- * @mod-header {"title": "URL", "by": "url"}
- * @mod-header {"title": "Subject", "by": "subject"}
- * @mod-header {"title": "Language", "by": "language", "type": "model", "field": "title"}
  */
 class EmailTemplate extends Multiple
 {
+  protected function getHeader(): array
+  {
+    $headers = [
+      Header::text(by: 'url'),
+      Header::text(by: 'subject'),
+      Header::longtext(by: 'body'),
+      Header::enabled(),
+    ];
+    if (Front::getInstance()->getConfig()['air']['admin']['languages'] ?? false) {
+      $headers[] = Header::language();
+    }
+    return $headers;
+  }
+
   protected function getTitle(): string
   {
-    return Locale::t('Email / Templates');
+    return 'Email / Templates';
   }
 
   protected function getModelClassName(): string
@@ -32,9 +41,9 @@ class EmailTemplate extends Multiple
     return \Air\Crud\Model\EmailTemplate::class;
   }
 
-  protected function getAdminMenuItem(): array|null
+  protected function getIcon(): string
   {
-    return ['icon' => 'page'];
+    return FaIcon::ICON_PAGE;
   }
 
   protected function getEntity(): string
@@ -44,13 +53,9 @@ class EmailTemplate extends Multiple
 
   protected function getForm($model = null): Form
   {
-    /** @var \Air\Crud\Model\EmailTemplate $model */
-
     return Generator::full($model, [
-      'General' => [
-        new Text('subject'),
-        new Tiny('body')
-      ],
+      Input::text('subject'),
+      Input::tiny('body'),
     ]);
   }
 }

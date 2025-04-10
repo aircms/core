@@ -11,7 +11,7 @@ trait Printable
     return $this->getTitle();
   }
 
-  protected function getPrintableHeader(): array
+  protected function getPrintableHeader(): ?array
   {
     return $this->getHeader();
   }

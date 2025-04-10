@@ -5,22 +5,21 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
+use Air\Crud\Controller\MultipleHelper\Accessor\Filter;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
-use Air\Form\Element\Text;
 use Air\Form\Form;
 use Air\Form\Generator;
+use Air\Form\Input;
 use Air\Model\ModelAbstract;
+use Air\Type\FaIcon;
 
 /**
- * @mod-quick-manage true
+ * @mod-quick-manage
+ * @mod-items-per-page 100
  */
 class Phrase extends Multiple
 {
-  protected function getItemsPerPage(): int
-  {
-    return 100;
-  }
-
   protected function getTitle(): string
   {
     return Locale::t('Phrases');
@@ -29,8 +28,8 @@ class Phrase extends Multiple
   protected function getHeader(): array
   {
     return [
-      'key' => ['title' => Locale::t('Key'), 'by' => 'key'],
-      'value' => ['title' => Locale::t('Value'), 'source' => function (\Air\Crud\Model\Phrase $phrase) {
+      Header::text(by: 'key'),
+      Header::source('Value', function (\Air\Crud\Model\Phrase $phrase) {
         return text(
           value: $phrase->value,
           class: 'form-control',
@@ -41,18 +40,18 @@ class Phrase extends Multiple
             'phrase-value' => $phrase->value
           ],
         );
-      }],
-      'isEdited' => ['title' => Locale::t('Edited'), 'by' => 'isEdited', 'type' => 'bool'],
-      'language' => ['title' => Locale::t('Language'), 'by' => 'language', 'type' => 'model', 'field' => 'title'],
+      }),
+      Header::bool(by: 'isEdited'),
+      Header::language()
     ];
   }
 
   protected function getFilter(): array
   {
     return [
-      ['type' => 'search', 'by' => ['key', 'value']],
-      ['type' => 'bool', 'by' => 'isEdited', 'true' => 'Edited', 'false' => 'Not edited'],
-      ['type' => 'model', 'by' => 'language', 'field' => 'title', 'model' => \Air\Crud\Model\Language::class]
+      Filter::search(['key', 'value']),
+      Filter::bool('Edited', 'isEdited', 'Edited', 'Not edited'),
+      Filter::language()
     ];
   }
 
@@ -61,9 +60,9 @@ class Phrase extends Multiple
     return \Air\Crud\Model\Phrase::class;
   }
 
-  protected function getAdminMenuItem(): array
+  protected function getIcon(): string
   {
-    return ['icon' => 'language'];
+    return FaIcon::ICON_LANGUAGE;
   }
 
   protected function getEntity(): string
@@ -74,14 +73,8 @@ class Phrase extends Multiple
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      Locale::t('General') => [
-        new Text('key', [
-          'label' => Locale::t('Key'),
-        ]),
-        new Text('value', [
-          'label' => Locale::t('Value'),
-        ]),
-      ],
+      Input::text('key'),
+      Input::text('value'),
     ]);
   }
 

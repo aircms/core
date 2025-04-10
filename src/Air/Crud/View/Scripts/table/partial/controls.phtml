@@ -1,6 +1,7 @@
 <?php
 
 use Air\Core\Front;
+use Air\Crud\Model\Language;
 use Air\Map;
 use Air\Model\Paginator;
 
@@ -30,6 +31,10 @@ $toJson = function ($row) {
   if (isset($data['image'])) {
     $data['image']['src'] = $row->image?->getSrc();
   }
+  if (isset($data['language'])) {
+    $data['languageKey'] = $row->language->key;
+    $data['languageImage'] = $row->language->image->getSrc();
+  }
   return htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
 };
 ?>
@@ -44,12 +49,19 @@ $toJson = function ($row) {
         <?php if (($control['type'] ?? false) === 'custom') : ?>
           <?php $customControl = $control['source']($row); ?>
           <?php if ($customControl) : ?>
+            <?php if (is_array($customControl['url'])) : ?>
+              <?php $customControl['url'] = urldecode($this->uri($customControl['url'], ['id' => $row->id], true)); ?>
+            <?php endif; ?>
             <li>
               <a class="dropdown-item"
-                <?php if (($customControl['confirm'] ?? false)) : ?>
+                <?php if ($customControl['confirm'] ?? false) : ?>
+                  href="<?php echo $customControl['url']; ?>"
                   data-confirm="<?php echo $customControl['confirm']; ?>"
-                <?php endif; ?>
-                 href="<?php echo $customControl['url']; ?>">
+                  role="button"
+                <?php elseif ($customControl['modal'] ?? false) : ?>
+                  onclick="modal.<?php echo $customControl['modal']; ?>('<?php echo $customControl['url']; ?>', '<?php echo $customControl['title']; ?>')"
+                  role="button"
+                <?php endif; ?>>
                 <i class="fas fa-<?php echo $customControl['icon']; ?> me-1"></i> <?php echo $customControl['title']; ?>
               </a>
             </li>
@@ -81,6 +93,23 @@ $toJson = function ($row) {
               <i class="fas fa-copy me-1"></i> <?php echo \Air\Crud\Locale::t('Copy?'); ?>
             </a>
           </li>
+
+        <?php elseif (($control['type'] ?? false) === 'localizedCopy') : ?>
+          <li class="dropdown-divider"></li>
+          <?php foreach (Language::fetchAll() as $language) : ?>
+            <li>
+              <a class="dropdown-item"
+                 role="button"
+                 data-admin-table-row-copy-message="<?php echo \Air\Crud\Locale::t('Copy to: ') . $language->title; ?>"
+                 data-admin-table-row-copy="<?php echo $this->uri(
+                   ['controller' => $controller, 'action' => 'localizedCopy'],
+                   ['id' => $row->id, 'language' => $language->id]);
+                 ?>">
+                <i class="fas fa-copy me-1"></i> <?php echo \Air\Crud\Locale::t('Copy to: ') . $language->title; ?>
+              </a>
+            </li>
+          <?php endforeach; ?>
+          <li class="dropdown-divider"></li>
 
         <?php elseif (($control['type'] ?? false) == 'enabled' && $row->getMeta()->hasProperty('enabled')) : ?>
 
@@ -141,7 +170,7 @@ $toJson = function ($row) {
                 data-confirm="<?php echo $control['confirm']; ?>"
                 role="button"
               <?php elseif ($control['modal'] ?? false) : ?>
-                onclick="modal.<?php echo $control['modal']; ?>('<?php echo $control['url']; ?>')"
+                onclick="modal.<?php echo $control['modal']; ?>('<?php echo $control['url']; ?>', '<?php echo $control['title']; ?>')"
                 role="button"
               <?php else: ?>
                 href="<?php echo $control['url']; ?>"

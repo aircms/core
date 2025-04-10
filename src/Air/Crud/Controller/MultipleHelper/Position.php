@@ -4,11 +4,22 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller\MultipleHelper;
 
+use Air\Crud\Locale;
 use Air\Model\ModelAbstract;
 use Exception;
 
 trait Position
 {
+  protected function getPositioning(): string|false
+  {
+    if ($this->getModelClass()->getMeta()->hasProperty('position')) {
+      if ($this->getModelClass()->getMeta()->hasProperty('title')) {
+        return 'title';
+      }
+    }
+    return false;
+  }
+
   public function position()
   {
     /** @var ModelAbstract $modelClassName */
@@ -40,7 +51,7 @@ trait Position
 
     $this->getView()->setVars([
       'icon' => $this->getIcon(),
-      'title' => $this->getTitle(),
+      'title' => Locale::t($this->getTitle()),
 
       'rows' => $rows,
       'positioning' => $this->getPositioning(),

@@ -4,18 +4,10 @@ namespace Air\Core;
 
 use Air\Core;
 use Air\Core\Request\File;
-use Air\Filter\FilterAbstract;
 use Throwable;
 
-/**
- * Class Request
- * @package Air
- */
 class Request
 {
-  /**
-   * Supported request method
-   */
   const string METHOD_GET = 'get';
   const string METHOD_POST = 'post';
   const string METHOD_PUT = 'put';
@@ -24,158 +16,87 @@ class Request
   /**
    * @var \Air\Type\File[]
    */
-  private $_files = [];
+  private array $files = [];
+  private array $postParams = [];
+  private array $getParams = [];
+  private array $params = [];
+  private array $headers = [];
+  private ?string $method = null;
+  private ?string $uri = null;
+  private ?string $uriParams = null;
+  private string|null $uriRequest = null;
+  private ?string $domain = null;
+  private ?string $scheme = null;
+  private ?int $port = null;
+  private ?string $ip = null;
+  private bool $isAjax = false;
+  private ?string $userAgent = null;
 
-  /**
-   * @var array
-   */
-  private $_postParams = [];
-
-  /**
-   * @var array
-   */
-  private $_getParams = [];
-
-  /**
-   * @var array
-   */
-  private $_params = [];
-
-  /**
-   * @var array
-   */
-  private $_headers = [];
-
-  /**
-   * @var string
-   */
-  private $_method = null;
-
-  /**
-   * @var string
-   */
-  private $_uri = null;
-
-  /**
-   * @var string
-   */
-  private $_uriParams = null;
-
-  /**
-   * @var null
-   */
-  private $_uriRequest = null;
-
-  /**
-   * @var string
-   */
-  private $_domain = null;
-
-  /**
-   * @var string
-   */
-  private $_scheme = null;
-
-  /**
-   * @var int
-   */
-  private $_port = null;
-
-  /**
-   * @var string
-   */
-  private $_ip = null;
-
-  /**
-   * @var bool
-   */
-  private $_isAjax = false;
-
-  /**
-   * @var string
-   */
-  private $_userAgent = null;
-
-  /**
-   * @return string
-   */
   public function getUserAgent(): string
   {
-    return $this->_userAgent;
+    return $this->userAgent;
   }
 
-  /**
-   * @param string $userAgent
-   * @return void
-   */
   public function setUserAgent(string $userAgent): void
   {
-    $this->_userAgent = $userAgent;
+    $this->userAgent = $userAgent;
   }
 
-  /**
-   * @return bool
-   */
   public function isAjax(): bool
   {
-    return $this->_isAjax;
+    return $this->isAjax;
   }
 
-  /**
-   * @param bool $isAjax
-   */
   public function setIsAjax(bool $isAjax): void
   {
-    $this->_isAjax = $isAjax;
+    $this->isAjax = $isAjax;
   }
 
-  /**
-   * @return void
-   */
   public function fillRequestFromServer(): void
   {
-    $this->_getParams = $_GET ?? [];
-    $this->_postParams = $_POST ?? [];
-    $this->_params = $_REQUEST ?? [];
+    $this->getParams = $_GET ?? [];
+    $this->postParams = $_POST ?? [];
+    $this->params = $_REQUEST ?? [];
 
     if (($_SERVER['CONTENT_TYPE'] ?? '') === 'application/json') {
       try {
-        $this->_postParams = json_decode(file_get_contents('php://input'), true) ?? [];
-        if (count($this->_postParams)) {
-          $this->_params = $this->_postParams;
+        $this->postParams = json_decode(file_get_contents('php://input'), true) ?? [];
+        if (count($this->postParams)) {
+          $this->params = $this->postParams;
         }
-      } catch (Throwable) {}
+      } catch (Throwable) {
+      }
     }
 
     foreach (getallheaders() as $key => $value) {
-      $this->_headers[strtolower($key)] = $value;
+      $this->headers[strtolower($key)] = $value;
     }
 
-    $this->_method = strtolower($_SERVER['REQUEST_METHOD']);
-    $this->_uri = urldecode($_SERVER['REQUEST_URI']);
-    $this->_domain = $_SERVER['HTTP_HOST'];
-    $this->_port = (int)$_SERVER['SERVER_PORT'];
-    $this->_ip = $_SERVER['REMOTE_ADDR'];
-    
-    $this->_scheme =
+    $this->method = strtolower($_SERVER['REQUEST_METHOD']);
+    $this->uri = urldecode($_SERVER['REQUEST_URI']);
+    $this->domain = $_SERVER['HTTP_HOST'];
+    $this->port = (int)$_SERVER['SERVER_PORT'];
+    $this->ip = $_SERVER['REMOTE_ADDR'];
+
+    $this->scheme =
       $_SERVER['HTTP_X_FORWARDED_PROTO']
       ?? $_SERVER['HTTP_X_SCHEME']
       ?? $_SERVER['REQUEST_SCHEME']
       ?? 'http';
 
-    $this->_uriRequest = explode('?', $_SERVER['REQUEST_URI'])[0];
-    $this->_uriParams = explode('?', $_SERVER['REQUEST_URI'])[1] ?? '';
+    $this->uriRequest = explode('?', $_SERVER['REQUEST_URI'])[0];
+    $this->uriParams = explode('?', $_SERVER['REQUEST_URI'])[1] ?? '';
 
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])
       && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-      $this->_isAjax = true;
+      $this->isAjax = true;
     }
 
-    $this->_userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $this->userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
     foreach ($_FILES as $key => $file) {
       if (is_array($file['tmp_name'])) {
-        $this->_files[$key] = array_map(function ($name, $type, $tmpName, $error, $size) {
+        $this->files[$key] = array_map(function ($name, $type, $tmpName, $error, $size) {
           return new File([
             'name' => $name,
             'type' => $type,
@@ -190,7 +111,7 @@ class Request
           $_FILES[$key]['size']
         );
       } else {
-        $this->_files[$key] = new File([
+        $this->files[$key] = new File([
           'name' => $file['name'],
           'type' => $file['type'],
           'tmpName' => $file['tmp_name'],
@@ -201,12 +122,9 @@ class Request
     }
   }
 
-  /**
-   * @return void
-   */
   public function fillRequestFromCli(): void
   {
-    $this->_getParams = $_GET;
+    $this->getParams = $_GET;
 
     global $argv;
 
@@ -222,23 +140,17 @@ class Request
       }
 
       if (count($e) == 2) {
-        $this->_getParams[$e[0]] = $e[1];
+        $this->getParams[$e[0]] = $e[1];
       }
     }
 
-    $this->_uri = '/' . $route;
-    $this->_domain = 'cli';
+    $this->uri = '/' . $route;
+    $this->domain = 'cli';
   }
 
-  /**
-   * @param string $key
-   * @param null $default
-   * @param FilterAbstract[] $filters
-   * @return string|int|mixed|null|array
-   */
   public function getGet(string $key, $default = null, array $filters = [])
   {
-    $value = $this->_getParams[$key] ?? $default;
+    $value = $this->getParams[$key] ?? $default;
 
     foreach ($filters as $filter) {
       $value = $filter->filter($value);
@@ -247,24 +159,14 @@ class Request
     return $value;
   }
 
-  /**
-   * @return array
-   */
   public function getGetAll(): array
   {
-    return $this->_getParams;
+    return $this->getParams;
   }
 
-  /**
-   * @param string $key
-   * @param null $default
-   * @param FilterAbstract[] $filters
-   *
-   * @return string|int|mixed|null|array
-   */
-  public function getPost(string $key, $default = null, array $filters = [])
+  public function getPost(string $key, $default = null, array $filters = []): mixed
   {
-    $value = $this->_postParams[$key] ?? $default;
+    $value = $this->postParams[$key] ?? $default;
 
     foreach ($filters as $filter) {
 
@@ -276,24 +178,14 @@ class Request
     return $value;
   }
 
-  /**
-   * @return array
-   */
   public function getPostAll(): array
   {
-    return $this->_postParams;
+    return $this->postParams;
   }
 
-  /**
-   * @param string $name
-   * @param null $default
-   * @param FilterAbstract[] $filters
-   *
-   * @return string|int|mixed|null|array
-   */
-  public function getParam(string $name, $default = null, array $filters = [])
+  public function getParam(string $name, $default = null, array $filters = []): mixed
   {
-    $value = $this->_params[$name] ?? $default;
+    $value = $this->params[$name] ?? $default;
 
     foreach ($filters as $filter) {
 
@@ -305,49 +197,32 @@ class Request
     return $value;
   }
 
-  /**
-   * @return array
-   */
   public function getParams(): array
   {
-    return $this->_params;
+    return $this->params;
   }
 
-  /**
-   * @return array
-   */
   public function getHeaders(): array
   {
-    return $this->_headers;
+    return $this->headers;
   }
 
-  /**
-   * @param string $key
-   * @return string|null
-   */
   public function getHeader(string $key): ?string
   {
-    return $this->_headers[$key] ?? null;
+    return $this->headers[$key] ?? null;
   }
 
-  /**
-   * @param string $key
-   * @param string $value
-   */
   public function setHeader(string $key, string $value): void
   {
-    $this->_headers[$key] = $value;
+    $this->headers[$key] = $value;
   }
 
-  /**
-   * @return array
-   */
-  public function getXHeaders()
+  public function getXHeaders(): array
   {
     $xHeaders = [];
 
-    foreach ($this->_headers as $name => $value) {
-      if (substr($name, 0, 2) == 'x-') {
+    foreach ($this->headers as $name => $value) {
+      if (str_starts_with($name, 'x-')) {
         $xHeaders[$name] = $value;
       }
     }
@@ -355,207 +230,129 @@ class Request
     return $xHeaders;
   }
 
-  /**
-   * @return bool
-   */
   public function isGet(): bool
   {
-    return $this->_method == self::METHOD_GET;
+    return $this->method == self::METHOD_GET;
   }
 
-  /**
-   * @return bool
-   */
   public function isPost(): bool
   {
-    return $this->_method == self::METHOD_POST;
+    return $this->method == self::METHOD_POST;
   }
 
-  /**
-   * @return bool
-   */
   public function isPut(): bool
   {
-    return $this->_method == self::METHOD_PUT;
+    return $this->method == self::METHOD_PUT;
   }
 
-  /**
-   * @return bool
-   */
   public function isDelete(): bool
   {
-    return $this->_method == self::METHOD_DELETE;
+    return $this->method == self::METHOD_DELETE;
   }
 
-  /**
-   * @return string
-   */
-  public function getMethod()
+  public function getMethod(): ?string
   {
-    return $this->_method;
+    return $this->method;
   }
 
-  /**
-   * @param string $method
-   * @throws \Air\Core\Exception\RequestMethodIsNotSupported
-   */
-  public function setMethod(string $method)
+  public function setMethod(string $method): void
   {
     if (!in_array($method, [self::METHOD_GET, self::METHOD_POST, self::METHOD_PUT, self::METHOD_DELETE])) {
       throw new Core\Exception\RequestMethodIsNotSupported($method);
     }
 
-    $this->_method = $method;
+    $this->method = $method;
   }
 
-  /**
-   * @return string
-   */
   public function getUri(): string
   {
-    return $this->_uri;
+    return $this->uri;
   }
 
-  /**
-   * @param string $uri
-   */
-  public function setUri(string $uri)
+  public function setUri(string $uri): void
   {
-    $this->_uri = $uri;
+    $this->uri = $uri;
   }
 
-  /**
-   * @return string
-   */
   public function getDomain(): string
   {
-    return $this->_domain;
+    return $this->domain;
   }
 
-  /**
-   * @param string $domain
-   */
-  public function setDomain(string $domain)
+  public function setDomain(string $domain): void
   {
-    $this->_domain = $domain;
+    $this->domain = $domain;
   }
 
-  /**
-   * @return string
-   */
   public function getScheme(): string
   {
-    return $this->_scheme;
+    return $this->scheme;
   }
 
-  /**
-   * @param string $scheme
-   */
-  public function setScheme(string $scheme)
+  public function setScheme(string $scheme): void
   {
-    $this->_scheme = $scheme;
+    $this->scheme = $scheme;
   }
 
-  /**
-   * @return int
-   */
   public function getPort(): int
   {
-    return $this->_port;
+    return $this->port;
   }
 
-  /**
-   * @param int $port
-   */
-  public function setPort(int $port)
+  public function setPort(int $port): void
   {
-    $this->_port = $port;
+    $this->port = $port;
   }
 
-  /**
-   * @return string
-   */
   public function getIp(): string
   {
-    return $this->_ip;
+    return $this->ip;
   }
 
-  /**
-   * @param string $ip
-   */
-  public function setIp(string $ip)
+  public function setIp(string $ip): void
   {
-    $this->_ip = $ip;
+    $this->ip = $ip;
   }
 
-  /**
-   * @param string $key
-   * @param $value
-   * @param bool $replace
-   */
-  public function setGetParam(string $key, $value, bool $replace = false)
+  public function setGetParam(string $key, $value, bool $replace = false): void
   {
-    if ($replace || !isset($this->_getParams[$key])) {
-      $this->_getParams[$key] = $value;
-      return;
+    if ($replace || !isset($this->getParams[$key])) {
+      $this->getParams[$key] = $value;
     }
   }
 
-  /**
-   * @return string
-   */
   public function getUriParams(): string
   {
-    return $this->_uriParams;
+    return $this->uriParams;
   }
 
-  /**
-   * @param string $uriParams
-   */
   public function setUriParams(string $uriParams): void
   {
-    $this->_uriParams = $uriParams;
+    $this->uriParams = $uriParams;
   }
 
-  /**
-   * @return null
-   */
-  public function getUriRequest()
+  public function getUriRequest(): string
   {
-    return $this->_uriRequest;
+    return $this->uriRequest;
   }
 
-  /**
-   * @param null $uriRequest
-   */
-  public function setUriRequest($uriRequest): void
+  public function setUriRequest(string $uriRequest): void
   {
-    $this->_uriRequest = $uriRequest;
+    $this->uriRequest = $uriRequest;
   }
 
-  /**
-   * @param string $fileKey
-   * @return \Air\Type\File|null
-   */
-  public function getFile(string $fileKey)
+  public function getFile(string $fileKey): ?\Air\Type\File
   {
-    return $this->_files[$fileKey] ?? null;
+    return $this->files[$fileKey] ?? null;
   }
 
-  /**
-   * @param string $fileKey
-   * @return \Air\Type\File[]|array
-   */
-  public function getMultipleFile(string $fileKey): array
+  public function getMultipleFile(string $fileKey): ?\Air\Type\File
   {
-    return $this->_files[$fileKey] ?? [];
+    return $this->files[$fileKey] ?? null;
   }
 
-  /**
-   * @return \Air\Type\File[]
-   */
   public function getFiles(): array
   {
-    return $this->_files ?? [];
+    return $this->files ?? [];
   }
 }

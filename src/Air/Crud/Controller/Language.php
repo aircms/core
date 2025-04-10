@@ -4,94 +4,61 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
-use Air\Crud\Locale;
-use Air\Form\Element\Checkbox;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Form\Form;
 use Air\Form\Generator;
-use Air\Form\Element\Text;
-use Air\Form\Element\Textarea;
-use Air\Form\Element\Storage;
+use Air\Form\Input;
+use Air\Type\FaIcon;
 
 /**
- * @mod-manageable true
+ * @mod-manageable
  * @mod-sortable title
  */
 class Language extends Multiple
 {
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
-  protected function getTitle(): string
+  public static function isAvailable(): bool
   {
-    return Locale::t('Languages');
+    return !!(Front::getInstance()->getConfig()['air']['admin']['languages'] ?? false);
   }
 
-  /**
-   * @return array[]
-   * @throws ClassWasNotFound
-   */
+  protected function getTitle(): string
+  {
+    return 'Languages';
+  }
+
   protected function getHeader(): array
   {
     return [
-      'image' => ['title' => Locale::t('Image'), 'by' => 'image', 'type' => 'image'],
-      'title' => ['title' => Locale::t('Title'), 'by' => 'title'],
-      'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
-      'isDefault' => ['title' => Locale::t('Default'), 'by' => 'isDefault', 'type' => 'bool'],
+      Header::image(),
+      Header::title(),
+      Header::enabled(),
+      Header::bool(by: 'isDefault')
     ];
   }
 
-  /**
-   * @return string
-   */
   public function getModelClassName(): string
   {
     return \Air\Crud\Model\Language::class;
   }
 
-  /**
-   * @return string[]
-   */
-  protected function getAdminMenuItem(): array
+  protected function getIcon(): string
   {
-    return ['icon' => 'globe'];
+    return FaIcon::ICON_GLOBE;
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   protected function getEntity(): string
   {
     return Front::getInstance()->getConfig()['air']['admin']['languages'];
   }
 
-  /**
-   * @param \Air\Crud\Model\Language $model
-   * @return Form
-   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      Locale::t('General') => [
-        new Checkbox('isDefault', [
-          'label' => Locale::t('Is default'),
-        ]),
-        new Text('title', [
-          'label' => Locale::t('Title'),
-          'allowNull' => false,
-        ]),
-        new Storage('image', [
-          'label' => Locale::t('Flag'),
-          'allowNull' => false,
-        ]),
-        new Text('key', [
-          'label' => Locale::t('Key'),
-          'description' => Locale::t('2 symbols, lowercase')
-        ])
-      ]
+      Input::checkbox('isDefault'),
+      Input::text('title'),
+      Input::storage('image'),
+      Input::text('key', description: '2 symbols, lowercase'),
     ]);
   }
 }

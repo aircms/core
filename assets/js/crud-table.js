@@ -23,7 +23,7 @@ $(document).ready(() => {
   });
 
   $(document).on('click', '[data-admin-table-row-copy]', function () {
-    modal.question('Copy record?').then(() => {
+    modal.question($(this).data('admin-table-row-copy-message') || 'Copy record?').then(() => {
       $.post($(this).data('admin-table-row-copy'))
         .done(() => {
           nav.reload();
@@ -78,5 +78,58 @@ $(document).ready(() => {
       $(this).data('admin-table-view-id'),
     );
     return false;
+  });
+
+  const updateCheckboxes = () => {
+    let allChecked = true;
+    let checkCount = 0;
+    const ids = [];
+    $('[data-main-table-selectable]').each(function () {
+      if ($(this).data('main-table-selectable') !== 'main') {
+        if (!$(this).prop('checked')) {
+          allChecked = false;
+        } else {
+          checkCount++;
+          ids.push($(this).data('main-table-selectable'));
+        }
+      }
+    });
+    $('[data-main-table-selectable="main"]').prop('checked', allChecked);
+    if (checkCount) {
+      $('[data-bulk-manage] span').html('(' + checkCount + ')');
+    } else {
+      $('[data-bulk-manage] span').html('');
+    }
+    $('[data-bulk-manage]').attr('data-ids', ids.join(','));
+  };
+
+  $(document).on('click', '[data-bulk-manage]', function () {
+    const ids = ($(this).attr('data-ids') || '').split(',').filter((c) => c.length);
+
+    const url = ids.length
+      ? '/' + $(this).data('bulk-manage') + '/manageMultiple?ids=' + ids.join(',')
+      : $(this).data('href');
+
+    modal.iframe(url, locale('Bulk editing'), () => nav.reload());
+  });
+
+  $(document).on('click', '[data-main-table-row-select]', function () {
+    const id = $(this).data('main-table-row-select');
+    const checkbox = $('[data-main-table-selectable="' + id + '"]');
+    checkbox.prop('checked', !checkbox.prop('checked'));
+    updateCheckboxes();
+  });
+
+  $(document).on('click', '[data-main-table-row-selectable]', function () {
+    const id = $(this).data('main-table-row-selectable');
+    const checkbox = $('[data-main-table-selectable="' + id + '"]');
+    checkbox.prop('checked', !checkbox.prop('checked'));
+    updateCheckboxes();
+    return false;
+  });
+
+  $(document).on('click', '[data-main-table-selectable="main"]', function () {
+    $('[data-main-table-selectable]').prop('checked', $(this).prop('checked'));
+    updateCheckboxes();
   });
 });

@@ -4,9 +4,6 @@ use Air\Form\Element\ElementAbstract;
 
 /** @var ElementAbstract $element */
 $element = $this->element;
-?>
-  <div class="mb-3">
-    <?php echo $this->partial($element->getLabelTemplate()); ?>
-  </div>
-<?php echo $this->partial($element->getElementTemplate()); ?>
-<?php echo $this->partial($element->getErrorTemplate()); ?>
+
+echo $this->partial($element->getElementTemplate());
+echo $this->partial($element->getErrorTemplate());

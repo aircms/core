@@ -11,125 +11,58 @@ class Request
   const string GET = 'GET';
   const string POST = 'POST';
 
-  /**
-   * @var string
-   */
   public string $url;
-
-  /**
-   * @var string
-   */
   public string $method = self::GET;
-
-  /**
-   * @var array
-   */
   public array $get = [];
-
-  /**
-   * @var array
-   */
   public array $headers = [];
-
-  /**
-   * @var array
-   */
   public array $cookies = [];
-
-  /**
-   * @var string|null
-   */
   public ?string $bearer = null;
-
-  /**
-   * @var mixed|null
-   */
   public mixed $body = null;
-
-  /**
-   * @var int
-   */
   public int $timeout = 30;
-
-  /**
-   * @var array
-   */
   public array $files = [];
 
-  /**
-   * @param string $url
-   * @return $this
-   */
   public function url(string $url): self
   {
     $this->url = $url;
     return $this;
   }
 
-  /**
-   * @param string $method
-   * @return self
-   */
   public function method(string $method): self
   {
     $this->method = $method;
     return $this;
   }
 
-  /**
-   * @param array $get
-   * @return $this
-   */
   public function get(array $get): self
   {
     $this->get = [...$this->get, ...$get];
     return $this;
   }
 
-  /**
-   * @param array $header
-   * @return $this
-   */
   public function headers(array $header): self
   {
     $this->headers = [...$this->headers, ...$header];
     return $this;
   }
 
-  /**
-   * @param array $cookies
-   * @return $this
-   */
   public function cookies(array $cookies): self
   {
     $this->cookies = [...$this->cookies, ...$cookies];
     return $this;
   }
 
-  /**
-   * @param string $bearer
-   * @return self
-   */
   public function bearer(string $bearer): self
   {
     $this->bearer = $bearer;
     return $this;
   }
 
-  /**
-   * @param array $body
-   * @return $this
-   */
   public function body(mixed $body): self
   {
     $this->body = $body;
     return $this;
   }
 
-  /**
-   * @param string $type
-   * @return self
-   */
   public function type(string $type): self
   {
     $types = [
@@ -142,31 +75,18 @@ class Request
     return $this;
   }
 
-  /**
-   * @param int $timeout
-   * @return $this
-   */
   public function timeout(int $timeout): self
   {
     $this->timeout = $timeout;
     return $this;
   }
 
-  /**
-   * @param string $name
-   * @param string|array $fileOrFiles
-   * @return $this
-   */
   public function file(string $name, string|array $fileOrFiles): self
   {
     $this->files[$name] = $fileOrFiles;
     return $this;
   }
 
-  /**
-   * @param array $files
-   * @return self
-   */
   public function files(array $files): self
   {
     foreach ($files as $key => $value) {
@@ -175,10 +95,6 @@ class Request
     return $this;
   }
 
-  /**
-   * @return Response
-   * @throws Exception
-   */
   public function do(): Response
   {
     $ch = curl_init();
@@ -247,11 +163,6 @@ class Request
     return new Response($response);
   }
 
-  /**
-   * @param string $contentType
-   * @param mixed $data
-   * @return mixed
-   */
   public static function convertDataToContentType(string $contentType, mixed $data): mixed
   {
     return match ($contentType) {
@@ -261,12 +172,6 @@ class Request
     };
   }
 
-  /**
-   * @param string $url
-   * @param array $options
-   * @return Response
-   * @throws Exception
-   */
   public static function run(string $url, array $options = []): Response
   {
     $notAllowedMethods = [
@@ -292,12 +197,6 @@ class Request
     return $request->do();
   }
 
-  /**
-   * @param string $url
-   * @param mixed|null $data
-   * @return Response
-   * @throws Exception
-   */
   public static function postJson(string $url, mixed $data = null): Response
   {
     return self::run($url, [
@@ -307,12 +206,6 @@ class Request
     ]);
   }
 
-  /**
-   * @param string $url
-   * @param array $get
-   * @return Response
-   * @throws Exception
-   */
   public static function getQuery(string $url, array $get = []): Response
   {
     return self::run($url, [
@@ -320,12 +213,6 @@ class Request
     ]);
   }
 
-  /**
-   * @param string $url
-   * @param array $get
-   * @return Response
-   * @throws Exception
-   */
   public static function postQuery(string $url, array $get = []): Response
   {
     return self::run($url, [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 function dropdown(
   string|array         $containerClass = [],
   string|array         $containerAttributes = [],

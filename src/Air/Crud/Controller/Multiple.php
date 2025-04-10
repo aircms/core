@@ -17,13 +17,11 @@ use Air\Crud\Controller\MultipleHelper\Printable;
 use Air\Crud\Controller\MultipleHelper\Select;
 use Air\Crud\Controller\MultipleHelper\Settings;
 use Air\Crud\Controller\MultipleHelper\Table;
-use Air\Crud\Controller\MultipleHelper\Ui;
 use Air\Crud\Controller\MultipleHelper\View;
 use Air\Model\ModelAbstract;
 
 abstract class Multiple extends AuthCrud
 {
-  use Ui;
   use Mods;
   use ModelMeta;
   use Table;
@@ -44,6 +42,9 @@ abstract class Multiple extends AuthCrud
   {
     parent::init();
 
+    MultipleHelper\Accessor\Header::$entity = $this->getModelClassName();
+    MultipleHelper\Accessor\Filter::$entity = $this->getModelClassName();
+
     $this->getView()->setLayoutEnabled(
       !$this->getRequest()->isAjax()
     );
@@ -54,7 +55,7 @@ abstract class Multiple extends AuthCrud
     $this->getView()->setPath(realpath(__DIR__ . '/../View'));
   }
 
-  protected function didCreated(ModelAbstract $model, array $formData)
+  protected function didCreated(ModelAbstract $model, array $formData): void
   {
   }
 
@@ -62,19 +63,19 @@ abstract class Multiple extends AuthCrud
   {
   }
 
-  protected function didSaved(ModelAbstract $model, array $formData, ModelAbstract $oldModel)
+  protected function didSaved(ModelAbstract $model, array $formData, ModelAbstract $oldModel): void
   {
   }
 
-  protected function didEnabled(ModelAbstract $model)
+  protected function didEnabled(ModelAbstract $model): void
   {
   }
 
-  protected function didDisable(ModelAbstract $model)
+  protected function didDisable(ModelAbstract $model): void
   {
   }
 
-  protected function didCopied(ModelAbstract $oldRecord, ModelAbstract $newRecord)
+  protected function didCopied(ModelAbstract $oldRecord, ModelAbstract $newRecord): void
   {
   }
 }

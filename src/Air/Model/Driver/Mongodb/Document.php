@@ -9,9 +9,6 @@ use MongoDB\BSON\ObjectID;
 
 class Document extends DocumentAbstract
 {
-  /**
-   * @return int
-   */
   public function getTimestamp(): int
   {
     $primaryValue = $this->getModel()->{$this->getModel()->getMeta()->getPrimary()};

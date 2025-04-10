@@ -1,11 +1,8 @@
 $(document).ready(() => {
-  const activeTab = [];
+  let lastActiveTab = 0;
   wait.on('[data-admin-tab]', (tab) => {
     new Tab(tab, {
-      active: activeTab[location.pathname] || 0,
-      change: (index) => {
-        activeTab[location.pathname] = index;
-      }
+      active: lastActiveTab, change: (index) => lastActiveTab = index
     })
   });
 
@@ -79,6 +76,24 @@ $(document).ready(() => {
       injectQuickSave();
       form.submit();
       e.preventDefault();
+    }
+  });
+
+  $(document).on('click', '[data-admin-manage-switch-language] [data-admin-select-option]', function () {
+    const languageId = $(this).data('value');
+    const map = JSON.parse($(this).closest('[data-admin-manage-switch-language]').find('[data-admin-manage-switch-language-map]').text().trim());
+
+    try {
+      const recordId = map.find(m => m.languageId === languageId).recordId;
+      const controller = map.find(m => m.languageId === languageId).controller;
+      const isQuickManage = map.find(m => m.languageId === languageId).isQuickManage;
+
+      let url = '/' + controller + '/manage?id=' + recordId;
+      if (isQuickManage) {
+        url += '&isQuickManage=1';
+      }
+      nav.nav(url);
+    } catch {
     }
   });
 });

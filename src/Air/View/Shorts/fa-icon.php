@@ -2,29 +2,8 @@
 
 declare(strict_types=1);
 
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Type\FaIcon;
 
-/**
- * @param string|FaIcon|null $icon
- * @param string|null $style
- * @param string|array $data
- * @param array $attributes
- * @param string $tag
- * @param string|array|null $class
- * @return string
- * @throws CallUndefinedMethod
- * @throws ClassWasNotFound
- * @throws ConfigWasNotProvided
- * @throws DriverClassDoesNotExists
- * @throws DriverClassDoesNotExtendsFromDriverAbstract
- * @throws ReflectionException
- * @throws Throwable
- */
 function faIcon(
   string|FaIcon $icon = null,
   string        $style = null,

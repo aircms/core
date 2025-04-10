@@ -6,31 +6,18 @@ namespace Air\Validator;
 
 class StringLength extends Number
 {
-  /**
-   * @var string
-   */
   public string $encoding = 'UTF-8';
 
-  /**
-   * @return string
-   */
   public function getEncoding(): string
   {
     return $this->encoding;
   }
 
-  /**
-   * @param string $encoding
-   */
   public function setEncoding(string $encoding): void
   {
     $this->encoding = $encoding;
   }
 
-  /**
-   * @param int $value
-   * @return bool
-   */
   public function isValid($value): bool
   {
     $value = $value ?? '';

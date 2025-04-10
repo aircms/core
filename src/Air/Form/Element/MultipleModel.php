@@ -5,39 +5,19 @@ declare(strict_types=1);
 namespace Air\Form\Element;
 
 use Air\Crud\Locale;
-use Air\Form\Exception\FilterClassWasNotFound;
-use Air\Form\Exception\ValidatorClassWasNotFound;
 use Air\Model\ModelAbstract;
 
 class MultipleModel extends ElementAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/multiple-model';
-
-  /**
-   * @var string
-   */
   public string $model = '';
-
-  /**
-   * @var array
-   */
   public array $field = ['title'];
 
-  /**
-   * @return array
-   */
   public function getField(): array
   {
     return $this->field;
   }
 
-  /**
-   * @param array|string $field
-   * @return void
-   */
   public function setField(array|string $field): void
   {
     if (is_string($field)) {
@@ -47,29 +27,16 @@ class MultipleModel extends ElementAbstract
     }
   }
 
-  /**
-   * @return ModelAbstract
-   */
   public function getModel(): ModelAbstract
   {
     return new $this->model;
   }
 
-  /**
-   * @param string $model
-   * @return void
-   */
   public function setModel(string $model): void
   {
     $this->model = $model;
   }
 
-  /**
-   * @param $value
-   * @return bool
-   * @throws FilterClassWasNotFound
-   * @throws ValidatorClassWasNotFound
-   */
   public function isValid($value): bool
   {
     $isValid = parent::isValid($value);
@@ -88,9 +55,6 @@ class MultipleModel extends ElementAbstract
     return $isValid;
   }
 
-  /**
-   * @return array
-   */
   public function getValue(): array
   {
     $value = parent::getValue();
@@ -110,9 +74,6 @@ class MultipleModel extends ElementAbstract
     return $value;
   }
 
-  /**
-   * @return array
-   */
   public function getRawValue(): array
   {
     $ids = [];
@@ -127,9 +88,6 @@ class MultipleModel extends ElementAbstract
     return $ids;
   }
 
-  /**
-   * @return mixed
-   */
   public function getCleanValue(): mixed
   {
     return $this->getRawValue();

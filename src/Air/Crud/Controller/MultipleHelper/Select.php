@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller\MultipleHelper;
 
+use Air\Crud\Locale;
+
 trait Select
 {
   public function select(): void
   {
     $this->getView()->setVars([
       'icon' => $this->getIcon(),
-      'title' => $this->getTitle(),
+      'title' => Locale::t($this->getTitle()),
       'filter' => $this->getFilterWithValues(),
       'header' => $this->getHeader(),
       'paginator' => $this->getPaginator(),

@@ -8,11 +8,8 @@ use Exception;
 
 class DriverClassDoesNotExists extends Exception
 {
-  /**
-   * @param string $className
-   */
   public function __construct(string $className)
   {
-    parent::__construct("DriverClassDoesNotExists: " . $className);
+    parent::__construct($className);
   }
 }

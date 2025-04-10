@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Crud\Controller\MultipleHelper;
 
 use Air\Crud\Controller\Single;
+use Air\Crud\Locale;
 use Air\Crud\Model\History;
 use Air\Crud\Model\Language;
 use Air\Form\Element\Hidden;
@@ -13,11 +14,18 @@ use Air\Form\Generator;
 use Air\Map;
 use Air\Model\ModelAbstract;
 use Air\Model\ModelInterface;
+use MongoDB\BSON\ObjectId;
 use Throwable;
 
 trait Manage
 {
-  protected function getForm($model = null): Form
+  protected function getManageable(): bool
+  {
+    $model = $this->getModelClassName();
+    return !!$this->getForm(new $model);
+  }
+
+  protected function getForm($model = null): ?Form
   {
     $formClassName = $this->getFormClassName();
 
@@ -29,13 +37,14 @@ trait Manage
     return Generator::full($model);
   }
 
-  protected function getFormMultiple(): Form
+  protected function getManageableMultiple(): bool
   {
-    /** @var ModelAbstract $modelClassName */
-    $modelClassName = $this->getModelClassName();
-    $model = new $modelClassName();
+    return !!$this->getFormMultiple();
+  }
 
-    return Generator::full($model);
+  protected function getFormMultiple(): ?Form
+  {
+    return null;
   }
 
   protected function saveModel($formData, $model): void
@@ -79,9 +88,28 @@ trait Manage
     $this->didSaved($model, $formData, $oldModel);
   }
 
+  public function getConditionsBasedOnIds(?array $filter = []): array
+  {
+    if ($this->getParam('ids')) {
+      $ids = array_map(function ($id) {
+        return new ObjectId($id);
+      }, explode(',', $this->getParam('ids')));
+
+      return ['_id' => ['$in' => $ids]];
+    }
+    return $this->getConditions($filter);
+  }
+
   public function manageMultiple()
   {
     $form = $this->getFormMultiple();
+
+    if ($this->getParam('ids')) {
+      $form->addElement(new Hidden('ids', [
+        'value' => $this->getParam('ids'),
+      ]));
+
+    }
     $form->addElement(new Hidden('filter', [
       'value' => base64_encode(serialize($this->getParam('filter'))),
     ]));
@@ -97,7 +125,8 @@ trait Manage
         $filter = unserialize(base64_decode($formData['filter']));
         unset($formData['filter']);
 
-        $cond = $this->getConditions($filter);
+        $cond = $this->getConditionsBasedOnIds($filter);
+        unset($formData['ids']);
 
         foreach ($modelClassName::fetchAll($cond) as $item) {
           $this->saveModel($formData, $item);
@@ -120,17 +149,17 @@ trait Manage
 
     $form->setReturnUrl($returnUrl);
 
-    $count = $modelClassName::count($this->getConditions());
+    $count = $modelClassName::count($this->getConditionsBasedOnIds());
 
     $this->getView()->setVars([
       'icon' => $this->getAdminMenuItem()['icon'] ?? null,
-      'title' => $this->getTitle() . ' (Manage ' . $count . ' records)',
+      'title' => Locale::t($this->getTitle()) . ' (' . Locale::t('Editing') . ' ' . $count . ' ' . Locale::t('records') . ')',
       'form' => $form,
       'mode' => 'manage',
-      'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false,
-      'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false
+      'isQuickManage' => true,
     ]);
 
+    $this->setAdminNavVisibility(false);
     $this->getView()->setScript('form/index');
   }
 
@@ -150,18 +179,12 @@ trait Manage
 
         $this->saveModel($formData, $model);
 
-        try {
-          if ($isCreating && $languageProperty = $model->getMeta()->getPropertyWithName('language')) {
-            if ($languageProperty->getType() === Language::class) {
-              foreach (Language::fetchAll() as $language) {
-                if ($language->id !== $formData['language']) {
-                  $formData['language'] = $language->id;
-                  $this->saveModel($formData, new $modelClassName());
-                }
-              }
+        if ($isCreating && isset($formData['language'])) {
+          foreach (Language::fetchAll() as $language) {
+            if ($language->id !== $formData['language']) {
+              $this->localizedCopy($model->id, $language);
             }
           }
-        } catch (Throwable) {
         }
 
         $this->getView()->setLayoutEnabled(false);
@@ -170,7 +193,11 @@ trait Manage
         return [
           'url' => $this->getRouter()->assemble(
             ['controller' => $this->getEntity(), 'action' => 'manage'],
-            ['returnUrl' => $this->getRequest()->getPost('return-url'), 'id' => $model->id]
+            [
+              'returnUrl' => $this->getRequest()->getPost('return-url'),
+              'id' => $model->id,
+              'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false
+            ]
           ),
           'quickSave' => $this->getParam('quick-save'),
           'newOne' => !$isCreating
@@ -200,9 +227,11 @@ trait Manage
     $form->setReturnUrl($returnUrl);
 
     $this->getView()->setVars([
-      'icon' => $this->getAdminMenuItem()['icon'] ?? null,
-      'title' => $this->getTitle(),
+      'icon' => $this->getAdminMenuItem()['icon'] ?? $this->getIcon() ?? null,
+      'title' => Locale::t($this->getTitle()),
       'form' => $form,
+      'model' => $model,
+      'controller' => $this->getRouter()->getController(),
       'mode' => 'manage',
       'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false,
       'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false,

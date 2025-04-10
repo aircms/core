@@ -11,126 +11,58 @@ use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\ModelAbstract;
-use ReflectionException;
-use Throwable;
 
 class Meta
 {
-  /**
-   * @var string
-   */
   public string $title = '';
-
-  /**
-   * @var string
-   */
   public string $description = '';
-
-  /**
-   * @var string
-   */
   public string $ogTitle = '';
-
-  /**
-   * @var string
-   */
   public string $ogDescription = '';
-
-  /**
-   * @var File|null
-   */
   public ?File $ogImage = null;
-
-  /**
-   * @var bool
-   */
   public bool $useModelData = false;
-
-  /**
-   * @var string
-   */
   public string $modelClassName = '';
-
-  /**
-   * @var string
-   */
   public string $modelObjectId = '';
 
-  /**
-   * @return string
-   */
   public function getTitle(): string
   {
     return $this->title;
   }
 
-  /**
-   * @return string
-   */
   public function getDescription(): string
   {
     return $this->description;
   }
 
-  /**
-   * @return string
-   */
   public function getOgTitle(): string
   {
     return $this->ogTitle;
   }
 
-  /**
-   * @return string
-   */
   public function getOgDescription(): string
   {
     return $this->ogDescription;
   }
 
-  /**
-   * @return File|null
-   */
   public function getOgImage(): ?File
   {
     return $this->ogImage;
   }
 
-  /**
-   * @return bool
-   */
   public function isUseModelData(): bool
   {
     return $this->useModelData;
   }
 
-  /**
-   * @return string
-   */
   public function getModelClassName(): string
   {
     return $this->modelClassName;
   }
 
-  /**
-   * @return string
-   */
   public function getModelObjectId(): string
   {
     return $this->modelObjectId;
   }
 
-  /**
-   * @param array|null $meta
-   * @param ModelAbstract|null $model
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
-   */
   public function __construct(?array $meta = [], ?ModelAbstract $model = null)
   {
     foreach (array_keys(get_class_vars(self::class)) as $var) {
@@ -149,15 +81,6 @@ class Meta
     }
   }
 
-  /**
-   * @return array
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyWasNotFound
-   */
   public function getComputedData(): array
   {
     if ($this->isUseModelData()) {
@@ -180,15 +103,6 @@ class Meta
     ];
   }
 
-  /**
-   * @return string
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws PropertyWasNotFound
-   */
   public function __toString(): string
   {
     $data = $this->getComputedData();
@@ -227,8 +141,8 @@ class Meta
 
   /**
    * @return array{title: string|null, description: string|null, image: File|null}
-   * @throws ClassWasNotFound
    * @throws CallUndefinedMethod
+   * @throws ClassWasNotFound
    * @throws ConfigWasNotProvided
    * @throws DriverClassDoesNotExists
    * @throws DriverClassDoesNotExtendsFromDriverAbstract
@@ -247,9 +161,9 @@ class Meta
     }
 
     $defaults = [
-      'title' => '',
-      'description' => '',
-      'image' => ''
+      'title' => null,
+      'description' => null,
+      'image' => null
     ];
 
     if ($object) {
@@ -297,9 +211,6 @@ class Meta
     return $defaults;
   }
 
-  /**
-   * @return array
-   */
   public function toArray(): array
   {
     return [

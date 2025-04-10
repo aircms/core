@@ -8,11 +8,8 @@ use Exception;
 
 class DriverClassDoesNotExtendsFromDriverAbstract extends Exception
 {
-  /**
-   * @param string $className
-   */
   public function __construct(string $className)
   {
-    parent::__construct("DriverClassDoesNotExtendsFromDriverAbstract: " . $className);
+    parent::__construct($className);
   }
 }

@@ -12,6 +12,7 @@ $model = $element->getModel();
 
 $hasImage = $element->getModel()->getMeta()->hasProperty('image');
 $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
+$hasLanguage = $element->getModel()->getMeta()->hasProperty('language');
 ?>
 
 <div data-admin-form-multiple-model="<?php echo $name; ?>"
@@ -49,14 +50,21 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
                    data-admin-async-image="<?php echo $item->image?->getSrc(); ?>"></div>
             <?php endif; ?>
 
-
-            <div class="h6 m-0 max-lines-3 small">
-              <?php foreach ($element->getField() as $field) : ?>
-                <?php echo $item->{$field}; ?>
-              <?php endforeach; ?>
+            <div class="d-flex align-items-center justify-content-between gap-2">
+              <div class="h6 m-0 max-lines-3 small lh-1">
+                <?php foreach ($element->getField() as $field) : ?>
+                  <?php echo $item->{$field}; ?>
+                <?php endforeach; ?>
+              </div>
+              <?php if ($hasLanguage && $item->language?->key) : ?>
+                <div class="badge badge-primary">
+                  <img src="<?php echo $item->language->image->getSrc(); ?>" class="me-1" style="height: 10px;">
+                  <?php echo strtoupper($item->language->key); ?>
+                </div>
+              <?php endif; ?>
             </div>
 
-            <a class="btn btn-danger btn-lg px-3 py-3 d-flex align-items-center ms-3"
+            <a class="btn btn-danger px-3 py-3 d-flex align-items-center ms-3"
                data-admin-form-multiple-model-item-delete>
               <i class="fas fa-close"></i>
             </a>
@@ -91,13 +99,21 @@ $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
     <?php endif; ?>
 
 
-    <div class="h6 m-0 max-lines-2 small">
-      <?php foreach ($element->getField() as $field) : ?>
-        {{<?php echo $field; ?>}}
-      <?php endforeach; ?>
+    <div class="d-flex align-items-center justify-content-between gap-2">
+      <div class="h6 m-0 max-lines-3 small lh-1">
+        <?php foreach ($element->getField() as $field) : ?>
+          {{<?php echo $field; ?>}}
+        <?php endforeach; ?>
+      </div>
+      <?php if ($hasLanguage) : ?>
+        <div class="badge badge-primary">
+          <img src="{{languageImage}}" class="me-1" style="height: 10px;">
+          {{languageKey}}
+        </div>
+      <?php endif; ?>
     </div>
 
-    <a class="btn btn-danger btn-lg px-3 py-3 d-flex align-items-center ms-3"
+    <a class="btn btn-danger px-3 py-3 d-flex align-items-center ms-3"
        data-admin-form-multiple-model-item-delete>
       <i class="fas fa-close"></i>
     </a>

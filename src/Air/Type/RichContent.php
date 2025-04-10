@@ -13,9 +13,6 @@ class RichContent
   const string TYPE_HTML = 'html';
   const string TYPE_EMBED = 'embed';
 
-  /**
-   * @var string
-   */
   public string $type;
 
   /**
@@ -23,9 +20,6 @@ class RichContent
    */
   public mixed $value;
 
-  /**
-   * @param array|null $data
-   */
   public function __construct(?array $data = null)
   {
     $this->type = $data['type'] ?? 'empty';
@@ -55,9 +49,6 @@ class RichContent
     }
   }
 
-  /**
-   * @return string
-   */
   public function getType(): string
   {
     return $this->type;
@@ -71,9 +62,6 @@ class RichContent
     return $this->value;
   }
 
-  /**
-   * @return array
-   */
   public function toArray(): array
   {
     if ($this->type === self::TYPE_HTML || $this->type === self::TYPE_TEXT || $this->type === self::TYPE_EMBED) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Air\View;
 
+use Air\Core\Exception\ViewTemplateWasNotFound;
+use Air\Core\Front;
 use Air\Type\Meta;
 use Air\View\Helper\Asset;
 use Air\View\Helper\Base;
@@ -14,9 +16,6 @@ use Air\View\Helper\PartialCached;
 use Air\View\Helper\Uri;
 use Closure;
 use Exception;
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Core\Exception\ViewTemplateWasNotFound;
-use Air\Core\Front;
 use ReflectionClass;
 
 /**
@@ -29,59 +28,16 @@ use ReflectionClass;
  */
 class View
 {
-  /**
-   * @var string|null
-   */
   protected ?string $path = null;
-
-  /**
-   * @var bool
-   */
   protected bool $layoutEnabled = true;
-
-  /**
-   * @var string|null
-   */
   protected ?string $layoutTemplate = null;
-
-  /**
-   * @var string|null
-   */
   protected ?string $script = null;
-
-  /**
-   * @var bool
-   */
   protected bool $autoRender = true;
-
-  /**
-   * @var string|null
-   */
   protected ?string $content = null;
-
-  /**
-   * @var array
-   */
   protected array $vars = [];
-
-  /**
-   * @var bool
-   */
   protected bool $isMinifyHtml = false;
-
-  /**
-   * @var Meta|null
-   */
   protected ?Meta $meta = null;
-
-  /**
-   * @var Closure|null
-   */
   protected ?Closure $defaultMeta = null;
-
-  /**
-   * @var array
-   */
   protected array $properties = [];
 
   public function __construct()
@@ -91,12 +47,6 @@ class View
     }
   }
 
-  /**
-   * @param string $key
-   * @param mixed $value
-   * @return void
-   * @throws Exception
-   */
   public function assign(string $key, mixed $value): void
   {
     if (in_array(strtolower($key), $this->properties)) {
@@ -106,19 +56,11 @@ class View
     $this->vars[$key] = $value;
   }
 
-  /**
-   * @return array
-   */
   public function getVars(): array
   {
     return $this->vars;
   }
 
-  /**
-   * @param array $vars
-   * @return void
-   * @throws Exception
-   */
   public function setVars(array $vars): void
   {
     foreach ($vars as $key => $value) {
@@ -126,65 +68,41 @@ class View
     }
   }
 
-  /**
-   * @return string
-   */
   public function getPath(): string
   {
     return $this->path;
   }
 
-  /**
-   * @param string $path
-   */
   public function setPath(string $path): void
   {
     $this->path = $path;
   }
 
-  /**
-   * @return bool
-   */
   public function isLayoutEnabled(): bool
   {
     return $this->layoutEnabled;
   }
 
-  /**
-   * @param bool $layoutEnabled
-   */
   public function setLayoutEnabled(bool $layoutEnabled): void
   {
     $this->layoutEnabled = $layoutEnabled;
   }
 
-  /**
-   * @return bool
-   */
   public function isMinifyHtml(): bool
   {
     return $this->isMinifyHtml;
   }
 
-  /**
-   * @param bool $isMinifyHtml
-   */
   public function setIsMinifyHtml(bool $isMinifyHtml): void
   {
     $this->isMinifyHtml = $isMinifyHtml;
   }
 
-  /**
-   * @param Meta|null $meta
-   */
   public function setMeta(?Meta $meta): void
   {
     $this->meta = $meta;
   }
 
-  /**
-   * @return Meta|null
-   */
   public function getMeta(): ?Meta
   {
     if (!$this->meta) {
@@ -195,46 +113,33 @@ class View
     return $this->meta;
   }
 
-  /**
-   * @param Closure $defaultMeta
-   */
+  public function getBase(): string
+  {
+    return tag('base', attributes: [
+      'href' => Front::getInstance()->getConfig()['air']['asset']['prefix'] . '/'
+    ]);
+  }
+
   public function setDefaultMeta(Closure $defaultMeta): void
   {
     $this->defaultMeta = $defaultMeta;
   }
 
-  /**
-   * @return Closure|null
-   */
   public function getDefaultMeta(): ?Closure
   {
     return $this->defaultMeta;
   }
 
-  /**
-   * @param string $name
-   * @return mixed|null
-   */
   public function __get(string $name)
   {
     return $this->vars[$name] ?? null;
   }
 
-  /**
-   * @param string $name
-   * @param $value
-   */
   public function __set(string $name, $value)
   {
     $this->vars[$name] = $value;
   }
 
-  /**
-   * @param string $name
-   * @param array $arguments
-   * @return mixed
-   * @throws ClassWasNotFound
-   */
   public function __call(string $name, array $arguments)
   {
     if (Front::getInstance()->getConfig()['air']['modules'] ?? false) {
@@ -266,77 +171,47 @@ class View
     return call_user_func_array([$helper, 'call'], $arguments);
   }
 
-  /**
-   * @return string
-   */
   public function getLayoutTemplate(): string
   {
     return $this->layoutTemplate;
   }
 
-  /**
-   * @param string $layoutTemplate
-   */
   public function setLayoutTemplate(string $layoutTemplate): void
   {
     $this->layoutTemplate = $layoutTemplate;
   }
 
-  /**
-   * @return string
-   */
   public function getScript(): string
   {
     return $this->script;
   }
 
-  /**
-   * @param string $script
-   */
   public function setScript(string $script): void
   {
     $this->script = $script;
   }
 
-  /**
-   * @return bool
-   */
   public function isAutoRender(): bool
   {
     return $this->autoRender;
   }
 
-  /**
-   * @param bool $autoRender
-   */
   public function setAutoRender(bool $autoRender): void
   {
     $this->autoRender = $autoRender;
   }
 
-  /**
-   * @return string
-   */
-  public function getContent(): string
+  public function getContent(): ?string
   {
     return $this->content;
   }
 
-  /**
-   * @param string $content
-   */
   public function setContent(string $content): void
   {
+    $this->setAutoRender(false);
     $this->content = $content;
   }
 
-  /**
-   * @param string|null $template
-   * @param array $vars
-   * @return string
-   * @throws Exception
-   * @throws ClassWasNotFound
-   */
   public function render(string $template = null, array $vars = []): string
   {
     if (count($vars)) {
@@ -386,11 +261,6 @@ class View
     return $content;
   }
 
-  /**
-   * @param string $template
-   * @return string
-   * @throws Exception
-   */
   private function _render(string $template): string
   {
     $exception = null;
@@ -432,10 +302,6 @@ class View
     return $content;
   }
 
-  /**
-   * @return string
-   * @throws Exception
-   */
   public function renderLayout(): string
   {
     return $this->_render($this->path . '/Layouts/' . $this->layoutTemplate . '.phtml');

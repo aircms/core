@@ -6,30 +6,39 @@ namespace Air\Form\Element;
 
 class Select extends ElementAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/select';
-
-  /**
-   * @var array
-   */
   public array $options = [];
 
-  /**
-   * @return array
-   */
   public function getOptions(): array
   {
     return $this->options;
   }
 
-  /**
-   * @param array $options
-   * @return void
-   */
   public function setOptions(array $options): void
   {
-    $this->options = $options;
+    $formattedOptions = [];
+
+    if (count($options)) {
+      if (isset($options[0]['title'])) {
+        $formattedOptions = $options;
+
+      } else if (isset($options[0])) {
+        foreach ($options as $option) {
+          $formattedOptions[] = [
+            'title' => ucfirst($option),
+            'value' => $option
+          ];
+        }
+      } else {
+        foreach ($options as $title => $value) {
+          $formattedOptions[] = [
+            'title' => $title,
+            'value' => $value
+          ];
+        }
+      }
+    }
+
+    $this->options = $formattedOptions;
   }
 }

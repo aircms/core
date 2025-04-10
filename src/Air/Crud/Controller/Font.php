@@ -4,145 +4,66 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
-use Air\Form\Element\Storage;
-use Air\Form\Element\Text;
 use Air\Form\Form;
 use Air\Form\Generator;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
-use Air\Model\Meta\Exception\PropertyWasNotFound;
+use Air\Form\Input;
+use Air\Type\FaIcon;
 
 /**
- * @mod-manageable true
+ * @mod-quick-manage
  */
 class Font extends Multiple
 {
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   protected function getTitle(): string
   {
     return Locale::t('Fonts');
   }
 
-  /**
-   * @return array[]
-   * @throws ClassWasNotFound
-   */
   protected function getHeader(): array
   {
     return [
-      'title' => ['title' => Locale::t('Title'), 'by' => 'title'],
-      'enabled' => ['title' => Locale::t('Activity'), 'by' => 'enabled', 'type' => 'bool'],
+      Header::title(),
+      Header::enabled(),
     ];
   }
 
-  /**
-   * @return string
-   */
   public function getModelClassName(): string
   {
     return \Air\Crud\Model\Font::class;
   }
 
-  /**
-   * @return string[]
-   */
-  protected function getAdminMenuItem(): array
+  protected function getIcon(): string
   {
-    return ['icon' => 'font'];
+    return FaIcon::ICON_FONT;
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   */
   protected function getEntity(): string
   {
     return Front::getInstance()->getConfig()['air']['admin']['fonts'];
   }
 
-  /**
-   * @param \Air\Crud\Model\Font $model
-   * @return Form
-   * @throws ClassWasNotFound
-   * @throws PropertyWasNotFound
-   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      Locale::t('My font') => [
-        new Storage('eotIe9', [
-          'value' => $model->eotIe9,
-          'description' => 'IE9 Compat Modes',
-          'label' => 'EOT',
-          'allowNull' => true,
-        ]),
-        new Storage('eotIe6Ie8', [
-          'value' => $model->eotIe6Ie8,
-          'description' => 'Embedded opentype',
-          'label' => 'EOT',
-          'allowNull' => true,
-        ]),
-        new Storage('otf', [
-          'value' => $model->otf,
-          'description' => 'Opentype',
-          'label' => 'OTF',
-          'allowNull' => true,
-        ]),
-        new Storage('woff2', [
-          'value' => $model->woff2,
-          'description' => 'Super Modern Browsers',
-          'label' => 'WOFF2',
-          'allowNull' => true,
-        ]),
-        new Storage('woff', [
-          'value' => $model->woff,
-          'description' => 'Pretty Modern Browsers',
-          'label' => 'WOFF',
-          'allowNull' => true,
-        ]),
-        new Storage('ttf', [
-          'value' => $model->ttf,
-          'description' => 'Safari, Android, iOS',
-          'label' => 'TTF',
-          'allowNull' => true,
-        ]),
-        new Storage('svg', [
-          'value' => $model->svg,
-          'description' => 'Legacy iOS',
-          'label' => 'SVG',
-          'allowNull' => true,
-        ]),
+      'My font' => [
+        Input::storage('eotIe9', allowNull: true),
+        Input::storage('eotIe6Ie8', allowNull: true),
+        Input::storage('otf', allowNull: true),
+        Input::storage('woff2', allowNull: true),
+        Input::storage('woff', allowNull: true),
+        Input::storage('ttf', allowNull: true),
+        Input::storage('svg', allowNull: true),
       ],
-      Locale::t('Google font') => [
-        new Text('googleFontName', [
-          'allowNull' => true,
-          'label' => Locale::t('Google font'),
-          'description' => Locale::t('Enter the name of the Google Font')
-        ]),
-        new Text('googleFontImportUrl', [
-          'allowNull' => true,
-          'label' => Locale::t('Google font import URL'),
-        ])
+      'Google font' => [
+        Input::text('googleFontName', description: 'Enter the name of the Google Font', allowNull: true),
+        Input::text('googleFontImportUrl', description: 'Google font import URL', allowNull: true),
       ],
     ]);
   }
 
-  /**
-   * @return string
-   * @throws ClassWasNotFound
-   * @throws CallUndefinedMethod
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function css(): string
   {
     $this->getView()->setPath(realpath(__DIR__ . '/../View'));
@@ -155,16 +76,6 @@ class Font extends Multiple
     return $css;
   }
 
-  /**
-   * That kind of response need to TinyMce
-   *
-   * @return string
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
-   */
   public function fonts(): string
   {
     $this->getView()->setLayoutEnabled(false);

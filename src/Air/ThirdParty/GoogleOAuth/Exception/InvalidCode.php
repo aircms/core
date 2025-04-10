@@ -8,11 +8,8 @@ use Exception;
 
 class InvalidCode extends Exception
 {
-  /**
-   * @param string $code
-   */
   public function __construct(string $code)
   {
-    parent::__construct('InvalidCode: ' . $code, 400);
+    parent::__construct($code, 400);
   }
 }

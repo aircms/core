@@ -6,21 +6,10 @@ namespace Air\Core;
 
 use Air\Core\Exception\ClassWasNotFound;
 
-/**
- * Class Loader
- * @package Air
- */
 class Loader
 {
-  /**
-   * @var array|null
-   */
   private ?array $_config;
 
-  /**
-   * @param array $config
-   * @throws ClassWasNotFound
-   */
   public function __construct(array $config = [])
   {
     $this->_config = $config;
@@ -40,10 +29,6 @@ class Loader
     });
   }
 
-  /**
-   * @param string $namespace
-   * @return string
-   */
   public function getClassFilePath(string $namespace): string
   {
     $namespace = explode('\\', $namespace);

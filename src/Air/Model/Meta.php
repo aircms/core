@@ -11,32 +11,17 @@ use Air\Model\Meta\Exception\PropertyIsSetIncorrectly;
 use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\Meta\Property;
 use ReflectionClass;
-use ReflectionException;
+use Throwable;
 
 final class Meta
 {
-  const ID_COLLECTION = '@collection';
-  const ID_PROPERTY = '@property';
-  const ID_PRIMARY = '@primary';
+  const string ID_COLLECTION = '@collection';
+  const string ID_PROPERTY = '@property';
+  const string ID_PRIMARY = '@primary';
 
-  /**
-   * @var array
-   */
   private static array $cache = [];
-
-  /**
-   * @var array
-   */
   private static array $namespaceCache = [];
-
-  /**
-   * @var string|null
-   */
   private ?string $collection = null;
-
-  /**
-   * @var string
-   */
   private string $primary = 'id';
 
   /**
@@ -48,35 +33,14 @@ final class Meta
    * @var Property[]
    */
   private array $assocProperties = [];
-
-  /**
-   * @var string|null
-   */
   private ?string $modelClassName;
 
-  /**
-   * @param ModelAbstract $model
-   * @throws CollectionCantBeWithoutPrimary
-   * @throws CollectionCantBeWithoutProperties
-   * @throws CollectionNameDoesNotExists
-   * @throws PropertyIsSetIncorrectly
-   * @throws ReflectionException
-   */
   public function __construct(ModelAbstract $model)
   {
     $this->modelClassName = get_class($model);
     $this->parse($model);
   }
 
-  /**
-   * @param ModelAbstract $model
-   * @return void
-   * @throws CollectionCantBeWithoutPrimary
-   * @throws CollectionCantBeWithoutProperties
-   * @throws CollectionNameDoesNotExists
-   * @throws PropertyIsSetIncorrectly
-   * @throws ReflectionException
-   */
   private function parse(ModelAbstract $model): void
   {
     if (!empty(self::$cache[$this->modelClassName])) {
@@ -108,6 +72,9 @@ final class Meta
 
     $this->properties = [];
     $this->collection = null;
+
+    $reflectionClass = new ReflectionClass($model);
+    $constants = $reflectionClass->getConstants();
 
     foreach ($docblock as $line) {
 
@@ -163,6 +130,29 @@ final class Meta
 
         $property->setType($propertyType);
         $property->setName($propertyName);
+        $property->setIsMultiple($isArray);
+        $property->setRawType(str_replace('[]', '', $propType));
+
+        $options = [];
+        $upperProp = strtoupper($property->getName());
+        foreach ($constants as $constantName => $constantValue) {
+          if (str_starts_with(strtoupper($constantName), $upperProp . '_')) {
+            $title = ucfirst(strtolower(str_replace(['_', '-'], ' ', $constantValue)));
+            $options[$title] = $constantValue;
+          }
+        }
+
+        if (count($options)) {
+          $property->setIsEnum(true);
+          $property->setEnum($options);
+        }
+
+        $modelClass = str_replace('[]', '', $propType);
+        if (class_exists($modelClass) && is_subclass_of($modelClass, ModelAbstract::class)) {
+          $property->setIsModel(true);
+        } else {
+          $property->setIsModel(false);
+        }
 
         $this->assocProperties[$property->getName()] = $property;
         $this->properties[] = $property;
@@ -189,11 +179,6 @@ final class Meta
     ];
   }
 
-  /**
-   * @param ModelAbstract $model
-   * @return array
-   * @throws ReflectionException
-   */
   public function getUsedNamespaces(ModelAbstract $model): array
   {
     if (!isset(self::$namespaceCache[get_class($model)])) {
@@ -220,17 +205,11 @@ final class Meta
     return self::$namespaceCache[get_class($model)];
   }
 
-  /**
-   * @return string
-   */
   public function getPrimary(): string
   {
     return $this->primary;
   }
 
-  /**
-   * @param string $primary
-   */
   public function setPrimary(string $primary): void
   {
     $this->primary = $primary;
@@ -252,48 +231,29 @@ final class Meta
     return $this->assocProperties;
   }
 
-  /**
-   * @param array $fields
-   */
   public function setProperties(array $fields): void
   {
     $this->properties = $fields;
   }
 
-  /**
-   * @param string $name
-   * @return Property
-   * @throws PropertyWasNotFound
-   */
   public function getPropertyWithName(string $name): Property
   {
     if (isset($this->assocProperties[$name])) {
       return $this->assocProperties[$name];
     }
-
     throw new PropertyWasNotFound($this->getCollection(), $name);
   }
 
-  /**
-   * @return string
-   */
   public function getCollection(): string
   {
     return $this->collection;
   }
 
-  /**
-   * @param string $collection
-   */
   public function setCollection(string $collection): void
   {
     $this->collection = $collection;
   }
 
-  /**
-   * @param string $name
-   * @return bool
-   */
   public function hasProperty(string $name): bool
   {
     return isset($this->assocProperties[$name]);

@@ -8,9 +8,6 @@ use Throwable;
 
 class System extends Multiple
 {
-  /**
-   * @return void
-   */
   public function index(): void
   {
     try {

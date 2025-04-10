@@ -1,19 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Core\Exception;
 
-/**
- * Class ControllerClassWasNotFound
- * @package Air\Exception
- */
-class ControllerClassWasNotFound extends \Exception
+use Exception;
+
+class ControllerClassWasNotFound extends Exception
 {
-  /**
-   * ControllerClassWasNotFound constructor.
-   * @param string $controllerClassName
-   */
   public function __construct(string $controllerClassName)
   {
-    parent::__construct('ControllerClassWasNotFound: ' . $controllerClassName, 404);
+    parent::__construct($controllerClassName, 404);
   }
 }

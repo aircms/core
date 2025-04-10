@@ -10,25 +10,10 @@ use Exception;
 
 class OpenAi
 {
-  /**
-   * @var string
-   */
   private string $key;
-
-  /**
-   * @var array
-   */
   private array $models;
-
-  /**
-   * @var array
-   */
   private array $messages = [];
 
-  /**
-   * @param array{key: string, models: array{chat: string, image: string}}|null $openAiConfig
-   * @throws Core\Exception\ClassWasNotFound
-   */
   public function __construct(?array $openAiConfig = [])
   {
     if (!$openAiConfig) {
@@ -39,12 +24,6 @@ class OpenAi
     $this->models = $openAiConfig['models'];
   }
 
-  /**
-   * @param string $question
-   * @param bool|null $json
-   * @return string
-   * @throws Exception
-   */
   public function message(string $question, ?bool $json = false): mixed
   {
     if ($json) {
@@ -93,13 +72,6 @@ class OpenAi
     return $message['content'];
   }
 
-  /**
-   * @param string $prompt
-   * @param int|null $width
-   * @param int|null $height
-   * @return string
-   * @throws Exception
-   */
   public function image(string $prompt, ?int $width = 1024, ?int $height = 1024): string
   {
     $body = [
@@ -126,24 +98,11 @@ class OpenAi
     return $answer['data'][0]['url'];
   }
 
-  /**
-   * @param string $question
-   * @param bool|null $json
-   * @return mixed
-   * @throws Exception
-   */
   public static function ask(string $question, ?bool $json = false): mixed
   {
     return (new self())->message($question, $json);
   }
 
-  /**
-   * @param string $prompt
-   * @param int|null $width
-   * @param int|null $height
-   * @return string
-   * @throws Exception
-   */
   public function img(string $prompt, ?int $width = 1024, ?int $height = 1024): string
   {
     return (new self())->image($prompt, $width, $height);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air\Form\Exception;
 
 use Air\Form\Form;
@@ -12,7 +14,7 @@ class Validation extends Exception
   public function __construct(Form $form)
   {
     $this->form = $form;
-    parent::__construct("Form validation exception", 400);
+    parent::__construct(code: 400);
   }
 
   public function getForm(): Form

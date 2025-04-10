@@ -4,24 +4,14 @@ declare(strict_types=1);
 
 namespace Air;
 
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
-use Air\Http\Response;
 use Air\Http\Request;
+use Air\Http\Response;
 use Air\Type\File;
 use Exception;
-use ReflectionException;
-use Throwable;
 
 class Storage
 {
-  /**
-   * @param string $path
-   * @param string $name
-   * @param bool $recursive
-   * @return bool
-   * @throws Core\Exception\ClassWasNotFound
-   */
   public static function createFolder(string $path, string $name, bool $recursive = false): bool
   {
     return self::action('createFolder', [
@@ -31,29 +21,11 @@ class Storage
     ])->isOk();
   }
 
-  /**
-   * @param string $path
-   * @return bool
-   * @throws Core\Exception\ClassWasNotFound
-   */
   public static function deleteFolder(string $path): bool
   {
     return self::action('deleteFolder', ['path' => $path])->isOk();
   }
 
-  /**
-   * @param string $path
-   * @param string $url
-   * @param string|null $name
-   * @return File
-   * @throws ClassWasNotFound
-   * @throws Model\Exception\CallUndefinedMethod
-   * @throws Model\Exception\ConfigWasNotProvided
-   * @throws Model\Exception\DriverClassDoesNotExists
-   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
-   */
   public static function uploadByUrl(string $path, string $url, ?string $name = null): File
   {
     $r = self::action('uploadByUrl', [
@@ -69,29 +41,16 @@ class Storage
     return new File($r->body);
   }
 
-  /**
-   * @param string $path
-   * @return bool
-   * @throws Core\Exception\ClassWasNotFound
-   */
   public static function deleteFile(string $path): bool
   {
-    return self::action('deleteFile', [
-      'path' => $path
-    ])->isOk();
+    return self::action('deleteFile', ['path' => $path])->isOk();
   }
 
   /**
    * @param string $path
-   * @param array $files
-   * @return array|File[]
-   * @throws ClassWasNotFound
-   * @throws Model\Exception\CallUndefinedMethod
-   * @throws Model\Exception\ConfigWasNotProvided
-   * @throws Model\Exception\DriverClassDoesNotExists
-   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
+   * @param File[] $files
+   * @return array
+   * @throws Exception
    */
   public static function uploadFiles(string $path, array $files): array
   {
@@ -119,13 +78,7 @@ class Storage
    * @param string $path
    * @param array $datum
    * @return array|File[]
-   * @throws Core\Exception\ClassWasNotFound
-   * @throws Model\Exception\CallUndefinedMethod
-   * @throws Model\Exception\ConfigWasNotProvided
-   * @throws Model\Exception\DriverClassDoesNotExists
-   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
+   * @throws Exception
    */
   public static function uploadDatum(string $path, array $datum): array
   {
@@ -149,13 +102,7 @@ class Storage
    * @param string $path
    * @param array $datum
    * @return File[]
-   * @throws Core\Exception\ClassWasNotFound
-   * @throws Model\Exception\CallUndefinedMethod
-   * @throws Model\Exception\ConfigWasNotProvided
-   * @throws Model\Exception\DriverClassDoesNotExists
-   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
+   * @throws Exception
    */
   public static function uploadBase64Datum(string $path, array $datum): array
   {
@@ -168,12 +115,6 @@ class Storage
     return self::uploadDatum($path, $datum);
   }
 
-  /**
-   * @param string $endpoint
-   * @param array|null $params
-   * @return Response
-   * @throws Core\Exception\ClassWasNotFound
-   */
   public static function action(string $endpoint, ?array $params = []): Response
   {
     $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
@@ -189,14 +130,8 @@ class Storage
 
   /**
    * @param array $paths
-   * @return array|File[]
-   * @throws Core\Exception\ClassWasNotFound
-   * @throws Model\Exception\CallUndefinedMethod
-   * @throws Model\Exception\ConfigWasNotProvided
-   * @throws Model\Exception\DriverClassDoesNotExists
-   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
+   * @return File[]
+   * @throws Exception
    */
   public static function info(array $paths): array
   {
@@ -218,28 +153,14 @@ class Storage
     return $files;
   }
 
-  /**
-   * @param string $folder
-   * @param string $fileName
-   * @param string $title
-   * @param string $backColor
-   * @param string $frontColor
-   * @return File|null
-   * @throws ClassWasNotFound
-   * @throws Model\Exception\CallUndefinedMethod
-   * @throws Model\Exception\ConfigWasNotProvided
-   * @throws Model\Exception\DriverClassDoesNotExists
-   * @throws Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract
-   * @throws ReflectionException
-   * @throws Throwable
-   */
+
   public static function annotation(
     string $folder,
     string $fileName,
     string $title,
     string $backColor,
     string $frontColor
-  ): File|null
+  ): ?File
   {
     $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
     $url = $storageConfig['url'] . '/api/annotation';

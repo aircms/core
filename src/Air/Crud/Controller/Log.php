@@ -4,44 +4,39 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Crud\Controller\MultipleHelper\Accessor\Filter;
+use Air\Crud\Controller\MultipleHelper\Accessor\Header;
+use Air\Type\FaIcon;
+
 /**
- * @mod-title Logs
- *
- * @mod-sorting {"created": -1}
- *
- * @mod-filter {"type": "search", "by": ["title", "all"]}
- * @mod-filter {"type": "dateTime", "by": "created"}
+ * @mod-sorting {"createdAt": -1}
  */
 class Log extends Multiple
 {
-  /**
-   * @return string
-   */
   public function getModelClassName(): string
   {
     return \Air\Crud\Model\Log::class;
   }
 
-  /**
-   * @return string[]|null
-   */
-  protected function getAdminMenuItem(): array|null
+  protected function getIcon(): string
   {
-    return ['icon' => 'list'];
+    return FaIcon::ICON_LIST;
   }
 
-  /**
-   * @return array[]
-   */
+  protected function getFilter(): array
+  {
+    return [
+      Filter::search(by: ['title']),
+      Filter::createdAt()
+    ];
+  }
+
   protected function getHeader(): array
   {
     return [
-      'title' => [
-        'title' => 'Record',
-        'source' => function (\Air\Crud\Model\Log $log) {
-          return $this->getView()->render('log-item', ['log' => $log]);
-        },
-      ],
+      Header::source('Record', function (\Air\Crud\Model\Log $log) {
+        return $this->getView()->render('log-item', ['log' => $log]);
+      })
     ];
   }
 }

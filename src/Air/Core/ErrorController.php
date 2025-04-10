@@ -9,35 +9,19 @@ use Exception;
 
 class ErrorController extends Controller
 {
-  /**
-   * @var Error|Exception|null
-   */
   private Error|Exception|null $exception = null;
-
-  /**
-   * @var bool
-   */
   private bool $exceptionEnabled = true;
 
-  /**
-   * @return bool
-   */
   public function isExceptionEnabled(): bool
   {
     return $this->exceptionEnabled;
   }
 
-  /**
-   * @param bool $exceptionEnabled
-   */
   public function setExceptionEnabled(bool $exceptionEnabled): void
   {
     $this->exceptionEnabled = $exceptionEnabled;
   }
 
-  /**
-   * @return void
-   */
   public function init(): void
   {
     parent::init();
@@ -51,19 +35,12 @@ class ErrorController extends Controller
     );
   }
 
-  /**
-   * @return Exception|Error|null
-   */
   public function getException(): Exception|Error|null
   {
     return $this->exception;
   }
 
-  /**
-   * @param $exception
-   * @return void
-   */
-  public function setException($exception): void
+  public function setException(Error|Exception $exception): void
   {
     $this->exception = $exception;
   }

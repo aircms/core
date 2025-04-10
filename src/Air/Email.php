@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Air;
 
 use Air\Crud\Model\EmailQueue;

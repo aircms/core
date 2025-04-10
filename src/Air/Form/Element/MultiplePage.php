@@ -5,39 +5,18 @@ declare(strict_types=1);
 namespace Air\Form\Element;
 
 use Air\Crud\Locale;
-use Exception;
-use Air\Form\Exception\FilterClassWasNotFound;
-use Air\Form\Exception\ValidatorClassWasNotFound;
 
 class MultiplePage extends PageAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/multiple-page';
-
-  /**
-   * @var Page|null
-   */
   public ?Page $pageElement = null;
-
-  /**
-   * @var array|null
-   */
   public ?array $pageElements = [];
 
-  /**
-   * @return Page|null
-   */
   public function getPageElement(): ?Page
   {
     return $this->pageElement;
   }
 
-  /**
-   * @param Page|null $pageElement
-   * @return void
-   */
   public function setPageElement(?Page $pageElement): void
   {
     $this->pageElement = $pageElement;
@@ -51,19 +30,11 @@ class MultiplePage extends PageAbstract
     return $this->pageElements;
   }
 
-  /**
-   * @param array|null $pageElements
-   * @return void
-   */
   public function setPageElements(?array $pageElements): void
   {
     $this->pageElements = $pageElements;
   }
 
-  /**
-   * @return void
-   * @throws Exception
-   */
   public function init(): void
   {
     parent::init();
@@ -76,10 +47,6 @@ class MultiplePage extends PageAbstract
     $this->initPages($this->value);
   }
 
-  /**
-   * @param array|null $value
-   * @return void
-   */
   public function initPages(?array $value): void
   {
     $this->pageElements = [];
@@ -96,12 +63,6 @@ class MultiplePage extends PageAbstract
     }
   }
 
-  /**
-   * @param $value
-   * @return bool
-   * @throws FilterClassWasNotFound
-   * @throws ValidatorClassWasNotFound
-   */
   public function isValid($value): bool
   {
     $isValid = parent::isValid($value);
@@ -135,7 +96,6 @@ class MultiplePage extends PageAbstract
 
   /**
    * @return \Air\Type\Page[]
-   * @throws Exception
    */
   public function getValue(): array
   {

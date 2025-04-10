@@ -4,29 +4,12 @@ declare(strict_types=1);
 
 namespace Air\Form\Element;
 
-use Air\Form\Exception\FilterClassWasNotFound;
-use Air\Form\Exception\ValidatorClassWasNotFound;
-
 class Group extends ElementAbstract
 {
-  /**
-   * @var string|null
-   */
   public ?string $elementTemplate = 'form/element/group';
-
-  /**
-   * @var ElementAbstract[]
-   */
   public array $elements = [];
-
-  /**
-   * @var string[]
-   */
   public array $originalElementNames = [];
 
-  /**
-   * @return void
-   */
   public function init(): void
   {
     parent::init();
@@ -41,10 +24,6 @@ class Group extends ElementAbstract
     $this->updateNamesWith($this->getName());
   }
 
-  /**
-   * @param string $parentName
-   * @return void
-   */
   public function updateNamesWith(string $parentName): void
   {
     foreach ($this->getElements() as $index => $element) {
@@ -61,18 +40,11 @@ class Group extends ElementAbstract
     }
   }
 
-  /**
-   * @return ElementAbstract[]
-   */
   public function getElements(): array
   {
     return $this->elements;
   }
 
-  /**
-   * @param ElementAbstract[] $elements
-   * @return void
-   */
   public function setElements(array $elements): void
   {
     foreach ($elements as $element) {
@@ -81,12 +53,6 @@ class Group extends ElementAbstract
     $this->elements = $elements;
   }
 
-  /**
-   * @param $value
-   * @return bool
-   * @throws FilterClassWasNotFound
-   * @throws ValidatorClassWasNotFound
-   */
   public function isValid($value): bool
   {
     $isValid = true;
@@ -101,9 +67,6 @@ class Group extends ElementAbstract
     return $isValid;
   }
 
-  /**
-   * @return bool
-   */
   public function hasError(): bool
   {
     $hasError = false;
@@ -117,9 +80,6 @@ class Group extends ElementAbstract
     return $hasError;
   }
 
-  /**
-   * @return array
-   */
   public function getValue(): array
   {
     $value = [];
@@ -135,9 +95,6 @@ class Group extends ElementAbstract
     return $value;
   }
 
-  /**
-   * @return mixed
-   */
   public function getCleanValue(): mixed
   {
     $value = [];

@@ -8,12 +8,8 @@ use Exception;
 
 class PropertyWasNotFound extends Exception
 {
-  /**
-   * @param string $collection
-   * @param string $property
-   */
   public function __construct(string $collection, string $property)
   {
-    parent::__construct("PropertyWasNotFound: collection: '" . $collection . "', property: " . $property);
+    parent::__construct("Collection: '" . $collection . "', property: " . $property);
   }
 }

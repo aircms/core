@@ -2,6 +2,7 @@
 
 use Air\Cookie;
 use Air\Core\Front;
+use Air\Crud\Locale;
 
 /**
  * @param mixed $value
@@ -104,7 +105,7 @@ $cache = $route($config['admin']['cache'] ?? null);
                data-admin-accordion-nav>
             <h6 class="m-0 admin-nav-section">
               <i class="fas fa-<?php echo $subMenu['icon']; ?> me-1"></i>
-              <?php echo $subMenu['title']; ?>
+              <?php echo Locale::t($subMenu['title']); ?>
             </h6>
             <i class="fas fa-chevron-right transition-2" data-admin-accordion-nav-icon></i>
           </div>
@@ -123,7 +124,7 @@ $cache = $route($config['admin']['cache'] ?? null);
                    href="<?php echo $this->uri($subMenuItems['url'], [], true); ?>"
                    data-mdb-ripple-init>
                   <i class="fas fa-<?php echo $subMenuItems['icon']; ?> me-1"></i>
-                  <?php echo $subMenuItems['title']; ?>
+                  <?php echo Locale::t($subMenuItems['title']); ?>
                 </a>
               <?php endforeach; ?>
             </div>
@@ -144,36 +145,36 @@ $cache = $route($config['admin']['cache'] ?? null);
           data-mdb-dropdown-init
           data-mdb-ripple-init>
           <i class="fas fa-power-off me-1"></i>
-          <?php echo \Air\Crud\Locale::t('Settings'); ?>
+          <?php echo Locale::t('Settings'); ?>
         </button>
         <ul class="dropdown-menu">
           <li class="d-flex">
             <a class="dropdown-item" role="button" onclick="theme.set('dark')">
-              <i class="fas fa-moon me-1 text-primary-emphasis"></i> <?php echo \Air\Crud\Locale::t('Night'); ?>
+              <i class="fas fa-moon me-1 text-primary-emphasis"></i> <?php echo Locale::t('Night'); ?>
             </a>
             <a class="dropdown-item" role="button" onclick="theme.set('air')">
-              <i class="fas fa-sun me-1 text-warning-emphasis"></i> <?php echo \Air\Crud\Locale::t('Day'); ?>
+              <i class="fas fa-sun me-1 text-warning-emphasis"></i> <?php echo Locale::t('Day'); ?>
             </a>
           </li>
           <li class="dropdown-divider mt-0 pt-0"></li>
           <?php if ($storage) : ?>
             <li>
               <a class="dropdown-item" href="<?php echo $storage; ?>">
-                <i class="fas fa-folder me-1"></i> <?php echo \Air\Crud\Locale::t('File storage'); ?>
+                <i class="fas fa-folder me-1"></i> <?php echo Locale::t('File storage'); ?>
               </a>
             </li>
           <?php endif; ?>
           <?php if ($fonts) : ?>
             <li>
               <a class="dropdown-item" href="<?php echo $fonts; ?>">
-                <i class="fas fa-font me-1"></i> <?php echo \Air\Crud\Locale::t('Fonts'); ?>
+                <i class="fas fa-font me-1"></i> <?php echo Locale::t('Fonts'); ?>
               </a>
             </li>
           <?php endif; ?>
           <?php if ($system) : ?>
             <li>
               <a class="dropdown-item" href="<?php echo $system; ?>">
-                <i class="fas fa-pie-chart me-1"></i> <?php echo \Air\Crud\Locale::t('System monitor'); ?>
+                <i class="fas fa-pie-chart me-1"></i> <?php echo Locale::t('System monitor'); ?>
               </a>
             </li>
           <?php endif; ?>
@@ -181,12 +182,12 @@ $cache = $route($config['admin']['cache'] ?? null);
             <li class="dropdown-divider"></li>
             <li>
               <a class="dropdown-item" href="<?php echo $languages; ?>">
-                <i class="fas fa-globe me-1"></i> <?php echo \Air\Crud\Locale::t('Languages'); ?>
+                <i class="fas fa-globe me-1"></i> <?php echo Locale::t('Languages'); ?>
               </a>
             </li>
             <li>
               <a class="dropdown-item" href="<?php echo $phrases; ?>">
-                <i class="fas fa-language me-1"></i> <?php echo \Air\Crud\Locale::t('Phrases'); ?>
+                <i class="fas fa-language me-1"></i> <?php echo Locale::t('Phrases'); ?>
               </a>
             </li>
           <?php endif; ?>
@@ -194,7 +195,7 @@ $cache = $route($config['admin']['cache'] ?? null);
             <li class="dropdown-divider"></li>
             <li>
               <a class="dropdown-item" href="<?php echo $logs; ?>">
-                <i class="fas fa-list me-1"></i> <?php echo \Air\Crud\Locale::t('Logs'); ?>
+                <i class="fas fa-list me-1"></i> <?php echo Locale::t('Logs'); ?>
               </a>
             </li>
           <?php endif; ?>
@@ -202,12 +203,12 @@ $cache = $route($config['admin']['cache'] ?? null);
             <li class="dropdown-divider"></li>
             <li>
               <a class="dropdown-item" href="<?php echo $administrators; ?>">
-                <i class="fas fa-users me-1"></i> <?php echo \Air\Crud\Locale::t('Administrators'); ?>
+                <i class="fas fa-users me-1"></i> <?php echo Locale::t('Administrators'); ?>
               </a>
             </li>
             <li>
               <a class="dropdown-item" href="<?php echo $administratorsHistory; ?>">
-                <i class="fas fa-clock me-1"></i> <?php echo \Air\Crud\Locale::t('Administrator history'); ?>
+                <i class="fas fa-clock me-1"></i> <?php echo Locale::t('Administrator history'); ?>
               </a>
             </li>
             <li class="dropdown-divider"></li>
@@ -215,13 +216,13 @@ $cache = $route($config['admin']['cache'] ?? null);
           <?php if ($codes) : ?>
             <li>
               <a class="dropdown-item" href="<?php echo $codes; ?>">
-                <i class="fas fa-code me-1"></i> <?php echo \Air\Crud\Locale::t('Codes'); ?>
+                <i class="fas fa-code me-1"></i> <?php echo Locale::t('Codes'); ?>
               </a>
             </li>
             <?php if ($robotsTxt) : ?>
               <li>
                 <a class="dropdown-item" href="<?php echo $robotsTxt; ?>">
-                  <i class="fas fa-robot me-1"></i> <?php echo \Air\Crud\Locale::t('Robots.txt'); ?>
+                  <i class="fas fa-robot me-1"></i> <?php echo Locale::t('Robots.txt'); ?>
                 </a>
               </li>
             <?php endif; ?>
@@ -231,7 +232,7 @@ $cache = $route($config['admin']['cache'] ?? null);
           <?php if ($emailSettings) : ?>
             <li>
               <a class="dropdown-item" href="<?php echo $emailSettings; ?>">
-                <i class="fas fa-cogs me-1"></i> <?php echo \Air\Crud\Locale::t('Email / Settings'); ?>
+                <i class="fas fa-cogs me-1"></i> <?php echo Locale::t('Email / Settings'); ?>
               </a>
             </li>
           <?php endif; ?>
@@ -239,7 +240,7 @@ $cache = $route($config['admin']['cache'] ?? null);
           <?php if ($emailTemplates) : ?>
             <li>
               <a class="dropdown-item" href="<?php echo $emailTemplates; ?>">
-                <i class="fas fa-page me-1"></i> <?php echo \Air\Crud\Locale::t('Email / Templates'); ?>
+                <i class="fas fa-page me-1"></i> <?php echo Locale::t('Email / Templates'); ?>
               </a>
             </li>
           <?php endif; ?>
@@ -247,7 +248,7 @@ $cache = $route($config['admin']['cache'] ?? null);
           <?php if ($emailQueue) : ?>
             <li>
               <a class="dropdown-item" href="<?php echo $emailQueue; ?>">
-                <i class="fas fa-database me-1"></i> <?php echo \Air\Crud\Locale::t('Email / Queue'); ?>
+                <i class="fas fa-database me-1"></i> <?php echo Locale::t('Email / Queue'); ?>
               </a>
             </li>
           <?php endif; ?>
@@ -262,8 +263,8 @@ $cache = $route($config['admin']['cache'] ?? null);
                  role="button"
                  data-admin-clean-cache
                  data-href="<?php echo $cache; ?>"
-                 data-confirm="<?php echo \Air\Crud\Locale::t('Clear cache now?'); ?>">
-                <i class="fa fa-trash me-1"></i> <?php echo \Air\Crud\Locale::t('Clean cache'); ?>
+                 data-confirm="<?php echo Locale::t('Clear cache now?'); ?>">
+                <i class="fa fa-trash me-1"></i> <?php echo Locale::t('Clean cache'); ?>
               </a>
             </li>
             <li class="dropdown-divider"></li>
@@ -272,8 +273,8 @@ $cache = $route($config['admin']['cache'] ?? null);
             <a class="dropdown-item text-danger-emphasis"
                href="<?php echo $logout; ?>"
                data-force="true"
-               data-confirm="<?php echo \Air\Crud\Locale::t('Do you really want to sign out?'); ?>">
-              <i class="fa fa-sign-out me-1"></i> <?php echo \Air\Crud\Locale::t('Sign out'); ?>
+               data-confirm="<?php echo Locale::t('Do you really want to sign out?'); ?>">
+              <i class="fa fa-sign-out me-1"></i> <?php echo Locale::t('Sign out'); ?>
             </a>
           </li>
         </ul>

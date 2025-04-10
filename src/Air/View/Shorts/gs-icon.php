@@ -2,20 +2,6 @@
 
 declare(strict_types=1);
 
-use Air\Core\Exception\ClassWasNotFound;
-
-/**
- * @param string|null $icon
- * @param array $attributes
- * @param string|array|null $class
- * @param int $fill
- * @param int $weight
- * @param int $grad
- * @param int $opsz
- * @param string $tag
- * @return string
- * @throws ClassWasNotFound
- */
 function gsIcon(
   string       $icon = null,
   array        $attributes = [],

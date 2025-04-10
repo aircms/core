@@ -6,24 +6,10 @@ namespace Air\Http;
 
 class Response
 {
-  /**
-   * @var int
-   */
   public int $code = 0;
-
-  /**
-   * @var array
-   */
   public array $header = [];
-
-  /**
-   * @var mixed|string
-   */
   public mixed $body = '';
 
-  /**
-   * @param string|null $httpResponse
-   */
   public function __construct(?string $httpResponse = null)
   {
     if ($httpResponse) {
@@ -50,9 +36,6 @@ class Response
     }
   }
 
-  /**
-   * @return bool
-   */
   public function isOk(): bool
   {
     return $this->code >= 200 && $this->code < 300;
