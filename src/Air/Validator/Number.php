@@ -48,9 +48,9 @@ class Number extends ValidatorAbstract
 
   public static function valid(
     string $errorMessage = '',
+    bool   $allowNull = false,
     int    $min = null,
     int    $max = null,
-    bool   $allowNull = false
   ): static
   {
     return new static([

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Air\View\Helper;
 
 use Air\Core\Front;
-use Air\Crud\Model\Codes;
 use Air\Crud\Model\Font;
+use Air\Crud\Controller\Codes;
 
 class Head extends HelperAbstract
 {

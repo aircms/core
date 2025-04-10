@@ -39,5 +39,16 @@ abstract class ValidatorAbstract
     $this->errorMessage = $errorMessage;
   }
 
+  public static function valid(
+    string $errorMessage = '',
+    bool   $allowNull = false
+  ): static
+  {
+    return new static([
+      'errorMessage' => $errorMessage,
+      'allowNull' => $allowNull,
+    ]);
+  }
+
   public abstract function isValid($value): bool;
 }

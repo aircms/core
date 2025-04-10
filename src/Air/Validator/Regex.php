@@ -27,7 +27,7 @@ class Regex extends ValidatorAbstract
     return !!preg_match($this->pattern, $value);
   }
 
-  public static function valid(string $errorMessage = '', string $pattern = '', bool $allowNull = false): static
+  public static function valid(string $errorMessage = '', bool $allowNull = false, string $pattern = ''): static
   {
     return new static([
       'errorMessage' => $errorMessage,

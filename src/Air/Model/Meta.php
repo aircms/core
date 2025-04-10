@@ -137,7 +137,7 @@ final class Meta
         $upperProp = strtoupper($property->getName());
         foreach ($constants as $constantName => $constantValue) {
           if (str_starts_with(strtoupper($constantName), $upperProp . '_')) {
-            $title = ucfirst(strtolower(str_replace(['_', '-'], ' ', $constantValue)));
+            $title = ucfirst(strtolower(str_replace(['_', '-'], ' ', (string)$constantValue)));
             $options[$title] = $constantValue;
           }
         }
