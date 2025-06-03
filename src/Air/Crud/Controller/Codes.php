@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
-use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -20,9 +19,7 @@ class Codes extends Multiple
 {
   public static function render(): string
   {
-    return Ui::multiple(
-      Map::execute(\Air\Crud\Model\Codes::all(), 'description')
-    );
+    return implode("\n", Map::multiple(\Air\Crud\Model\Codes::all(), 'description'));
   }
 
   protected function getTitle(): string

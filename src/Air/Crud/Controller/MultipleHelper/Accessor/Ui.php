@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller\MultipleHelper\Accessor;
 
+use Air\Model\ModelAbstract;
 use Air\Type\File;
 use Closure;
 
@@ -46,7 +47,13 @@ class Ui
     );
   }
 
-  public static function link(string $label, string $url, ?string $confirm = null, string $style = 'primary'): string
+  public static function link(
+    string  $label,
+    string  $url,
+    ?string $confirm = null,
+    string  $style = 'primary',
+    bool    $isBlank = false
+  ): string
   {
     if (str_contains($url, '@')) {
       $url = 'mailto:' . $url;
@@ -55,12 +62,33 @@ class Ui
       $url = 'tel:' . $url;
     }
 
+    $attributes = [];
+
+    if ($confirm) {
+      $attributes['data-confirm'] = $confirm;
+    }
+
+    if ($isBlank) {
+      $attributes['target'] = '_blank';
+    }
+
     return a(
       href: $url,
       content: $label,
       class: ['text-decoration-underline', 'text-' . $style],
-      attributes: $confirm ? ['data-confirm' => $confirm] : null
+      attributes: $attributes
     );
+  }
+
+  public static function modelPreview(ModelAbstract $model): string
+  {
+    return div(class: 'admin-table-row-image', content: div(
+      class: 'd-flex align-items-center',
+      content: [
+        $model->getMeta()->hasProperty('image') ? div(class: 'bg-image me-3', content: self::imgPreview($model->image)) : null,
+        span($model->title)
+      ]
+    ));
   }
 
   public static function imgPreview(File|string $image): string

@@ -117,11 +117,28 @@ trait Table
     /** @var ModelAbstract $modelClassName */
     $model = new $modelClassName();
 
-    if ($model->getMeta()->hasProperty('title') ||
-      $model->getMeta()->hasProperty('subTitle') ||
-      $model->getMeta()->hasProperty('description')) {
-      $filters[] = Filter::search();
+    $searchBy = ['id'];
+
+    if ($model->getMeta()->hasProperty('title')) {
+      $searchBy[] = 'title';
     }
+
+    if ($model->getMeta()->hasProperty('subTitle')) {
+      $searchBy[] = 'subTitle';
+    }
+
+    if ($model->getMeta()->hasProperty('description')) {
+      $searchBy[] = 'description';
+    }
+
+    if ($model->getMeta()->hasProperty('search')) {
+      $searchBy[] = 'search';
+    }
+
+    if (count($searchBy)) {
+      $filters[] = Filter::search(by: $searchBy);
+    }
+
     if ($model->getMeta()->hasProperty('enabled')) {
       $filters[] = Filter::enabled();
     }
@@ -133,7 +150,7 @@ trait Table
     $constants = $reflectionClass->getConstants();
 
     foreach ($model->getMeta()->getProperties() as $property) {
-      if ($property->getIsModel()) {
+      if ($property->isModel()) {
         $filters[] = Filter::model(by: $property->getName());
       }
 
@@ -199,6 +216,10 @@ trait Table
         $headers[] = Header::image();
       }
 
+      if ($model->getMeta()->hasProperty('images')) {
+        $headers[] = Header::images();
+      }
+
       if ($model->getMeta()->hasProperty('title') && $model->getMeta()->hasProperty('description')) {
         $headers[] = Header::title(Header::LG);
         $headers[] = Header::longtext(by: 'description');
@@ -214,7 +235,7 @@ trait Table
       $constants = $reflectionClass->getConstants();
 
       foreach ($model->getMeta()->getProperties() as $property) {
-        if ($property->getIsModel() && !$property->getIsMultiple()) {
+        if ($property->isModel() && !$property->isMultiple()) {
           $headers[] = Header::model($property->getRawType(), by: $property->getName());
         }
 
@@ -254,24 +275,27 @@ trait Table
 
   protected function getControls(): array
   {
-    $controls = [
-      Control::copy(),
-    ];
-    if (Language::isAvailable()) {
-      $controls[] = Control::localizedCopy();
-    }
-    if ($this->getQuickManage()) {
-      $controls[] = Control::view();
-    }
-    if ($this->getPrintable()) {
-      $controls[] = Control::print();
-    }
-    if ($this->getManageable()) {
-      $controls[] = Control::manage();
-    }
     $modelClassName = $this->getModelClassName();
     /** @var ModelAbstract $model */
     $model = new $modelClassName();
+
+    $controls = [
+      Control::view()
+    ];
+
+    if ($this->getManageable()) {
+      $controls[] = Control::manage();
+    }
+
+    $controls[] = Control::copy();
+    if (Language::isAvailable() && $model->getMeta()->hasProperty('language')) {
+      $controls[] = Control::localizedCopy();
+    }
+
+    if ($this->getPrintable()) {
+      $controls[] = Control::print();
+    }
+
     if ($model->getMeta()->hasProperty('enabled')) {
       $controls[] = Control::enabled();
     }

@@ -9,7 +9,7 @@ const getLanguage = () => {
   if (!language && $('[name="filter[language]"]').length) {
     language = $('[name="filter[language]"]').val();
   }
-  return language.length ? language : null;
+  return language && language.length ? language : null;
 };
 
 $(document).ready(() => {

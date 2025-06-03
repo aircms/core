@@ -61,7 +61,9 @@ $hasLanguage = $model->getMeta()->hasProperty('language');
           <?php foreach (Language::fetchAll() as $language) : ?>
             <div class="badge badge-secondary d-flex align-items-center gap-2" role="button"
                  data-admin-select-language="<?php echo $language->id; ?>">
-              <img src="<?php echo $language->image->getSrc(); ?>" style="height: 10px;">
+              <?php if ($language->image) : ?>
+                <img src="<?php echo $language->image->getSrc(); ?>" style="height: 10px;">
+              <?php endif; ?>
               <span class="lh-1"><?php echo strtoupper($language->key); ?></span>
             </div>
           <?php endforeach; ?>
@@ -100,7 +102,9 @@ $hasLanguage = $model->getMeta()->hasProperty('language');
             <div class="d-flex align-items-center gap-2 justify-content-between">
               <?php if ($hasLanguage && $rec->language?->key) : ?>
                 <div class="badge badge-primary d-flex gap-2">
-                  <img src="<?php echo $rec->language->image->getSrc(); ?>" style="height: 10px;">
+                  <?php if ($rec->language->image) : ?>
+                    <img src="<?php echo $rec->language->image->getSrc(); ?>" style="height: 10px;">
+                  <?php endif; ?>
                   <?php echo strtoupper($rec->language->key); ?>
                 </div>
               <?php endif; ?>

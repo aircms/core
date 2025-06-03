@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Air\Model;
 
+use Air\Core\Loader;
 use Air\Model\Meta\Exception\CollectionCantBeWithoutPrimary;
 use Air\Model\Meta\Exception\CollectionCantBeWithoutProperties;
 use Air\Model\Meta\Exception\CollectionNameDoesNotExists;
 use Air\Model\Meta\Exception\PropertyIsSetIncorrectly;
 use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\Meta\Property;
+use Air\Type\TypeAbstract;
 use ReflectionClass;
 use Throwable;
 
@@ -109,7 +111,7 @@ final class Meta
           $isArray = true;
         }
 
-        $namespaces = $this->getUsedNamespaces($model);
+        $namespaces = Loader::getUsedNamespaces($model::class);
 
         if (class_exists($namespaces['namespace'] . '\\' . $propType)) {
           $propType = $namespaces['namespace'] . '\\' . $propType;
@@ -154,6 +156,12 @@ final class Meta
           $property->setIsModel(false);
         }
 
+        if (class_exists($modelClass) && is_subclass_of($modelClass, TypeAbstract::class)) {
+          $property->setIsTypeAbstract(true);
+        } else {
+          $property->setIsTypeAbstract(false);
+        }
+
         $this->assocProperties[$property->getName()] = $property;
         $this->properties[] = $property;
       }
@@ -177,32 +185,6 @@ final class Meta
       'primary' => $this->primary,
       'assocProperties' => $this->assocProperties
     ];
-  }
-
-  public function getUsedNamespaces(ModelAbstract $model): array
-  {
-    if (!isset(self::$namespaceCache[get_class($model)])) {
-      $usedNamespaces = [
-        'namespace' => '',
-        'uses' => []
-      ];
-
-      $r = new ReflectionClass($model::class);
-      $filePath = $r->getFileName();
-
-      foreach (explode("\n", file_get_contents($filePath)) as $line) {
-        if (str_starts_with(trim($line), 'use ')) {
-          $usedNamespaces['uses'][] = str_replace(';', '', trim(explode('use', $line)[1]));
-          continue;
-        }
-
-        if (str_starts_with(trim($line), 'namespace ')) {
-          $usedNamespaces['namespace'] = str_replace(';', '', trim(explode('namespace', $line)[1]));
-        }
-      }
-      self::$namespaceCache[get_class($model)] = $usedNamespaces;
-    }
-    return self::$namespaceCache[get_class($model)];
   }
 
   public function getPrimary(): string

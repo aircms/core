@@ -21,6 +21,7 @@ class Header
   const string SOURCE = 'source';
   const string MODEL = 'model';
   const string IMAGE = 'image';
+  const string IMAGES = 'images';
   const string LONGTEXT = 'longtext';
   const string TEXT = 'text';
   const string BOOL = 'bool';
@@ -100,8 +101,12 @@ class Header
 
   public static function image(): array
   {
-    $by = self::getModelClass()->getMeta()->hasProperty('images') ? 'images' : 'image';
-    return self::col(self::IMAGE, 'Img.', $by, self::SM);
+    return self::col(self::IMAGE, 'Img.', 'image', self::SM);
+  }
+
+  public static function images(): array
+  {
+    return self::col(self::IMAGES, 'Img.', 'images', self::SM);
   }
 
   public static function source(string $title, Closure $source): array
@@ -146,7 +151,7 @@ class Header
 
   public static function createdAt(): array
   {
-    return self::dateTime('Created', 'createdAt');
+    return self::source('Created', fn(ModelAbstract $model) => Ui::badge(date('Y/m/d H:i', $model->createdAt), Ui::DARK));
   }
 
   public static function updatedAt(): array

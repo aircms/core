@@ -38,8 +38,7 @@ trait AdminLog
 
       $history = new History();
       $data = [
-        'dateTime' => time(),
-        'admin' => Auth::getInstance()->getName(),
+        'admin' => ['login' => Auth::getInstance()->getName()],
         'type' => $type,
         'section' => $section,
         'entity' => $entity,
@@ -47,7 +46,7 @@ trait AdminLog
         'became' => $became
       ];
       $data['search'] = serialize($data);
-      $history->populateWithoutQuerying($data);
+      $history->populate($data);
       $history->save();
     }
   }

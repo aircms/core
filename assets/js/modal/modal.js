@@ -134,6 +134,14 @@ const modal = new class {
     return this.html('PDF', this.replace(this.embedTemplates.pdf, {src, alt, title}), {size: 'xLarge'});
   }
 
+  htmlAjax(src, title) {
+    return new Promise(() => {
+      $.get(src, (content) => {
+        this.html(title, content, {size: 'xLarge'});
+      });
+    });
+  }
+
   text(src, alt, title) {
     return new Promise(() => {
       $.get(src, (content) => {

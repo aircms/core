@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller\MultipleHelper\Accessor;
 
+use Air\Core\Front;
 use Closure;
 
 class Control
@@ -45,8 +46,9 @@ class Control
 
   public static function runAndReload(array $url, string $icon, string $title, string|false $confirm = false): array
   {
-    return [
-      'type' => 'run-and-reload',
+    $url['controller'] = $url['controller'] ?? Front::getInstance()->getRouter()->getController();
+
+    return ['type' => 'run-and-reload',
       'url' => $url,
       'icon' => $icon,
       'title' => $title,
@@ -77,6 +79,18 @@ class Control
       'title' => $title,
       'confirm' => $confirm,
       'modal' => 'iframe',
+    ];
+  }
+
+  public static function html(array $url, string $icon, string $title, string|false $confirm = false): array
+  {
+    $url['controller'] = $url['controller'] ?? Front::getInstance()->getRouter()->getController();
+    return [
+      'url' => $url,
+      'icon' => $icon,
+      'title' => $title,
+      'confirm' => $confirm,
+      'modal' => 'htmlAjax',
     ];
   }
 }

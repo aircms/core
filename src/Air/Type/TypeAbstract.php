@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
+use Air\Core\Loader;
 use Air\Model\ModelAbstract;
-use ReflectionClass;
 use ReflectionProperty;
 use Throwable;
 
 abstract class TypeAbstract
 {
-  public function __construct(?array $item = [])
+  public function __construct(?array $data = [])
   {
     foreach (array_keys(get_class_vars(static::class)) as $var) {
 
-      if (isset($item[$var])) {
-        $value = $item[$var];
+      if (isset($data[$var])) {
+        $value = $data[$var];
 
         list($type, $isArray) = $this->getPropertyType($var);
 
@@ -65,29 +65,6 @@ abstract class TypeAbstract
     }
   }
 
-  public function getUsedNamespaces(mixed $class): array
-  {
-    $usedNamespaces = [
-      'namespace' => '',
-      'uses' => []
-    ];
-
-    $r = new ReflectionClass($class::class);
-    $filePath = $r->getFileName();
-
-    foreach (explode("\n", file_get_contents($filePath)) as $line) {
-      if (str_starts_with(trim($line), 'use ')) {
-        $usedNamespaces['uses'][] = str_replace(';', '', trim(explode('use', $line)[1]));
-        continue;
-      }
-
-      if (str_starts_with(trim($line), 'namespace ')) {
-        $usedNamespaces['namespace'] = str_replace(';', '', trim(explode('namespace', $line)[1]));
-      }
-    }
-    return $usedNamespaces;
-  }
-
   public function getPropertyType(string $property): ?array
   {
     $rp = new ReflectionProperty(static::class, $property);
@@ -107,7 +84,7 @@ abstract class TypeAbstract
             return [$type, true];
           }
 
-          $namespaces = $this->getUsedNamespaces(new static());
+          $namespaces = Loader::getUsedNamespaces(static::class);
 
           if (class_exists($namespaces['namespace'] . '\\' . $type)) {
             $type = $namespaces['namespace'] . '\\' . $type;
@@ -162,11 +139,9 @@ abstract class TypeAbstract
 
       if (class_exists($type)) {
 
-        if ($isArray) {
+        if ($isArray && is_array($value)) {
           $array[$var] = [];
-
           foreach ($value as $datum) {
-
             if (is_subclass_of($type, TypeAbstract::class)) {
               if (is_object($datum)) {
                 $array[$var][] = $datum->toRaw();

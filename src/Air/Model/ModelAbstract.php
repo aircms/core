@@ -14,9 +14,6 @@ use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use ArrayAccess;
 
-/**
- * @method static int remove (array $cond = [], int $limit = null)
- */
 abstract class ModelAbstract implements ModelInterface, ArrayAccess
 {
   private static DocumentAbstract|string $driverClassName = '';
@@ -32,7 +29,7 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     $this->meta = new Meta($this);
 
     if ($data) {
-      $this->populateWithoutQuerying($data);
+      $this->populate($data);
     }
   }
 
@@ -41,7 +38,7 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     self::$driverClassName = get_class($class);
   }
 
-  public static function fetchObject(array $cond = [], array $sort = []): static
+  public static function fetchObject(array|string|int $cond = [], array $sort = []): static
   {
     return self::__callStatic(__FUNCTION__, func_get_args());
   }
@@ -74,6 +71,9 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     } else {
       if (Config::getConfig()['driver'] == 'mongodb') {
         $driverClassName = Driver\Mongodb\Driver::class;
+
+      } else if (Config::getConfig()['driver'] == 'mysql') {
+        $driverClassName = Driver\Mysql\Driver::class;
       }
     }
 
@@ -105,29 +105,35 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     return self::__callStatic(__FUNCTION__, func_get_args());
   }
 
-  public static function singleOne(array $cond = [], array $sort = [], array $map = []): static|null
+  public static function singleOne(array|string|int $cond = [], array $sort = [], array $map = []): static|null
   {
     $cond = static::addCond($cond);
     $sort = static::addPosition($sort);
 
-    return Cache::single(['one', static::class, $cond, $sort, $map], function () use ($cond, $sort, $map) {
-      return static::fetchOne($cond, $sort, $map);
-    });
+    return Cache::single(
+      ['one', static::class, $cond, $sort, $map],
+      fn() => static::fetchOne($cond, $sort, $map)
+    );
   }
 
-  public static function one(array $cond = [], array $sort = [], array $map = []): static|null
+  public static function one(array|string|int $cond = [], array $sort = [], array $map = []): static|null
   {
     return static::fetchOne(static::addCond($cond), static::addPosition($sort), $map);
   }
 
-  public static function fetchOne(array $cond = [], array $sort = [], array $map = []): static|null
+  public static function fetchOne(array|string|int $cond = [], array $sort = [], array $map = []): static|null
   {
     return self::__callStatic(__FUNCTION__, func_get_args());
   }
 
-  public static function addCond(array $cond = []): array
+  public static function addCond(array|string|int $cond = []): array
   {
     $model = new static();
+
+    if (is_string($cond) || is_int($cond)) {
+      $cond = [$model::meta()->getPrimary() => $cond];
+    }
+
     if ($model->getMeta()->hasProperty('enabled') && !isset($cond['enabled'])) {
       $cond['enabled'] = true;
     }
@@ -170,9 +176,8 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
 
     return Cache::single(
       ['all', static::class, $cond, $sort, $count, $offset, $map],
-      function () use ($cond, $sort, $count, $offset, $map) {
-        return static::fetchAll($cond, $sort, $count, $offset, $map);
-      });
+      fn() => static::fetchAll($cond, $sort, $count, $offset, $map)
+    );
   }
 
   /**
@@ -247,8 +252,11 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
       $driver = Config::getConfig()['driver'];
       $documentClassName = null;
 
-      if ($driver == 'mongodb') {
+      if ($driver === 'mongodb') {
         $documentClassName = Document::class;
+
+      } else if ($driver === 'mysql') {
+        $documentClassName = Driver\Mysql\Document::class;
       }
 
       if ($documentClassName) {
@@ -313,12 +321,12 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     return $this->meta;
   }
 
-  public function populate(array $data, bool $fromSet = true): void
+  public static function meta(): Meta
   {
-    self::__call(__FUNCTION__, func_get_args());
+    return new Meta(new static());
   }
 
-  public function populateWithoutQuerying(array $data): void
+  public function populate(array $data, bool $fromSet = true): void
   {
     self::__call(__FUNCTION__, func_get_args());
   }
@@ -328,13 +336,18 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     return self::__call(__FUNCTION__, func_get_args());
   }
 
-  public function getTimestamp(): int
-  {
-    return self::__call(__FUNCTION__, func_get_args());
-  }
-
   public function toArray(): array
   {
     return $this->getDocument()->toArray();
+  }
+
+  public static function reflectSchema(): void
+  {
+    self::__callStatic(__FUNCTION__, []);
+  }
+
+  public static function remove(array $cond = [], int $limit = null): int
+  {
+    return self::__callStatic(__FUNCTION__, func_get_args());
   }
 }

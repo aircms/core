@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
-class RichContent
+class RichContent extends TypeAbstract
 {
   const string TYPE_FILE = 'file';
   const string TYPE_FILES = 'files';

@@ -11,7 +11,6 @@ use Air\Model\ModelAbstract;
  *
  * @property string $id
  * @property array $admin
- * @property integer $dateTime
  * @property string $type
  * @property string $section
  * @property array $entity
@@ -19,6 +18,7 @@ use Air\Model\ModelAbstract;
  * @property array $became
  *
  * @property string $search
+ * @property integer $createdAt
  */
 class History extends ModelAbstract
 {

@@ -10,7 +10,7 @@ use ArrayAccess;
 use Countable;
 use Iterator;
 
-abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
+class CursorAbstract implements Iterator, ArrayAccess, Countable
 {
   protected array $documents = [];
   private string|ModelAbstract $model;
@@ -94,7 +94,7 @@ abstract class CursorAbstract implements Iterator, ArrayAccess, Countable
 
       /** @var ModelAbstract $model */
       $model = new $modelClassName();
-      $model->populate(static::processDataRow($data[$index]), false);
+      $model->populate(static::processDataRow($data[$index]));
 
       $this->documents[$index] = $model;
 

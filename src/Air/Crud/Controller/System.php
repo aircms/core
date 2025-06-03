@@ -12,13 +12,13 @@ class System extends Multiple
   {
     try {
       $this->getView()->setVars([
-        'disk' => \Air\System::disk(),
-        'memory' => \Air\System::memory(),
-        'uptime' => \Air\System::uptime(true),
-        'version' => \Air\System::version(),
-        'cpuLoadAverage' => \Air\System::cpuLoadAverage(),
-        'cpuCoreCount' => \Air\System::cpuCoreCount(),
-        'cpuName' => \Air\System::cpuName(),
+        'disk' => \Air\System\System::disk(),
+        'memory' => \Air\System\System::memory(),
+        'uptime' => \Air\System\System::uptime(true),
+        'version' => \Air\System\System::version(),
+        'cpuLoadAverage' => \Air\System\System::cpuLoadAverage(),
+        'cpuCoreCount' => \Air\System\System::cpuCoreCount(),
+        'cpuName' => \Air\System\System::cpuName(),
       ]);
     } catch (Throwable) {
     }

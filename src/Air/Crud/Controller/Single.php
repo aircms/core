@@ -17,9 +17,4 @@ abstract class Single extends Multiple
     $modelClassName = $this->getModelClassName();
     return parent::manage($modelClassName::fetchObject()->id);
   }
-
-  public function manage(string $id = null): void
-  {
-    $this->redirect($this->getRouter()->assemble(['controller' => $this->getRouter()->getController()], [], true));
-  }
 }

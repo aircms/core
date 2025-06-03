@@ -68,11 +68,13 @@ $model = $this->model;
 
         <?php if ($mode === 'manage') : ?>
 
-          <?php if ($model->id && $model->getMeta()->hasProperty('language') && $model->getMeta()->hasProperty('url')) : ?>
+          <?php if ($model->id && $model->getMeta()->hasProperty('language') && ($model->getMeta()->hasProperty('url') || $isSingle)) : ?>
             <div data-admin-manage-switch-language="<?php echo $model->language->id; ?>">
-              <?php echo script(
+              <?php
+              $cond = $isSingle ? [] : ['url' => $model->url];
+              echo script(
                 attributes: ['type' => 'application/json', 'data-admin-manage-switch-language-map'],
-                content: json_encode(Map::execute($model::fetchAll(['url' => $model->url]), function (ModelAbstract $m) use ($controller, $isQuickManage) {
+                content: json_encode(Map::execute($model::fetchAll($cond), function (ModelAbstract $m) use ($controller, $isQuickManage) {
                   return [
                     'controller' => $controller,
                     'languageId' => $m->language->id,

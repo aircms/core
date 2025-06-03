@@ -22,8 +22,6 @@ class Driver extends DriverAbstract
 
   public function save(): int
   {
-    $bulk = new BulkWrite();
-
     $data = $this->replaceIdToObjectId(
       $this->getModel()->getData()
     );
@@ -36,6 +34,8 @@ class Driver extends DriverAbstract
         $data['updatedAt'] = time();
       }
     }
+
+    $bulk = new BulkWrite();
 
     if ($this->getModel()->id) {
       $cond = $this->replaceIdToObjectId(['id' => $this->getModel()->id]);
@@ -50,13 +50,7 @@ class Driver extends DriverAbstract
       $this->getModel()->id = (string)$bulk->insert($data);
     }
 
-    $writeConcern = new WriteConcern(
-      WriteConcern::MAJORITY, 1000
-    );
-
-    $result = $this->getManager()->executeBulkWrite(
-      $this->getCollectionNamespace(), $bulk, $writeConcern
-    );
+    $result = $this->getManager()->executeBulkWrite($this->getCollectionNamespace(), $bulk);
 
     if (!$this->getModel()->id) {
       return $result->getInsertedCount();
@@ -72,7 +66,7 @@ class Driver extends DriverAbstract
     }
     if (is_array($cond) && array_key_exists('id', $cond)) {
       $cond['_id'] = new ObjectId(
-        !empty($cond['id']) ? $cond['id'] : null
+        !empty($cond['id']) ? (string)$cond['id'] : null
       );
       unset($cond['id']);
     }
@@ -129,26 +123,16 @@ class Driver extends DriverAbstract
       $config = $this->getConfig();
 
       $credentials = null;
-      if (isset($config['username']) && isset($config['password'])) {
-        $credentials = implode(':', [$config['username'], $config['password']]) . '@';
+      if (isset($config['user']) && isset($config['pass'])) {
+        $credentials = implode(':', [$config['user'], $config['pass']]) . '@';
       }
 
-      $servers = [];
+      $host = $config['host'] ?? 'localhost';
+      $port = $config['port'] ?? 27017;
 
-      foreach ($config['servers'] as $server) {
-        $servers[] = implode(':', [$server['host'], $server['port']]);
-      }
+      $servers = $host . ':' . $port . '/' . $config['db'];
 
-      $servers = implode(',', $servers) . '/' . $config['db'];
-
-      $replicaSetName = null;
-      if (!empty($config['replicaSetName'])) {
-        $replicaSetName = '?replicaSet=' . $config['replicaSetName'];
-      }
-
-      $connection = 'mongodb://' . $credentials . $servers . $replicaSetName;
-
-      $this->manager[$managerConfigKey] = new Manager($connection);
+      $this->manager[$managerConfigKey] = new Manager('mongodb://' . $credentials . $servers);
     }
     return $this->manager[$managerConfigKey];
   }
@@ -161,8 +145,12 @@ class Driver extends DriverAbstract
     ]);
   }
 
-  public function remove(array $cond = [], int $limit = null): int
+  public function remove(array|string|int $cond = [], int $limit = null): int
   {
+    if (is_string($cond) || is_int($cond)) {
+      $cond = [$this->getModel()::meta()->getPrimary() => $cond];
+    }
+
     if ($this->getModel()->id) {
 
       $cond = $this->replaceIdToObjectId([
@@ -179,18 +167,12 @@ class Driver extends DriverAbstract
 
     $bulk->delete($cond, ['limit' => $limit]);
 
-    $writeConcern = new WriteConcern(
-      WriteConcern::MAJORITY, 100
-    );
-
-    $result = $this->getManager()->executeBulkWrite(
-      $this->getCollectionNamespace(), $bulk, $writeConcern
-    );
+    $result = $this->getManager()->executeBulkWrite($this->getCollectionNamespace(), $bulk);
 
     return $result->getDeletedCount();
   }
 
-  private function processQuery(array $cond = [], array $sort = []): array
+  private function processQuery(array|string|int $cond = [], array $sort = []): array
   {
     if ($cond === null) {
       $cond = [];
@@ -211,8 +193,12 @@ class Driver extends DriverAbstract
     return $projection;
   }
 
-  public function fetchOne(array $cond = [], array $sort = [], array $map = []): mixed
+  public function fetchOne(array|string|int $cond = [], array $sort = [], array $map = []): mixed
   {
+    if (is_string($cond) || is_int($cond)) {
+      $cond = [$this->getModel()::meta()->getPrimary() => $cond];
+    }
+
     list($cond, $sort) = $this->processQuery($cond, $sort);
 
     $cond = $this->normalizeDataTypes($cond);
@@ -331,8 +317,12 @@ class Driver extends DriverAbstract
     return self::batchInsert([$data]);
   }
 
-  public function update(array $cond = [], array $data = []): int
+  public function update(array|string|int $cond = [], array $data = []): int
   {
+    if (is_string($cond) || is_int($cond)) {
+      $cond = [$this->getModel()::meta()->getPrimary() => $cond];
+    }
+
     list($cond) = $this->processQuery($cond);
 
     $cond = $this->normalizeDataTypes($cond);
@@ -359,5 +349,10 @@ class Driver extends DriverAbstract
     }
 
     return 0;
+  }
+
+  public function reflectSchema(): void
+  {
+
   }
 }

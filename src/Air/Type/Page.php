@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
-class Page
+class Page extends TypeAbstract
 {
   const int WIDTH = 360;
   const int HEIGHT = 560;

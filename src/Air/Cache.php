@@ -104,7 +104,7 @@ class Cache extends ModelAbstract
     return $content;
   }
 
-  public static function getContent(Closure $fn): mixed
+  private static function getContent(Closure $fn): mixed
   {
     ob_start();
 

@@ -153,7 +153,6 @@ class Storage
     return $files;
   }
 
-
   public static function annotation(
     string $folder,
     string $fileName,

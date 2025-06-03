@@ -100,7 +100,7 @@ final class Generator
     }
 
     foreach ($model->getMeta()->getProperties() as $property) {
-      if ($property->getIsEnum()) {
+      if ($property->isEnum()) {
         $formElements['General'][$property->getName()] = null;
       }
     }
@@ -167,7 +167,7 @@ final class Generator
 
   private static function getElementClassName(string $name, ModelAbstract $model): ?string
   {
-    if ($model->getMeta()->hasProperty($name) && $model->getMeta()->getPropertyWithName($name)->getIsEnum()) {
+    if ($model->getMeta()->hasProperty($name) && $model->getMeta()->getPropertyWithName($name)->isEnum()) {
       return Select::class;
     }
 

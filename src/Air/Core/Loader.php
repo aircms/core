@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Core;
 
 use Air\Core\Exception\ClassWasNotFound;
+use ReflectionClass;
 
 class Loader
 {
@@ -46,5 +47,26 @@ class Loader
     }
 
     return implode('\\', $namespace);
+  }
+
+  public static function getUsedNamespaces(string $className): array
+  {
+    $r = new ReflectionClass($className);
+    $usedNamespaces = [
+      'uses' => [],
+      'namespace' => ''
+    ];
+    foreach (explode("\n", file_get_contents($r->getFileName())) as $line) {
+      if (str_starts_with(trim($line), 'use ')) {
+        $usedNamespaces['uses'][] = str_replace(';', '', trim(explode('use', $line)[1]));
+        continue;
+      }
+
+      if (str_starts_with(trim($line), 'namespace ')) {
+        $usedNamespaces['namespace'] = str_replace(';', '', trim(explode('namespace', $line)[1]));
+      }
+    }
+
+    return $usedNamespaces;
   }
 }

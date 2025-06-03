@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air;
 
+use Air\Model\Driver\CursorAbstract;
 use Air\Model\Driver\Mongodb\Cursor;
 use Air\Model\ModelAbstract;
 use Air\Model\ModelInterface;
@@ -13,6 +14,31 @@ use Throwable;
 
 class Map
 {
+  public static function adjust(mixed $data, array $mapper, array $userData = []): mixed
+  {
+    $props = [];
+
+    if (is_array($data) && isset($data[0]) && is_array($data[0])) {
+      $props = array_map(fn(mixed $key) => (string)$key, array_keys($data[0]));
+
+    } else if (is_array($data) && !isset($data[0])) {
+      $props = array_keys($data);
+
+    } else if ($data instanceof ModelAbstract) {
+      $props = array_keys($data->getMeta()->getAssocProperties());
+
+    } else if ($data instanceof CursorAbstract) {
+      $props = array_keys($data->getModel()->getMeta()->getAssocProperties());
+    }
+
+    $mapper = [
+      ...array_combine($props, $props),
+      ...$mapper
+    ];
+
+    return self::execute($data, $mapper, $userData);
+  }
+
   public static function execute(mixed $data, mixed $mapper, array $userData = []): mixed
   {
     if (!$data) {

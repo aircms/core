@@ -12,7 +12,7 @@ use Air\Type\FaIcon;
 use Throwable;
 
 /**
- * @mod-sorting {"dateTime": -1}
+ * @mod-sorting {"createdAt": -1}
  */
 class History extends Multiple
 {
@@ -53,26 +53,22 @@ class History extends Multiple
   public function getHeader(): array
   {
     return [
-      Header::source(Locale::t('User'), function (\Air\Crud\Model\History $adminHistory) {
-        return $adminHistory->admin['login'] ?? $adminHistory->admin[0];
-      }),
-      Header::dateTime(by: 'dateTime'),
-      Header::source(Locale::t('Action'), function (\Air\Crud\Model\History $adminHistory) {
-        return Ui::badge(
-          match ($adminHistory->type) {
-            \Air\Crud\Model\History::TYPE_READ_TABLE => Locale::t('Table view'),
-            \Air\Crud\Model\History::TYPE_READ_ENTITY => Locale::t('Record details'),
-            \Air\Crud\Model\History::TYPE_WRITE_ENTITY => Locale::t('Edit record'),
-            \Air\Crud\Model\History::TYPE_CREATE_ENTITY => Locale::t('Creating record'),
-            default => Locale::t('Unknown'),
-          },
-          match ($adminHistory->type) {
-            \Air\Crud\Model\History::TYPE_READ_TABLE, \Air\Crud\Model\History::TYPE_READ_ENTITY => Ui::INFO,
-            \Air\Crud\Model\History::TYPE_WRITE_ENTITY, \Air\Crud\Model\History::TYPE_CREATE_ENTITY => Ui::WARNING,
-            default => Ui::DANGER,
-          }
-        );
-      }),
+      Header::source(Locale::t('User'), fn(\Air\Crud\Model\History $adminHistory) => $adminHistory->admin['login'] ?? $adminHistory->admin[0]),
+      Header::createdAt(),
+      Header::source(Locale::t('Action'), fn(\Air\Crud\Model\History $adminHistory) => Ui::badge(
+        match ($adminHistory->type) {
+          \Air\Crud\Model\History::TYPE_READ_TABLE => Locale::t('Table view'),
+          \Air\Crud\Model\History::TYPE_READ_ENTITY => Locale::t('Record details'),
+          \Air\Crud\Model\History::TYPE_WRITE_ENTITY => Locale::t('Edit record'),
+          \Air\Crud\Model\History::TYPE_CREATE_ENTITY => Locale::t('Creating record'),
+          default => Locale::t('Unknown'),
+        },
+        match ($adminHistory->type) {
+          \Air\Crud\Model\History::TYPE_READ_TABLE, \Air\Crud\Model\History::TYPE_READ_ENTITY => Ui::INFO,
+          \Air\Crud\Model\History::TYPE_WRITE_ENTITY, \Air\Crud\Model\History::TYPE_CREATE_ENTITY => Ui::WARNING,
+          default => Ui::DANGER,
+        }
+      )),
       Header::source(Locale::t('Section'), function (\Air\Crud\Model\History $adminHistory) {
         $content = [Ui::label($adminHistory->section)];
         try {

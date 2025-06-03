@@ -19,7 +19,7 @@ class FaIcon extends ElementAbstract
 
     } else if (is_string($value)) {
       try {
-        $value = json_decode($value, true);
+        return new \Air\Type\FaIcon(json_decode($value, true));
       } catch (Throwable) {
       }
 
@@ -27,14 +27,7 @@ class FaIcon extends ElementAbstract
       return $value;
     }
 
-    if (isset($value['icon']) && isset($value['style'])) {
-      return new \Air\Type\FaIcon([
-        'icon' => (string)$value['icon'],
-        'style' => (string)$value['style'],
-      ]);
-    }
-
-    return null;
+    return $value;
   }
 
   public function getCleanValue(): mixed

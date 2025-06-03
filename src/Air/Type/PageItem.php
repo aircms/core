@@ -6,7 +6,7 @@ namespace Air\Type;
 
 use Exception;
 
-class PageItem
+class PageItem extends TypeAbstract
 {
   const string TYPE_FILE = 'file';
   const string TYPE_HTML = 'html';
@@ -68,43 +68,43 @@ class PageItem
     return $this->transparent;
   }
 
-  public function __construct(?array $item = [])
+  public function __construct(?array $data = [])
   {
-    if (!in_array(($item['type'] ?? false), [self::TYPE_FILE, self::TYPE_HTML, self::TYPE_EMBED])) {
-      throw new Exception('Unknown page item type: ' . $item['type']);
+    if (!in_array(($data['type'] ?? false), [self::TYPE_FILE, self::TYPE_HTML, self::TYPE_EMBED])) {
+      throw new Exception('Unknown page item type: ' . $data['type']);
     }
 
-    $this->value = match ($item['type'] ?? false) {
-      self::TYPE_FILE => new File($item['value'] ?? []),
-      self::TYPE_EMBED => $item['value'] ?? null,
-      self::TYPE_HTML => $item['value'] ?? [],
-      default => throw new Exception('Unknown page item type: ' . $item['type']),
+    $this->value = match ($data['type'] ?? false) {
+      self::TYPE_FILE => new File($data['value'] ?? []),
+      self::TYPE_EMBED => $data['value'] ?? null,
+      self::TYPE_HTML => $data['value'] ?? [],
+      default => throw new Exception('Unknown page item type: ' . $data['type']),
     };
 
-    $this->type = $item['type'];
+    $this->type = $data['type'];
 
-    if ($item['width'] ?? false) {
-      $this->width = $item['width'];
+    if ($data['width'] ?? false) {
+      $this->width = $data['width'];
     }
 
-    if ($item['height'] ?? false) {
-      $this->height = $item['height'];
+    if ($data['height'] ?? false) {
+      $this->height = $data['height'];
     }
 
-    if ($item['x'] ?? false) {
-      $this->x = $item['x'];
+    if ($data['x'] ?? false) {
+      $this->x = $data['x'];
     }
 
-    if ($item['y'] ?? false) {
-      $this->y = $item['y'];
+    if ($data['y'] ?? false) {
+      $this->y = $data['y'];
     }
 
-    if ($item['deep'] ?? false) {
-      $this->deep = $item['deep'];
+    if ($data['deep'] ?? false) {
+      $this->deep = $data['deep'];
     }
 
-    if ($item['transparent'] ?? false) {
-      $this->transparent = $item['transparent'];
+    if ($data['transparent'] ?? false) {
+      $this->transparent = $data['transparent'];
     }
   }
 

@@ -116,7 +116,7 @@ class Cursor extends CursorAbstract
 
     /** @var ModelAbstract $model */
     $model = new $modelClassName();
-    $model->populateWithoutQuerying($this->processDataRow($data));
+    $model->populate($this->processDataRow($data));
 
     return $model;
   }

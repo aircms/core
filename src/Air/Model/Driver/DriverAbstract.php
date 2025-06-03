@@ -21,7 +21,7 @@ abstract class DriverAbstract
     return $this->config;
   }
 
-  public function fetchObject(array $cond = [], array $sort = [], array $map = []): ModelAbstract|static
+  public function fetchObject(array|string|int $cond = [], array $sort = [], array $map = []): ModelAbstract|static
   {
     $model = static::fetchOne($cond, $sort, $map);
     if ($model) {
@@ -30,7 +30,7 @@ abstract class DriverAbstract
     return $this->getModel();
   }
 
-  abstract public function fetchOne(array $cond = [], array $sort = [], array $map = []): mixed;
+  abstract public function fetchOne(array|string|int $cond = [], array $sort = [], array $map = []): mixed;
 
   public function getModel(): ModelAbstract
   {
@@ -44,7 +44,7 @@ abstract class DriverAbstract
 
   abstract public function save(): int;
 
-  abstract public function remove(array $cond = [], int $limit = null): int;
+  abstract public function remove(array|string|int $cond = [], int $limit = null): int;
 
   abstract public function fetchAll(
     array $cond = [],
@@ -60,5 +60,9 @@ abstract class DriverAbstract
 
   abstract public function insert(array $data = []): int;
 
-  abstract public function update(array $cond = [], array $data = []): int;
+  abstract public function update(array|string|int $cond = [], array $data = []): int;
+
+  abstract public function getManager(): mixed;
+
+  abstract public function reflectSchema(): void;
 }

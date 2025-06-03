@@ -27,7 +27,7 @@ trait Copy
     }
 
     $newRecord = new $modelClassName();
-    $newRecord->populateWithoutQuerying($data);
+    $newRecord->populate($data);
     $newRecord->save();
 
     $this->didCopied($record, $newRecord);
@@ -47,7 +47,7 @@ trait Copy
       unset($data['id']);
 
       $copy = new $modelClassName();
-      $copy->populateWithoutQuerying($data);
+      $copy->populate($data);
 
       if ($record->getMeta()->hasProperty('language')) {
         $copy->language = $language;
@@ -56,7 +56,7 @@ trait Copy
       foreach ($copy->getMeta()->getProperties() as $property) {
         if ($property->getName() !== 'language') {
 
-          if ($property->getIsModel()) {
+          if ($property->isModel()) {
 
             /** @var ModelAbstract $propertyClassName */
             $propertyClassName = $property->getRawType();
@@ -65,7 +65,7 @@ trait Copy
 
               if (!empty($copy->{$property->getName()})) {
 
-                if ($property->getIsMultiple()) {
+                if ($property->isMultiple()) {
                   $ids = [];
                   foreach ($copy->{$property->getName()} as $propertyModel) {
                     $propertyModel = $propertyClassName::fetchOne([
@@ -76,9 +76,7 @@ trait Copy
                       $ids[] = $propertyModel->id;
                     }
                   }
-                  $copy->populateWithoutQuerying([
-                    $property->getName() => $ids
-                  ]);
+                  $copy->populate([$property->getName() => $ids]);
                 } else {
                   $propertyModel = $propertyClassName::fetchOne([
                     'url' => $copy->{$property->getName()}->url,

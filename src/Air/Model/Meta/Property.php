@@ -7,11 +7,16 @@ namespace Air\Model\Meta;
 class Property
 {
   private ?string $type = null;
-  private ?string $name = null;
-  private bool $isMultiple = false;
-  private bool $isModel = false;
   private ?string $rawType = null;
-  private ?bool $isEnum = false;
+
+  private ?string $name = null;
+
+  private bool $isMultiple = false;
+
+  private bool $isModel = false;
+  private bool $isTypeAbstract = false;
+
+  private bool $isEnum = false;
   private array $enum = [];
 
   public function getType(): string
@@ -34,7 +39,7 @@ class Property
     $this->name = $name;
   }
 
-  public function getIsMultiple(): ?bool
+  public function isMultiple(): ?bool
   {
     return $this->isMultiple;
   }
@@ -44,7 +49,7 @@ class Property
     $this->isMultiple = $isMultiple;
   }
 
-  public function getIsModel(): ?bool
+  public function isModel(): ?bool
   {
     return $this->isModel;
   }
@@ -64,7 +69,7 @@ class Property
     $this->rawType = $rawType;
   }
 
-  public function getIsEnum(): ?bool
+  public function isEnum(): ?bool
   {
     return $this->isEnum;
   }
@@ -82,5 +87,15 @@ class Property
   public function setEnum(?array $enum): void
   {
     $this->enum = $enum;
+  }
+
+  public function isTypeAbstract(): bool
+  {
+    return $this->isTypeAbstract;
+  }
+
+  public function setIsTypeAbstract(bool $isTypeAbstract): void
+  {
+    $this->isTypeAbstract = $isTypeAbstract;
   }
 }

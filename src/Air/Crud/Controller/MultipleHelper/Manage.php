@@ -47,6 +47,11 @@ trait Manage
     return null;
   }
 
+  protected function getFormValues(Form $form): array
+  {
+    return $form->getCleanValues();
+  }
+
   protected function saveModel($formData, $model): void
   {
     /** @var ModelAbstract $modelClassName */
@@ -74,7 +79,8 @@ trait Manage
       $formData
     );
 
-    $model->populateWithoutQuerying($formData);
+    $model->populate($formData);
+
     $isCreating = !!$model->id;
 
     $model->save();
@@ -175,7 +181,7 @@ trait Manage
       if ($form->isValid($this->getRequest()->getPostAll())) {
 
         $isCreating = !$model->id;
-        $formData = $form->getCleanValues();
+        $formData = $this->getFormValues($form);
 
         $this->saveModel($formData, $model);
 

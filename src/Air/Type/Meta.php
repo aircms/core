@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace Air\Type;
 
-use Air\Core\Exception\ClassWasNotFound;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Air\Model\Meta\Exception\PropertyWasNotFound;
 use Air\Model\ModelAbstract;
 
-class Meta
+class Meta extends TypeAbstract
 {
   public string $title = '';
   public string $description = '';
@@ -21,7 +16,7 @@ class Meta
   public ?File $ogImage = null;
   public bool $useModelData = false;
   public string $modelClassName = '';
-  public string $modelObjectId = '';
+  public mixed $modelObjectId = '';
 
   public function getTitle(): string
   {
@@ -58,22 +53,24 @@ class Meta
     return $this->modelClassName;
   }
 
-  public function getModelObjectId(): string
+  public function getModelObjectId(): mixed
   {
     return $this->modelObjectId;
   }
 
   public function __construct(?array $meta = [], ?ModelAbstract $model = null)
   {
-    foreach (array_keys(get_class_vars(self::class)) as $var) {
-      if (!empty($meta[$var])) {
-        if ($var === 'ogImage') {
-          $this->{$var} = new File((array)$meta[$var]);
-        } else {
-          $this->{$var} = $meta[$var];
-        }
-      }
-    }
+    parent::__construct($meta);
+
+//    foreach (array_keys(get_class_vars(self::class)) as $var) {
+//      if (!empty($meta[$var])) {
+//        if ($var === 'ogImage') {
+//
+//        } else {
+//          $this->{$var} = $meta[$var];
+//        }
+//      }
+//    }
 
     if ($model) {
       $this->modelClassName = $model::class;
@@ -140,12 +137,7 @@ class Meta
   }
 
   /**
-   * @return array{title: string|null, description: string|null, image: File|null}
-   * @throws CallUndefinedMethod
-   * @throws ClassWasNotFound
-   * @throws ConfigWasNotProvided
-   * @throws DriverClassDoesNotExists
-   * @throws DriverClassDoesNotExtendsFromDriverAbstract
+   * @return null[]
    * @throws PropertyWasNotFound
    */
   public function getObjectData(): array

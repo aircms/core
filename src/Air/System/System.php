@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Air;
+namespace Air\System;
 
 use Air\Core\Exception\SystemProcNotReadable;
+use DateTime;
+use Exception;
 use Throwable;
 
 class System
@@ -18,11 +20,11 @@ class System
       return $uptime;
     }
 
-    $create_time = 0;
-    $current_time = $uptime;
+    $createTime = 0;
+    $currentTime = $uptime;
 
-    $dtCurrent = \DateTime::createFromFormat('U', (string)$current_time);
-    $dtCreate = \DateTime::createFromFormat('U', (string)$create_time);
+    $dtCurrent = DateTime::createFromFormat('U', (string)$currentTime);
+    $dtCreate = DateTime::createFromFormat('U', (string)$createTime);
     $diff = $dtCurrent->diff($dtCreate);
 
     $interval = $diff->format("%y years %m months %d days %h hours %i minutes %s seconds");
@@ -51,7 +53,7 @@ class System
         $value = number_format(intval(array_values(array_filter(explode(' ', $line[1])))[0]) / 1024 / 1024, 2);
         $memInfo[$key] = $value;
 
-      } catch (\Exception) {
+      } catch (Exception) {
       }
     }
     return $memInfo;
@@ -91,7 +93,7 @@ class System
         $line = explode(':', $line);
         $key = trim($line[0]);
         $cpuInfo[$key] = trim($line[1]);
-      } catch (\Exception) {
+      } catch (Exception) {
       }
     }
 

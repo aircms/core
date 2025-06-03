@@ -121,7 +121,7 @@ foreach ($header as $key => $col) : ?>
     </td>
 
   <?php elseif ($type == 'image') : ?>
-    <?php $file = $row[$key] ?? new File(); ?>
+    <?php $file = $row->$key; ?>
 
     <td class="admin-table-row-image pe-0">
       <div class="bg-image rounded-4 shadow-5-strong"
@@ -140,7 +140,7 @@ foreach ($header as $key => $col) : ?>
     <td class="admin-table-row-image">
       <div class="d-flex gap-2">
         <?php /** @var File $image */ ?>
-        <?php foreach ($row[$key] as $index => $image) : ?>
+        <?php foreach ($row->$key as $index => $image) : ?>
 
           <?php if ($index > ($col['max'] ?? 5)) {
             break;
@@ -167,7 +167,7 @@ foreach ($header as $key => $col) : ?>
 
   <?php else : ?>
     <td class="admin-table-row-default <?php echo $size; ?>">
-      <?php echo $row[$key]; ?>
+      <?php echo $row->$key; ?>
     </td>
 
   <?php endif; ?>

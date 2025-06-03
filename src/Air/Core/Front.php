@@ -135,6 +135,22 @@ final class Front
       throw new Exception(implode(':', [$message, $file, $line]), $number);
     });
 
+    foreach ($this->config['air']['phpIni'] ?? [] as $key => $val) {
+      ini_set($key, $val);
+    }
+
+    foreach ($this->config['air']['startup'] ?? [] as $key => $val) {
+
+      if (function_exists($key)) {
+
+        if (!is_array($val)) {
+          $val = [$val];
+        }
+
+        call_user_func_array($key, $val);
+      }
+    }
+
     if ($this->bootstrap) {
 
       $bootReflection = new ReflectionClass(
@@ -181,22 +197,6 @@ final class Front
         $this->config['air'],
         $this->router->getConfig()
       );
-
-      foreach ($this->config['air']['phpIni'] ?? [] as $key => $val) {
-        ini_set($key, $val);
-      }
-
-      foreach ($this->config['air']['startup'] ?? [] as $key => $val) {
-
-        if (function_exists($key)) {
-
-          if (!is_array($val)) {
-            $val = [$val];
-          }
-
-          call_user_func_array($key, $val);
-        }
-      }
 
       foreach ($this->config['air']['headers'] ?? [] as $key => $val) {
         $this->response->setHeader($key, $val);
@@ -255,7 +255,7 @@ final class Front
       $controller->setRouter($this->router);
       $controller->setView($this->view);
 
-      if ($exception && is_subclass_of($controller, '\\Air\\Core\\ErrorController')) {
+      if ($exception && is_subclass_of($controller, ErrorController::class)) {
         $controller->setException($exception);
         $controller->setExceptionEnabled($this->config['air']['exception'] ?? false);
 
@@ -325,6 +325,10 @@ final class Front
 
         if (is_null($content)) {
           $content = $this->view->getContent();
+        }
+
+        if (is_object($content) && method_exists($content, 'toArray')) {
+          $content = $content->toArray();
         }
 
         if (is_array($content)) {
@@ -586,7 +590,9 @@ final class Front
 
                   if ($params[$parameter->getName()]['main'] === 'id') {
                     try {
-                      new ObjectId($value);
+                      if ($this->config['air']['db']['driver'] === 'mongodb') {
+                        new ObjectId($value);
+                      }
                       $allCond['id'] = $value;
                     } catch (Throwable) {
                       $allCond['url'] = $value;

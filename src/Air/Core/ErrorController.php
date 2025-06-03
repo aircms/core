@@ -6,6 +6,7 @@ namespace Air\Core;
 
 use Error;
 use Exception;
+use Throwable;
 
 class ErrorController extends Controller
 {
@@ -26,13 +27,15 @@ class ErrorController extends Controller
   {
     parent::init();
 
-    $this->getResponse()->setStatusCode(
-      $this->getException()->getCode()
-    );
+    try {
+      $this->getResponse()->setStatusCode(
+        $this->getException()->getCode()
+      );
 
-    $this->getResponse()->setStatusMessage(
-      $this->getException()->getMessage()
-    );
+      $this->getResponse()->setStatusMessage(
+        $this->getException()->getMessage()
+      );
+    } catch (Throwable) {}
   }
 
   public function getException(): Exception|Error|null

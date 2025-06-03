@@ -7,7 +7,7 @@ $(document).ready(() => {
   });
 
   $(document).on('submit', '[data-admin-from-manage]', (e) => {
-    $.post(location.pathname, $(e.currentTarget).serialize())
+    $.post(location.href, $(e.currentTarget).serialize())
       .done((response) => {
 
         if (typeof response === 'string') {
