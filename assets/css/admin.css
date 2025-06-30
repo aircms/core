@@ -266,6 +266,10 @@ ul.dropdown-menu > li > a > .fas {
   & > * {
     margin-bottom: 20px;
   }
+
+  img {
+    width: 100%;
+  }
 }
 
 .admin-table-row-default {

@@ -35,7 +35,7 @@ class Tiny {
     lineheight_formats: "8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 26pt 36pt",
     font_size_formats: "8pt 9pt 10pt 11pt 12pt 14pt 16px 18pt 24pt 30pt 36pt 48pt 60pt 72pt 96pt",
     font_family_formats: ["Arial=arial,helvetica,sans-serif", Tiny.fonts].filter(n => n).join('; '),
-    content_style: "@import url('/" + window.fontsUrl + "/css');",
+    content_style: "@import url('/" + window.fontsUrl + "/css'); img {width: 100%}",
 
     setup: (editor) => editor.on('change', () => editor.save())
   }

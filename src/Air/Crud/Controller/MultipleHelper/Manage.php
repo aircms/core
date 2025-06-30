@@ -163,6 +163,7 @@ trait Manage
       'form' => $form,
       'mode' => 'manage',
       'isQuickManage' => true,
+      'isMultipleManage' => true
     ]);
 
     $this->setAdminNavVisibility(false);

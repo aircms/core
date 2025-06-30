@@ -21,15 +21,20 @@ class Phrase extends ModelAbstract
 {
   private static ?array $phrases = null;
 
+  public static function updatePhrases(): void
+  {
+    self::$phrases = [];
+
+    foreach (self::all() as $phrase) {
+      $phraseData = $phrase->getData();
+      self::$phrases[$phraseData['key'] . $phraseData['language']] = $phraseData['value'];
+    }
+  }
+
   public static function t(string $key, ?Language $language = null): string
   {
     if (!self::$phrases) {
-      self::$phrases = [];
-
-      foreach (self::all() as $phrase) {
-        $phraseData = $phrase->getData();
-        self::$phrases[$phraseData['key'] . $phraseData['language']] = $phraseData['value'];
-      }
+      self::updatePhrases();
     }
 
     if (!$language) {
@@ -56,6 +61,8 @@ class Phrase extends ModelAbstract
       ]);
       $phrase->save();
     }
+    self::updatePhrases();
+
     return $key;
   }
 }

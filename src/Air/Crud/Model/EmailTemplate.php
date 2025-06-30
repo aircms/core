@@ -24,4 +24,9 @@ class EmailTemplate extends ModelAbstract
   {
     return self::one(['url' => $templateUrl]);
   }
+
+  public static function template(string $templateUrl): self
+  {
+    return self::fetchOne(['url' => $templateUrl]);
+  }
 }

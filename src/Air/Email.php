@@ -18,7 +18,7 @@ class Email
     string        $toName,
     EmailTemplate $template,
     array         $vars = [],
-    array         $attachments = null,
+    ?array        $attachments = null,
     bool          $force = false,
     int           $when = 0
   ): void

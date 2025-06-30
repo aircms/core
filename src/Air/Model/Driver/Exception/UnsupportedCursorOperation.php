@@ -8,7 +8,7 @@ use Exception;
 
 class UnsupportedCursorOperation extends Exception
 {
-  public function __construct(string $operation = null)
+  public function __construct(?string $operation = null)
   {
     parent::__construct($operation);
   }

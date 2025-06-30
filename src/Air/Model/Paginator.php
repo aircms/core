@@ -14,7 +14,7 @@ class Paginator
   private int $page = 0;
   private int $itemsPerPage = 10;
 
-  public function __construct(ModelAbstract $model, array $cond = null, array $sort = null)
+  public function __construct(ModelAbstract $model, ?array $cond = null, ?array $sort = null)
   {
     $this->model = $model;
     $this->cond = $cond;

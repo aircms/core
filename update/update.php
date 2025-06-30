@@ -22,20 +22,17 @@ if (!($config['air']['updates'] ?? false)) {
 
 UpdateManager::reflectSchema();
 
-// $updateManager = UpdateManager::fetchObject();
+$updateManager = UpdateManager::fetchObject();
 
 foreach (glob($config['air']['updates'] . '/*.php') as $file) {
-  require_once $file;
-  continue;
+  $lastUpdate = DateTime::createFromFormat('Y-m-d-H-i-s', basename($file, '.php'))->getTimestamp();
 
-//  $lastUpdate = DateTime::createFromFormat('Y-m-d-H-i-s', basename($file, '.php'))->getTimestamp();
-//
-//  if ($lastUpdate > $updateManager->lastUpdate) {
-//    require_once $file;
-//  }
+  if ($lastUpdate > $updateManager->lastUpdate) {
+    require_once $file;
+  }
 }
 
-//if (isset($lastUpdate)) {
-//  $updateManager->lastUpdate = $lastUpdate;
-//  $updateManager->save();
-//}
+if (isset($lastUpdate)) {
+  $updateManager->lastUpdate = $lastUpdate;
+  $updateManager->save();
+}

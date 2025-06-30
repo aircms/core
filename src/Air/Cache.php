@@ -73,7 +73,7 @@ class Cache extends ModelAbstract
     return self::propagate($key, $lifetime, $fn);
   }
 
-  public static function propagate(mixed $key, int $lifetime, Closure $fn = null): mixed
+  public static function propagate(mixed $key, int $lifetime, Closure $fn): mixed
   {
     if (!(Front::getInstance()->getConfig()['air']['cache']['enabled'] ?? false)) {
       return self::getContent($fn);

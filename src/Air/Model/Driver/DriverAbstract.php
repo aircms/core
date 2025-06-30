@@ -44,13 +44,13 @@ abstract class DriverAbstract
 
   abstract public function save(): int;
 
-  abstract public function remove(array|string|int $cond = [], int $limit = null): int;
+  abstract public function remove(array|string|int $cond = [], ?int $limit = null): int;
 
   abstract public function fetchAll(
     array $cond = [],
     array $sort = [],
-    int   $count = null,
-    int   $offset = null,
+    ?int  $count = null,
+    ?int  $offset = null,
     array $map = []
   ): array|CursorAbstract;
 

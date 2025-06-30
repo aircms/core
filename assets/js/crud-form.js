@@ -15,6 +15,8 @@ $(document).ready(() => {
           return;
         }
 
+        notify.success(locale('Saved!'));
+
         if (response.quickSave) {
           if (response.newOne) {
             nav.nav(response.url);
@@ -23,7 +25,6 @@ $(document).ready(() => {
         } else {
           nav.nav(response.url);
         }
-        notify.success(locale('Saved!'));
       })
       .fail((e) => {
         $(nav.layoutSelector).html(e.responseText);

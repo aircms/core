@@ -12,8 +12,8 @@ interface ModelInterface
   public static function fetchAll(
     array $cond = [],
     array $sort = [],
-    int   $count = null,
-    int   $offset = null
+    ?int  $count = null,
+    ?int  $offset = null
   ): CursorAbstract|array;
 
   public static function fetchOne(array $cond = [], array $sort = []): DocumentAbstract|static|null;

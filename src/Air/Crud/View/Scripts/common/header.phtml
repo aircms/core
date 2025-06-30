@@ -52,6 +52,10 @@ $controller = $this->controller;
 
 /** @var ModelAbstract $model */
 $model = $this->model;
+
+/** @var boolean $isMultipleManage */
+$isMultipleManage = $this->isMultipleManage;
+
 ?>
 <div class="p-3 position-sticky top-0 z-i-1001 header">
   <div class="card position-sticky w-100">
@@ -68,7 +72,7 @@ $model = $this->model;
 
         <?php if ($mode === 'manage') : ?>
 
-          <?php if ($model->id && $model->getMeta()->hasProperty('language') && ($model->getMeta()->hasProperty('url') || $isSingle)) : ?>
+          <?php if ($model && $model->id && $model->getMeta()->hasProperty('language') && ($model->getMeta()->hasProperty('url') || $isSingle)) : ?>
             <div data-admin-manage-switch-language="<?php echo $model->language->id; ?>">
               <?php
               $cond = $isSingle ? [] : ['url' => $model->url];

@@ -212,7 +212,7 @@ class View
     $this->content = $content;
   }
 
-  public function render(string $template = null, array $vars = []): string
+  public function render(?string $template = null, array $vars = []): string
   {
     if (count($vars)) {
 

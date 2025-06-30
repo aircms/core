@@ -59,7 +59,7 @@ class Auth
     }
 
     if (!empty($config['source']) && $config['source'] === self::SOURCE_DATABASE) {
-      $admin = Admin::quantity(['login' => $login, 'password' => md5($password)]);
+      $admin = Admin::quantity(['login' => $login, 'password' => $password]);
       if ($admin) {
         return self::SOURCE_DATABASE;
       }
@@ -93,7 +93,7 @@ class Auth
         }
 
       } elseif ($source === self::SOURCE_DATABASE) {
-        return !!Admin::quantity(['login' => $login, 'password' => md5($password)]);
+        return !!Admin::quantity(['login' => $login, 'password' => $password]);
       }
 
       return false;
@@ -126,7 +126,7 @@ class Auth
         return true;
       }
 
-      $admin = Admin::one(['login' => $login, 'password' => md5($password)]);
+      $admin = Admin::one(['login' => $login, 'password' => $password]);
 
       if (!$admin) {
         return false;

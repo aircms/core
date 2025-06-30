@@ -166,8 +166,8 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   public static function singleAll(
     array $cond = [],
     array $sort = [],
-    int   $count = null,
-    int   $offset = null,
+    ?int  $count = null,
+    ?int  $offset = null,
     array $map = []
   ): CursorAbstract|array
   {
@@ -192,8 +192,8 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   public static function all(
     array $cond = [],
     array $sort = [],
-    int   $count = null,
-    int   $offset = null,
+    ?int  $count = null,
+    ?int  $offset = null,
     array $map = []
   ): CursorAbstract|array
   {
@@ -212,8 +212,8 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
   public static function fetchAll(
     array $cond = [],
     array $sort = [],
-    int   $count = null,
-    int   $offset = null,
+    ?int  $count = null,
+    ?int  $offset = null,
     array $map = []
   ): CursorAbstract|array
   {
@@ -346,7 +346,7 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     self::__callStatic(__FUNCTION__, []);
   }
 
-  public static function remove(array $cond = [], int $limit = null): int
+  public static function remove(array $cond = [], ?int $limit = null): int
   {
     return self::__callStatic(__FUNCTION__, func_get_args());
   }

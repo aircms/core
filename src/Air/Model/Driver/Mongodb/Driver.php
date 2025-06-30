@@ -145,7 +145,7 @@ class Driver extends DriverAbstract
     ]);
   }
 
-  public function remove(array|string|int $cond = [], int $limit = null): int
+  public function remove(array|string|int $cond = [], ?int $limit = null): int
   {
     if (is_string($cond) || is_int($cond)) {
       $cond = [$this->getModel()::meta()->getPrimary() => $cond];
@@ -221,8 +221,8 @@ class Driver extends DriverAbstract
   public function fetchAll(
     array $cond = [],
     array $sort = [],
-    int   $count = null,
-    int   $offset = null,
+    ?int  $count = null,
+    ?int  $offset = null,
     array $map = []
   ): array|CursorAbstract
   {
@@ -267,7 +267,7 @@ class Driver extends DriverAbstract
     return 0;
   }
 
-  public function batchInsert(array $data = null): int
+  public function batchInsert(?array $data = null): int
   {
     $bulk = new BulkWrite();
 
