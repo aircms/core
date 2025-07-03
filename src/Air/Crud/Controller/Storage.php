@@ -14,9 +14,7 @@ class Storage extends Multiple
     $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
 
     $theme = Cookie::get('theme') ?? 'dark';
-    $lang = (Front::getInstance()->getConfig()['air']['admin']['locale'] ?? false)
-      ? 'en'
-      : 'ua';
+    $lang = (Front::getInstance()->getConfig()['air']['storage']['locale'] ?? false) ?? 'en';
 
     $this->getView()->assign('storageConfig', $storageConfig);
     $this->getView()->assign('theme', $theme);
