@@ -73,6 +73,15 @@ $emailTemplates = $route($config['admin']['emailTemplates'] ?? null);
 /** @var string $emailSettings */
 $emailSettings = $route($config['admin']['emailSettings'] ?? null);
 
+/** @var string $smsSettings */
+$smsSettings = $route($config['admin']['smsSettings'] ?? null);
+
+/** @var string $smsQueue */
+$smsQueue = $route($config['admin']['smsQueue'] ?? null);
+
+/** @var string $smsTemplates */
+$smsTemplates = $route($config['admin']['smsTemplates'] ?? null);
+
 /** @var string $cache */
 $cache = $route($config['admin']['cache'] ?? null);
 ?>
@@ -254,6 +263,34 @@ $cache = $route($config['admin']['cache'] ?? null);
           <?php endif; ?>
 
           <?php if ($emailSettings || $emailTemplates || $emailQueue) : ?>
+            <li class="dropdown-divider"></li>
+          <?php endif; ?>
+
+          <?php if ($smsSettings) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $smsSettings; ?>">
+                <i class="fas fa-cogs me-1"></i> <?php echo Locale::t('Sms / Settings'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <?php if ($smsTemplates) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $smsTemplates; ?>">
+                <i class="fas fa-page me-1"></i> <?php echo Locale::t('Sms / Templates'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <?php if ($smsQueue) : ?>
+            <li>
+              <a class="dropdown-item" href="<?php echo $smsQueue; ?>">
+                <i class="fas fa-database me-1"></i> <?php echo Locale::t('Sms / Queue'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <?php if ($smsSettings || $smsTemplates || $smsQueue) : ?>
             <li class="dropdown-divider"></li>
           <?php endif; ?>
 

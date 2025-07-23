@@ -29,8 +29,8 @@ class Ui
     string  $url,
     ?string $confirm = null,
     string  $style = 'primary',
-    string  $icon = null,
-    array   $attributes = []
+    ?string  $icon = null,
+    array   $attributes = [],
   ): string
   {
     return a(
@@ -41,8 +41,8 @@ class Ui
       ],
       class: ['btn', 'btn-' . $style],
       attributes: [
-        ...$attributes,
-        ...$confirm ? ['data-confirm' => $confirm] : null
+        ...count($attributes) ? $attributes : [],
+        ...$confirm ? ['data-confirm' => $confirm] : []
       ]
     );
   }

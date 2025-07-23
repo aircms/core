@@ -26,8 +26,19 @@ class Storage
     return self::action('deleteFolder', ['path' => $path])->isOk();
   }
 
-  public static function uploadByUrl(string $path, string $url, ?string $name = null): File
+  public static function uploadByUrl(string $path, string $url, ?string $name = null, ?bool $sharding = false): File
   {
+    if ($sharding) {
+      $hash = md5($url);
+
+      $dir1 = substr($hash, 0, 2);
+      $dir2 = substr($hash, 2, 2);
+
+      $path = $path . '/' . $dir1 . '/' . $dir2;
+    }
+
+    self::createFolder('/', $path, true);
+
     $r = self::action('uploadByUrl', [
       'path' => $path,
       'url' => $url,

@@ -8,6 +8,34 @@ use Air\Crud\Model\Language;
 
 class Route
 {
+  public static function r(
+    ?string $context = null,
+    ?string $controller = null,
+    ?string $action = null,
+    ?array  $params = null
+  ): array
+  {
+    $route = [];
+
+    if ($context) {
+      $route['context'] = $context;
+    }
+
+    if ($controller) {
+      $route['controller'] = $controller;
+    }
+
+    if ($action) {
+      $route['action'] = $action;
+    }
+
+    if ($params) {
+      $route['params'] = $params;
+    }
+
+    return $route;
+  }
+
   public static function assemble(array $route = [], array $params = [], bool $onlyUri = true): string
   {
     if (!isset($params['language'])) {

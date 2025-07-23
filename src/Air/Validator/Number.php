@@ -49,15 +49,17 @@ class Number extends ValidatorAbstract
   public static function valid(
     string $errorMessage = '',
     bool   $allowNull = false,
+    ?int   $exact = null,
     ?int   $min = null,
     ?int   $max = null,
   ): static
   {
-    return new static([
+    return new static(array_filter([
       'errorMessage' => $errorMessage,
       'min' => $min,
       'max' => $max,
+      'exact' => $exact,
       'allowNull' => $allowNull,
-    ]);
+    ]));
   }
 }

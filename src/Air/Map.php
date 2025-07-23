@@ -69,7 +69,10 @@ class Map
 
   public static function isSingle(mixed $data): bool
   {
-    return $data instanceof ModelInterface || (!isset($data[0]) && !($data instanceof Cursor));
+    return
+      $data instanceof ModelInterface
+      || $data instanceof TypeAbstract
+      || (!isset($data[0]) && !($data instanceof Cursor));
   }
 
   public static function executeAssoc(mixed $data, array $mapper = [], array $userData = []): ?array

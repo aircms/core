@@ -18,4 +18,9 @@ class Checkbox extends ElementAbstract
   {
     return (bool)parent::getValue();
   }
+
+  public function getCleanValue(): bool
+  {
+    return (bool)parent::getCleanValue();
+  }
 }

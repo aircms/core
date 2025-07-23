@@ -164,7 +164,7 @@ abstract class ElementAbstract
 
   public function isValid($value): bool
   {
-    $value = $value ?? $this->getCleanValue();
+    // $value = $value ?? $this->getCleanValue();
 
     $this->errorMessages = [];
 
@@ -224,7 +224,7 @@ abstract class ElementAbstract
 
     $this->value = $value;
 
-    if (empty($value) && !$this->isAllowNull()) {
+    if ($value === null && !$this->isAllowNull()) {
       $this->errorMessages[] = Locale::t('Could not be empty');
     }
 

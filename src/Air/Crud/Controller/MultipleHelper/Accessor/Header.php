@@ -159,9 +159,15 @@ class Header
     return self::dateTime('Updated', 'updatedAt');
   }
 
-  public static function model(string $model = null, string $title = null, string $by = null, string $field = null): array
+  public static function model(
+    string $model = null,
+    string $title = null,
+    string $by = null,
+    string $field = null,
+    string $size = self::SM
+  ): array
   {
-    return self::col(self::MODEL, $title, $by, self::SM, $model, $field);
+    return self::col(self::MODEL, $title, $by, $size, $model, $field);
   }
 
   public static function language(): array
