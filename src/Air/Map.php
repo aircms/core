@@ -105,8 +105,8 @@ class Map
       return self::transform($data, null, $mapper, $userData);
     }
     $mapped = [];
-    foreach ($data as $row) {
-      $mapped[] = self::transform($row, null, $mapper, $userData);
+    foreach ($data as $index => $row) {
+      $mapped[] = self::transform($row, null, $mapper, $userData, $index);
     }
     return $mapped;
   }
@@ -124,10 +124,10 @@ class Map
     return $mapped;
   }
 
-  public static function transform($data, $dest, $value, array $userData = []): mixed
+  public static function transform($data, $dest, $value, array $userData = [], int $index = 0): mixed
   {
     if ($value instanceof Closure) {
-      return $value($data, $userData ?: []);
+      return $value($data, $userData ?: [], $index);
     }
     if ($data instanceof ModelAbstract) {
       try {

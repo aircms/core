@@ -30,16 +30,18 @@ class Phrase extends Multiple
     return [
       Header::text(by: 'key'),
       Header::source('Value', function (\Air\Crud\Model\Phrase $phrase) {
-        return text(
-          value: $phrase->value,
-          class: 'form-control',
-          attributes: ['style' => 'width: 600px;'],
-          data: [
-            'phrase-key' => $phrase->key,
-            'phrase-language' => $phrase->language->id,
-            'phrase-value' => $phrase->value
-          ],
-        );
+        return div(
+          class: 'form-outline bg-body-tertiary w-100',
+          content: text(
+            value: $phrase->value,
+            class: 'form-control form-control-lg',
+            attributes: ['style' => 'width: 600px;'],
+            data: [
+              'phrase-key' => $phrase->key,
+              'phrase-language' => $phrase->language->id,
+              'phrase-value' => $phrase->value
+            ],
+          ));
       }),
       Header::bool(by: 'isEdited'),
       Header::language()

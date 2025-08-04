@@ -6,9 +6,9 @@ namespace Air\Form\Element;
 
 use Air\Model\ModelAbstract;
 
-class Model extends ElementAbstract
+class SingleModel extends ElementAbstract
 {
-  public ?string $elementTemplate = 'form/element/model';
+  public ?string $elementTemplate = 'form/element/single-model';
   public string $model = '';
   public mixed $field = 'title';
   public ?string $parent = null;

@@ -142,6 +142,18 @@ const modal = new class {
     });
   }
 
+  csv(src, alt, title) {
+    return new Promise(() => {
+      $.get(src, (content) => {
+        this.html(locale('CSV'), this.replace(this.embedTemplates.text, {
+          content: csvToTable(content, {classes: "csv table table-bordered"}),
+          alt,
+          title
+        }), {size: 'xLarge'});
+      });
+    });
+  }
+
   text(src, alt, title) {
     return new Promise(() => {
       $.get(src, (content) => {
@@ -175,10 +187,12 @@ const modal = new class {
     } else if (mime.includes('pdf')) {
       return this.pdf(src, alt, title);
 
+    } else if (mime.includes('csv')) {
+      return this.csv(src, alt, title);
+
     } else if (mime.includes('text')) {
       return this.text(src, alt, title);
     }
-
     return this.any(src, alt, title, mime);
   }
 

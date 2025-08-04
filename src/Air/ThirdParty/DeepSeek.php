@@ -8,11 +8,9 @@ use Air\Core\Front;
 use Air\Http\Request;
 use Exception;
 
-class OpenAi
+class DeepSeek
 {
   private array $messages = [];
-  private ?array $function = null;
-  private ?float $temperature = null;
 
   public function __construct(
     private ?string $key = null,
@@ -24,16 +22,6 @@ class OpenAi
       $this->key = $settings->key;
       $this->model = $settings->model;
     }
-  }
-
-  public function setFunction(array $function): void
-  {
-    $this->function = $function;
-  }
-
-  public function setTemperature(?float $temperature): void
-  {
-    $this->temperature = $temperature;
   }
 
   public function addMessage(string $role, string $content): void
@@ -61,16 +49,8 @@ class OpenAi
     $body = [
       'model' => $this->model,
       'messages' => $this->messages,
+      'stream' => false
     ];
-
-    if ($this->function) {
-      $body['functions'] = [$this->function];
-      $body['function_call'] = ["name" => $this->function['name']];
-    }
-
-    if ($this->temperature) {
-      $body['temperature'] = $this->temperature;
-    }
 
     if ($json) {
       $body['response_format'] = ['type' => 'json_object'];
@@ -94,52 +74,15 @@ class OpenAi
 
     $this->messages[] = $message;
 
-    if ($this->function) {
-      $content = $message['function_call']['arguments'];
-    } else {
-      $content = $message['content'];
-    }
-
     if ($json) {
-      return json_decode($content, true);
+      return json_decode($message['content'], true);
     }
 
     return $message['content'];
   }
 
-  public function image(string $prompt, ?int $width = 1024, ?int $height = 1024): string
-  {
-    $body = [
-      'model' => $this->model,
-      'prompt' => $prompt,
-      'n' => 1,
-      'size' => $width . 'x' . $height
-    ];
-
-    $answer = (new Request())
-      ->url('https://api.openai.com/v1/images/generations')
-      ->method(Request::POST)
-      ->type('json')
-      ->bearer($this->key)
-      ->timeout(30000)
-      ->body($body)
-      ->do()
-      ->body;
-
-    if (isset($answer['error'])) {
-      throw new Exception('OpenAi error:' . $answer['error']['type'] . '. Message: ' . $answer['error']['message']);
-    }
-
-    return $answer['data'][0]['url'];
-  }
-
   public static function ask(string $question, ?bool $json = false): mixed
   {
-    return (new self())->message($question, $json);
-  }
-
-  public function img(string $prompt, ?int $width = 1024, ?int $height = 1024): string
-  {
-    return (new self())->image($prompt, $width, $height);
+    return (new static())->message($question, $json);
   }
 }

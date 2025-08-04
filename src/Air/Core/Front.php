@@ -11,6 +11,8 @@ use Air\Core\Exception\Stop;
 use Air\Crud\Controller\Admin;
 use Air\Crud\Controller\Cache;
 use Air\Crud\Controller\Codes;
+use Air\Crud\Controller\Deepl;
+use Air\Crud\Controller\DeepSeek;
 use Air\Crud\Controller\EmailQueue;
 use Air\Crud\Controller\EmailSettings;
 use Air\Crud\Controller\EmailTemplate;
@@ -22,6 +24,7 @@ use Air\Crud\Controller\Language;
 use Air\Crud\Controller\Log;
 use Air\Crud\Controller\Login;
 use Air\Crud\Controller\NotAllowed;
+use Air\Crud\Controller\OpenAi;
 use Air\Crud\Controller\Phrase;
 use Air\Crud\Controller\RobotsTxt;
 use Air\Crud\Controller\RobotsTxtUi;
@@ -228,7 +231,8 @@ final class Front
           'View'
         ]));
 
-      } else if ($modules) {
+      }
+      if ($modules && !$viewPath) {
         $viewPath = realpath(implode('/', [
           $this->config['air']['loader']['path'],
           $modules,
@@ -236,7 +240,8 @@ final class Front
           'View'
         ]));
 
-      } else {
+      }
+      if (!$viewPath && !$contexts && !$modules) {
         $viewPath = realpath(implode('/', [
           $this->config['air']['loader']['path'],
           'View'
@@ -477,6 +482,15 @@ final class Front
 
     } else if (($this->getConfig()['air']['admin']['smsQueue'] ?? false) === $controller) {
       return SmsQueue::class;
+
+    } else if (($this->getConfig()['air']['admin']['openAi'] ?? false) === $controller) {
+      return OpenAi::class;
+
+    } else if (($this->getConfig()['air']['admin']['deepl'] ?? false) === $controller) {
+      return Deepl::class;
+
+    } else if (($this->getConfig()['air']['admin']['deepseek'] ?? false) === $controller) {
+      return DeepSeek::class;
     }
 
     if ($this->config['air']['contexts'] ?? false) {

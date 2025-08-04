@@ -19,6 +19,39 @@ class Ui
   const string LIGHT = 'light';
   const string DARK = 'dark';
 
+  public static function duration(
+    int  $seconds,
+    bool $showDays = true,
+    bool $showHours = true,
+    bool $showMinutes = true,
+    bool $showSeconds = true
+  ): string
+  {
+    $parts = [];
+
+    $days = intdiv($seconds, 86400);
+    $seconds %= 86400;
+    $hours = intdiv($seconds, 3600);
+    $seconds %= 3600;
+    $minutes = intdiv($seconds, 60);
+    $seconds %= 60;
+
+    if ($days > 0 && $showDays) {
+      $parts[] = "$days day";
+    }
+    if ($hours > 0 && $showHours) {
+      $parts[] = "$hours hour";
+    }
+    if ($minutes > 0 && $showMinutes) {
+      $parts[] = "$minutes minute";
+    }
+    if (($seconds > 0 || empty($parts)) && $showSeconds) {
+      $parts[] = "$seconds second";
+    }
+
+    return implode(' ', $parts);
+  }
+
   public static function badge(mixed $label, string $style = 'primary'): string
   {
     return span(content: (string)$label, class: ['badge', 'badge-' . $style]);
@@ -29,7 +62,7 @@ class Ui
     string  $url,
     ?string $confirm = null,
     string  $style = 'primary',
-    ?string  $icon = null,
+    ?string $icon = null,
     array   $attributes = [],
   ): string
   {

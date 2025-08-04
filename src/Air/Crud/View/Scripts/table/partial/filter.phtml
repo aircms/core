@@ -48,6 +48,7 @@ if ($visibleFilterCount > 4) {
 
           <?php elseif ($filterItem['type'] == 'model') : ?>
             <?php echo $this->partial('table/partial/filter/model', ['filter' => $filterItem]); ?>
+
           <?php endif; ?>
         </div>
       <?php endforeach; ?>

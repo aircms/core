@@ -72,6 +72,8 @@
 
 .dropdown-menu {
   --mdb-dropdown-bg: var(--mdb-body-bg);
+  max-height: 70vh;
+  overflow: auto;
 }
 
 ul.dropdown-menu > li > a > .fas {
@@ -306,4 +308,20 @@ input.form-control.color {
 
 [data-admin-manage-switch-language] [data-admin-select] {
   width: 250px !important;
+}
+
+button.localized {
+  border: 0;
+  background: transparent;
+  color: var(--mdb-primary-text-emphasis);
+  position: absolute;
+  right: 6px;
+  top: 9px;
+}
+
+
+table.csv {
+  thead tr th {
+    background-color: var(--mdb-primary-border-subtle);
+  }
 }

@@ -29,7 +29,11 @@ class Text extends TextAbstract
   public function getValue(): mixed
   {
     if ($this->type === self::TYPE_NUMBER) {
-      return intval(parent::getValue());
+      $floatValue = (float)parent::getValue();
+      if (floor($floatValue) == $floatValue) {
+        return (int)$floatValue;
+      }
+      return $floatValue;
     }
     return parent::getValue();
   }

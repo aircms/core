@@ -10,6 +10,9 @@ $filter = $this->filter;
 /** @var ModelAbstract $model */
 $model = new $filter['model']();
 
+/** @var string $parent */
+$parent = $filter['parent'] ?? '';
+
 /** @var string $field */
 $field = $filter['field'] ?? null;
 
@@ -32,6 +35,7 @@ if (isset($filter['title'])) {
 $hasImage = $model->getMeta()->hasProperty('image');
 $hasEnabled = $model->getMeta()->hasProperty('enabled');
 $hasLanguage = $model->getMeta()->hasProperty('language');
+$hasParent = $model->getMeta()->hasProperty($parent);
 ?>
 <div class="btn-group w-100 rounded-4" data-admin-select-submit="true" data-admin-select>
   <button class="btn btn-primary btn-block text-start px-3 admin-select-button"
@@ -95,6 +99,9 @@ $hasLanguage = $model->getMeta()->hasProperty('language');
                 <?php if (isset($filter['source'])) : ?>
                   <?php echo $filter['source']($rec); ?>
                 <?php else : ?>
+                  <?php if ($hasParent && $parent && $rec->{$parent}) : ?>
+                    <?php echo $rec->{$parent}->{$field}; ?> ›
+                  <?php endif; ?>
                   <?php echo $rec->$field; ?>
                 <?php endif; ?>
               </div>

@@ -242,7 +242,7 @@ trait Manage
       'mode' => 'manage',
       'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false,
       'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false,
-      'isSingle' => is_subclass_of($this, Single::class)
+      'isSingle' => is_subclass_of($this, Single::class),
     ]);
 
     $this->getView()->setScript('form/index');

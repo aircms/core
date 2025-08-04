@@ -18,6 +18,15 @@ class Meta extends TypeAbstract
   public string $modelClassName = '';
   public mixed $modelObjectId = '';
 
+  public static function dummy(array $data = []): static
+  {
+    if (!count($data)) {
+      $data['useModelData'] = true;
+    }
+
+    return new static($data);
+  }
+
   public function getTitle(): string
   {
     return $this->title;
@@ -61,16 +70,6 @@ class Meta extends TypeAbstract
   public function __construct(?array $meta = [], ?ModelAbstract $model = null)
   {
     parent::__construct($meta);
-
-//    foreach (array_keys(get_class_vars(self::class)) as $var) {
-//      if (!empty($meta[$var])) {
-//        if ($var === 'ogImage') {
-//
-//        } else {
-//          $this->{$var} = $meta[$var];
-//        }
-//      }
-//    }
 
     if ($model) {
       $this->modelClassName = $model::class;

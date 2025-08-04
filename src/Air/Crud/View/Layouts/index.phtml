@@ -15,6 +15,9 @@ $fonts = Front::getInstance()->getConfig()['air']['admin']['fonts'];
 /** @var string $title */
 $title = Front::getInstance()->getConfig()['air']['admin']['title'];
 
+/** @var string $deepl */
+$deepl = Front::getInstance()->getConfig()['air']['admin']['deepl'] ?? '';
+
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
@@ -51,6 +54,7 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
       }
       return value || key;
     };
+    window.deepl = '<?php echo $deepl; ?>';
   </script>
 
   <?php echo $this->asset([
@@ -115,6 +119,7 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/crud-elements/multiple-key-value.js',
     'js/crud-elements/multiple-text.js',
     'js/crud-elements/multiple-model.js',
+    'js/crud-elements/single-model.js',
     'js/crud-elements/rich-content.js',
     'js/crud-elements/storage.js',
     'js/crud-elements/embed.js',
@@ -126,6 +131,8 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/crud-elements/fa-icon.js',
     'js/crud-elements/url.js',
 
+    'js/deepl.js',
+    'js/csv.js',
     'js/general.js',
 
     '/' . $fonts . '/css'

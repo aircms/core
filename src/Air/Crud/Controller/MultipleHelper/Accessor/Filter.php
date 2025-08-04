@@ -18,6 +18,7 @@ class Filter
   const string DATETIME = 'dateTime';
   const string DATE = 'date';
   const string SELECT = 'select';
+  const string ENUM = 'enum';
 
   public static string|null $entity = null;
 
@@ -35,6 +36,7 @@ class Filter
     string       $false = null,
     string       $field = null,
     string       $model = null,
+    string       $parent = null,
     ?Closure     $source = null,
     array        $options = null,
   ): array
@@ -59,6 +61,7 @@ class Filter
       'model' => $model,
       'source' => $source,
       'options' => $options,
+      'parent' => $parent,
     ];
   }
 
@@ -101,12 +104,13 @@ class Filter
   }
 
   public static function model(
-    string  $model = null,
-    string  $title = null,
-    string  $by = null,
-    string  $field = 'title',
-    Closure $source = null,
-    string  $value = null,
+    ?string  $model = null,
+    ?string  $title = null,
+    ?string  $by = null,
+    string   $field = 'title',
+    ?Closure $source = null,
+    ?string  $value = null,
+    ?string  $parent = null
   ): array
   {
     if ($model && !$by) {
@@ -118,12 +122,42 @@ class Filter
     if (!$title) {
       $title = ucfirst($by);
     }
-    return self::filter(self::MODEL, $by, $value, $title, field: $field, model: $model, source: $source);
+    return self::filter(self::MODEL, $by, $value, $title, field: $field, model: $model, source: $source, parent: $parent);
   }
 
   public static function language(string $value = null): array
   {
     return self::model(Language::class, 'Language', 'language', value: $value);
+  }
+
+  public static function enum(
+    string $by,
+    string $title = null,
+    mixed  $value = null,
+  ): array
+  {
+    $reflectionClass = new ReflectionClass(self::getModelClass());
+    $constants = $reflectionClass->getConstants();
+
+    $options = [];
+    $upperProp = strtoupper($by);
+    foreach ($constants as $constantName => $constantValue) {
+      if (str_starts_with(strtoupper($constantName), $upperProp . '_')) {
+        $title = ucfirst(strtolower(str_replace(['_', '-'], ' ', $constantValue)));
+        $options[$title] = $constantValue;
+      }
+    }
+
+    if (!$title) {
+      $title = Header::getTitleBasedOnModelOrPropertyName($by);
+    }
+
+    return Filter::select(
+      title: $title,
+      by: $by,
+      options: $options,
+      value: $value
+    );
   }
 
   public static function select(

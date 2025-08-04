@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Type;
 
 use Air\Core\Front;
+use Air\Storage;
 
 class File extends TypeAbstract
 {
@@ -72,9 +73,19 @@ class File extends TypeAbstract
     return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->src;
   }
 
+  public function getSrcContent(): string|false
+  {
+    return file_get_contents($this->getSrc());
+  }
+
   public function isImage(): bool
   {
     return str_contains($this->getMime(), 'image');
+  }
+
+  public function remove(): bool
+  {
+    return Storage::deleteFile($this->path);
   }
 
   public static function fromArray(?array $file): self

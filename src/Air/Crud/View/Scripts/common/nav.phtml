@@ -84,6 +84,15 @@ $smsTemplates = $route($config['admin']['smsTemplates'] ?? null);
 
 /** @var string $cache */
 $cache = $route($config['admin']['cache'] ?? null);
+
+/** @var string $openAi */
+$openAi = $route($config['admin']['openAi'] ?? null);
+
+/** @var string $deepl */
+$deepl = $route($config['admin']['deepl'] ?? null);
+
+/** @var string $deepSeek */
+$deepSeek = $route($config['admin']['deepseek'] ?? null);
 ?>
 
 <div class="d-flex flex-column h-100">
@@ -205,6 +214,30 @@ $cache = $route($config['admin']['cache'] ?? null);
             <li>
               <a class="dropdown-item" href="<?php echo $logs; ?>">
                 <i class="fas fa-list me-1"></i> <?php echo Locale::t('Logs'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($openAi) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $openAi; ?>">
+                <i class="fas fa-robot me-1"></i> <?php echo Locale::t('OpenAi'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($deepl) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $deepl; ?>" data-deepl>
+                <i class="fas fa-globe me-1"></i> <?php echo Locale::t('Deepl'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($deepSeek) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $deepSeek; ?>">
+                <i class="fas fa-robot me-1"></i> <?php echo Locale::t('DeepSeek'); ?>
               </a>
             </li>
           <?php endif; ?>

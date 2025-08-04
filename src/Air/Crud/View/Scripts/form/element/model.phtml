@@ -9,10 +9,12 @@ $element = $this->element;
 
 $value = $element->getValue();
 $name = $element->getName();
+$parent = $element->getParent();
 
 $hasImage = $element->getModel()->getMeta()->hasProperty('image');
 $hasEnabled = $element->getModel()->getMeta()->hasProperty('enabled');
 $hasLanguage = $element->getModel()->getMeta()->hasProperty('language');
+$hasParent = $element->getModel()->getMeta()->hasProperty($parent ?? '');
 ?>
 
 <div class="btn-group w-100 rounded-4" data-admin-select>
@@ -74,6 +76,9 @@ $hasLanguage = $element->getModel()->getMeta()->hasProperty('language');
               <?php
               $field = $element->getField();
               if (is_string($field)) {
+                if ($hasParent && $rec->{$parent}) {
+                  echo $rec->{$parent}->$field . ' › ';
+                }
                 echo $rec->$field;
               } else if (is_callable($field)) {
                 echo $field($rec);

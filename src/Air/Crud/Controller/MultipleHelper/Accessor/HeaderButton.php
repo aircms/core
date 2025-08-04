@@ -13,7 +13,7 @@ class HeaderButton
     string       $style = null,
     string       $title = null,
     string|false $confirm = false,
-    bool         $force = true
+    bool         $force = false
   ): array
   {
     return [
