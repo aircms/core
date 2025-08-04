@@ -106,4 +106,26 @@ class Route
       true
     );
   }
+
+  public static function assembleWithLanguage(
+    array    $route = [],
+    array    $params = [],
+    bool     $onlyUri = true,
+    Language $language
+  ): string
+  {
+    $params = $params ?? [];
+    unset($params['language']);
+
+    if (!$language->isDefault) {
+      $params['language'] = $language->key;
+    }
+
+    $url = trim(Front::getInstance()->getRouter()->assemble($route, $params, true, $onlyUri));
+
+    if (str_ends_with($url, '?')) {
+      $url = substr($url, 0, strlen($url) - 1);
+    }
+    return $url;
+  }
 }
