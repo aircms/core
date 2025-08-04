@@ -64,12 +64,39 @@ class File extends TypeAbstract
     return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->thumbnail;
   }
 
-  public function getSrc(): string
+  public function getSrc(?int $width = null, ?int $height = null, ?int $quality = null): string
   {
     if (str_starts_with($this->src, 'http')) {
-      return $this->src;
+      $src = $this->src;
+    } else {
+      $src = Front::getInstance()->getConfig()['air']['storage']['url'] . $this->src;
     }
-    return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->src;
+
+    if (!$width && !$height && !$quality) {
+      return $src;
+    }
+
+    $suffix = '';
+
+    if ($width !== null || $height !== null) {
+      $suffix .= '_r';
+      if ($width !== null) {
+        $suffix .= $width;
+      }
+      if ($height !== null) {
+        $suffix .= 'x' . $height;
+      }
+    }
+
+    if ($quality !== null) {
+      $suffix .= '_q' . $quality;
+    }
+
+    if ($suffix === '') {
+      return $src;
+    }
+
+    return preg_replace('/(\\.[^\\.\\/\\?]+)(\\?.*)?$/', $suffix . '$1$2', $src);
   }
 
   public function isImage(): bool

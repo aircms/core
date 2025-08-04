@@ -164,7 +164,7 @@ abstract class ElementAbstract
 
   public function isValid($value): bool
   {
-    $value = $value ?? $this->getCleanValue();
+    // $value = $value ?? $this->getCleanValue();
 
     $this->errorMessages = [];
 

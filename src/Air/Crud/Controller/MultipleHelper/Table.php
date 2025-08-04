@@ -131,6 +131,10 @@ trait Table
       $searchBy[] = 'description';
     }
 
+    if ($model->getMeta()->hasProperty('url')) {
+      $searchBy[] = 'url';
+    }
+
     if ($model->getMeta()->hasProperty('search')) {
       $searchBy[] = 'search';
     }
