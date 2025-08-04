@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Http;
 
+use Air\Model\Driver\Mysql\Driver;
 use Exception;
 
 class Request
@@ -139,7 +140,6 @@ class Request
       foreach ($headers as $name => $header) {
         $_headers[] = ucfirst($name) . ": " . $header;
       }
-
       curl_setopt($ch, CURLOPT_HTTPHEADER, $_headers);
     }
 

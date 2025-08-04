@@ -12,12 +12,14 @@ class Router
 {
   private ?Request $request = null;
   private string $module = '';
+  private string $context = '';
   private string $controller = '';
   private string $action = '';
   private array $routes = [];
   private array $urlParams = [];
   private array $injector = [];
   private array $config = [];
+  private bool $isError = false;
 
   public function getModule(): string
   {
@@ -27,6 +29,16 @@ class Router
   public function setModule(string $module): void
   {
     $this->module = $module;
+  }
+
+  public function getContext(): string
+  {
+    return $this->context;
+  }
+
+  public function setContext(string $context): void
+  {
+    $this->context = $context;
   }
 
   public function getController(): string
@@ -89,6 +101,16 @@ class Router
     $this->config = $config;
   }
 
+  public function isError(): bool
+  {
+    return $this->isError;
+  }
+
+  public function setIsError(bool $isError): void
+  {
+    $this->isError = $isError;
+  }
+
   public function assemble(
     array $requestedRoute = [],
     array $params = [],
@@ -97,6 +119,7 @@ class Router
   ): string
   {
     $module = $requestedRoute['module'] ?? $this->module;
+    $context = $requestedRoute['context'] ?? $this->context;
     $controller = $requestedRoute['controller'] ?? ($reset ? '' : $this->controller);
     $action = $requestedRoute['action'] ?? ($reset ? '' : $this->action);
 
@@ -126,14 +149,17 @@ class Router
           $routeUri = ($router['prefix'] ?? '') . $routeUri;
 
           $currentRouteSettings = [
+            'context' => $route['context'] ?? '',
             'controller' => $route['controller'] ?? 'index',
             'action' => $route['action'] ?? 'index'
           ];
 
+          $chContext = $context == '' ? '' : $context;
           $chController = $controller == '' ? 'index' : $controller;
           $chAction = $action == '' ? 'index' : $action;
 
-          if ($chController == $currentRouteSettings['controller']
+          if ($chContext == $currentRouteSettings['context']
+            && $chController == $currentRouteSettings['controller']
             && $chAction == $currentRouteSettings['action']) {
 
             $releaseParts = [];
@@ -297,6 +323,7 @@ class Router
 
       array_shift($matches);
 
+      $this->context = $settings['context'] ?? '';
       $this->controller = $settings['controller'] ?? 'index';
       $this->action = $settings['action'] ?? 'index';
       $this->urlParams = $settings['params'] ?? [];
@@ -337,6 +364,7 @@ class Router
 
       if (is_array($route)) {
 
+        $this->context = $route['contenxt'] ?? '';
         $this->controller = $route['controller'] ?? 'index';
         $this->action = $route['action'] ?? 'index';
         $this->urlParams = $route['params'] ?? [];

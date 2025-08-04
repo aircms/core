@@ -8,6 +8,7 @@ use Air\Crud\Locale;
 use Air\Form\Element\ElementAbstract;
 use Air\Form\Element\Hidden;
 use Air\Form\Element\Tab;
+use Air\Form\Exception\Validation;
 use Air\Model\ModelAbstract;
 use Air\View\View;
 
@@ -20,7 +21,7 @@ class Form
   public ?View $view = null;
   public string $method = 'POST';
   public ?string $action = null;
-  public mixed $data;
+  public mixed $data = [];
   public ?string $returnUrl = null;
 
   public function getElements(): array
@@ -203,6 +204,19 @@ class Form
     }
 
     return $isValid;
+  }
+
+  public static function validated(array $data = []): array
+  {
+    return (new static())->validateOfFail($data);
+  }
+
+  public function validateOfFail(array $data = []): array
+  {
+    if (!$this->isValid($data)) {
+      throw new Validation($this);
+    }
+    return $this->getValues();
   }
 
   public function __construct(array $options = [], array $elements = [])

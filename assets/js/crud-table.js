@@ -45,7 +45,6 @@ $(document).ready(() => {
   });
 
   $(document).on('click', '[data-run-and-reload-url]', function () {
-
     const request = () => {
       $.post($(this).data('run-and-reload-url'))
         .done(() => {
@@ -58,8 +57,9 @@ $(document).ready(() => {
     if ($(this).data('run-and-reload-confirm')) {
       modal.question($(this).data('run-and-reload-confirm')).then(() => request());
     } else {
-      request()
+      request();
     }
+    return false;
   });
 
   $(document).on('click', '[data-admin-table-paginator] [data-page]', function () {

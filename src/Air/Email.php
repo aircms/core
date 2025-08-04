@@ -128,7 +128,7 @@ class Email
 
   public static function consume(int $chunk = 50): bool
   {
-    if (!EmailSettings::one()->emailQueueEnabled) {
+    if (!EmailSettings::one()?->emailQueueEnabled) {
       return false;
     }
 

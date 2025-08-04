@@ -69,7 +69,10 @@ class Map
 
   public static function isSingle(mixed $data): bool
   {
-    return $data instanceof ModelInterface || (!isset($data[0]) && !($data instanceof Cursor));
+    return
+      $data instanceof ModelInterface
+      || $data instanceof TypeAbstract
+      || (!isset($data[0]) && !($data instanceof Cursor));
   }
 
   public static function executeAssoc(mixed $data, array $mapper = [], array $userData = []): ?array
@@ -84,7 +87,7 @@ class Map
     return $mapped;
   }
 
-  public static function executeLine(mixed $data, string $mapper = null, array $userData = []): mixed
+  public static function executeLine(mixed $data, string $mapper, array $userData = []): mixed
   {
     if (self::isSingle($data)) {
       return self::executeSingle($data, [$mapper], $userData)[$mapper];
@@ -96,7 +99,7 @@ class Map
     return $mapped;
   }
 
-  public static function executeLineClosure(mixed $data, Closure $mapper, array $userData = null): mixed
+  public static function executeLineClosure(mixed $data, Closure $mapper, array $userData = []): mixed
   {
     if (self::isSingle($data)) {
       return self::transform($data, null, $mapper, $userData);
@@ -108,7 +111,7 @@ class Map
     return $mapped;
   }
 
-  public static function executeSingle($data, array $mapper, array $userData = null): array
+  public static function executeSingle($data, array $mapper, array $userData = []): array
   {
     $mapped = [];
     foreach ($mapper as $dest => $value) {
@@ -121,7 +124,7 @@ class Map
     return $mapped;
   }
 
-  public static function transform($data, $dest, $value, array $userData = null): mixed
+  public static function transform($data, $dest, $value, array $userData = []): mixed
   {
     if ($value instanceof Closure) {
       return $value($data, $userData ?: []);

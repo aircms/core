@@ -25,6 +25,9 @@ use Air\Crud\Controller\NotAllowed;
 use Air\Crud\Controller\Phrase;
 use Air\Crud\Controller\RobotsTxt;
 use Air\Crud\Controller\RobotsTxtUi;
+use Air\Crud\Controller\SmsQueue;
+use Air\Crud\Controller\SmsSettings;
+use Air\Crud\Controller\SmsTemplate;
 use Air\Crud\Controller\Storage;
 use Air\Crud\Controller\System;
 use Air\Model\ModelAbstract;
@@ -207,10 +210,25 @@ final class Front
       $this->view->setIsMinifyHtml($this->config['air']['view']['minify'] ?? false);
 
       $modules = null;
+      $contexts = null;
+
+      if ($this->config['air']['contexts'] ?? false) {
+        $contexts = implode('/', array_slice(explode('\\', $this->config['air']['contexts']), 2));
+      }
 
       if ($this->config['air']['modules'] ?? false) {
         $modules = implode('/', array_slice(explode('\\', $this->config['air']['modules']), 2));
+      }
 
+      if ($contexts) {
+        $viewPath = realpath(implode('/', [
+          $this->config['air']['loader']['path'],
+          $contexts,
+          ucfirst($this->router->getContext()),
+          'View'
+        ]));
+
+      } else if ($modules) {
         $viewPath = realpath(implode('/', [
           $this->config['air']['loader']['path'],
           $modules,
@@ -271,8 +289,18 @@ final class Front
         '\\' . $this->config['air']['loader']['namespace'] . '\\Plugin\\' => realpath($this->config['air']['loader']['path'] . '/Plugin')
       ];
 
-      if ($modules) {
+      if ($contexts) {
+        $pluginsPaths['\\' . $this->config['air']['loader']['namespace'] . '\\' . $contexts . '\\' . ucfirst($this->router->getContext()) . '\\Plugin\\'] =
+          realpath(implode('/', [
+            $this->config['air']['loader']['path'],
+            $contexts,
+            ucfirst($this->router->getContext()),
+            'Plugin'
+          ]));
 
+      }
+
+      if ($modules) {
         $pluginsPaths['\\' . $this->config['air']['loader']['namespace'] . '\\' . $modules . '\\' . ucfirst($this->router->getModule()) . '\\Plugin\\'] =
           realpath(implode('/', [
             $this->config['air']['loader']['path'],
@@ -288,7 +316,7 @@ final class Front
 
           $pluginClassName = $pluginNamespace . str_replace('.php', '', basename($pluginClass));
 
-          if (is_subclass_of($pluginClassName, '\\Air\\Core\\Plugin')) {
+          if (is_subclass_of($pluginClassName, Plugin::class)) {
             $plugins[] = new $pluginClassName();
           }
         }
@@ -361,11 +389,13 @@ final class Front
         $errorRouter = new Router();
 
         $errorRouter->setRequest($this->request);
+        $errorRouter->setContext($this->router->getContext());
         $errorRouter->setModule($this->router->getModule());
         $errorRouter->setController('error');
         $errorRouter->setAction('index');
         $errorRouter->setRoutes($this->config['router'] ?? []);
         $errorRouter->setConfig($this->router->getConfig());
+        $errorRouter->setIsError(true);
 
         $this->setRouter($errorRouter);
         return $this->run($localException);
@@ -438,6 +468,28 @@ final class Front
 
     } else if (($this->getConfig()['air']['admin']['emailQueue'] ?? false) === $controller) {
       return EmailQueue::class;
+
+    } else if (($this->getConfig()['air']['admin']['smsTemplates'] ?? false) === $controller) {
+      return SmsTemplate::class;
+
+    } else if (($this->getConfig()['air']['admin']['smsSettings'] ?? false) === $controller) {
+      return SmsSettings::class;
+
+    } else if (($this->getConfig()['air']['admin']['smsQueue'] ?? false) === $controller) {
+      return SmsQueue::class;
+    }
+
+    if ($this->config['air']['contexts'] ?? false) {
+      $contextContoller = implode('\\', [
+        $this->config['air']['contexts'],
+        ucfirst($router->getContext()),
+        'Controller',
+        ucfirst($controller),
+      ]);
+
+      if (class_exists($contextContoller)) {
+        return $contextContoller;
+      }
     }
 
     if ($this->config['air']['modules'] ?? false) {

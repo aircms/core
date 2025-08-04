@@ -46,6 +46,13 @@ $toJson = function ($row) {
     <?php if (!$isSelectControl) : ?>
 
       <?php foreach (($controls ?? []) as $control) : ?>
+
+        <?php
+          if (($control['type'] ?? false) === 'custom') {
+            $control = $control['source']($row);
+          }
+        ?>
+
         <?php if (($control['type'] ?? false) === 'custom') : ?>
           <?php $customControl = $control['source']($row); ?>
           <?php if ($customControl) : ?>
@@ -66,8 +73,9 @@ $toJson = function ($row) {
               </a>
             </li>
           <?php endif; ?>
+        <?php endif; ?>
 
-        <?php elseif (($control['type'] ?? false) === 'view') : ?>
+        <?php if (($control['type'] ?? false) === 'view') : ?>
           <li>
             <a class="dropdown-item"
                role="button"

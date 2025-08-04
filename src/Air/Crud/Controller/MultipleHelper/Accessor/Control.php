@@ -48,7 +48,8 @@ class Control
   {
     $url['controller'] = $url['controller'] ?? Front::getInstance()->getRouter()->getController();
 
-    return ['type' => 'run-and-reload',
+    return [
+      'type' => 'run-and-reload',
       'url' => $url,
       'icon' => $icon,
       'title' => $title,
