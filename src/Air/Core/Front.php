@@ -223,6 +223,8 @@ final class Front
         $modules = implode('/', array_slice(explode('\\', $this->config['air']['modules']), 2));
       }
 
+      $viewPath = null;
+
       if ($contexts) {
         $viewPath = realpath(implode('/', [
           $this->config['air']['loader']['path'],
