@@ -174,6 +174,7 @@ class Router
                   $releaseParts[] = $params[$var];
                   unset($params[$var]);
                 }
+
               } else {
                 $releaseParts[] = $part;
               }
@@ -364,7 +365,7 @@ class Router
 
       if (is_array($route)) {
 
-        $this->context = $route['contenxt'] ?? '';
+        $this->context = $route['context'] ?? '';
         $this->controller = $route['controller'] ?? 'index';
         $this->action = $route['action'] ?? 'index';
         $this->urlParams = $route['params'] ?? [];

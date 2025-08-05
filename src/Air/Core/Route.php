@@ -10,9 +10,9 @@ class Route
 {
   public static function r(
     ?string $context = null,
-    ?string $controller = null,
-    ?string $action = null,
-    ?array  $params = null
+    ?string $controller = '',
+    ?string $action = '',
+    ?array  $params = []
   ): array
   {
     $route = [];
@@ -108,10 +108,10 @@ class Route
   }
 
   public static function assembleWithLanguage(
+    Language $language,
     array    $route = [],
     array    $params = [],
     bool     $onlyUri = true,
-    Language $language
   ): string
   {
     $params = $params ?? [];
