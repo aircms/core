@@ -12,13 +12,29 @@ use Exception;
 
 class Storage
 {
-  public static function createFolder(string $path, string $name, bool $recursive = false): bool
+  public static function createFolder(
+    string $path,
+    string $name,
+    ?bool  $recursive = false,
+    ?bool  $sharding = false
+  ): string|false
   {
+    $path = $path . $name;
+
+    if ($sharding) {
+      $hash = md5(microtime());
+
+      $dir1 = substr($hash, 0, 2);
+      $dir2 = substr($hash, 2, 2);
+
+      $path = $path . '/' . $dir1 . '/' . $dir2;
+    }
+
     return self::action('createFolder', [
       'path' => $path,
       'name' => $name,
       'recursive' => $recursive
-    ])->isOk();
+    ])->isOk() ? $path : false;
   }
 
   public static function deleteFolder(string $path): bool
@@ -28,16 +44,7 @@ class Storage
 
   public static function uploadByUrl(string $path, string $url, ?string $name = null, ?bool $sharding = false): File
   {
-    if ($sharding) {
-      $hash = md5($url);
-
-      $dir1 = substr($hash, 0, 2);
-      $dir2 = substr($hash, 2, 2);
-
-      $path = $path . '/' . $dir1 . '/' . $dir2;
-    }
-
-    self::createFolder('/', $path, true);
+    $path = self::createFolder('/', $path, true, $sharding);
 
     $r = self::action('uploadByUrl', [
       'path' => $path,
@@ -63,8 +70,10 @@ class Storage
    * @return array
    * @throws Exception
    */
-  public static function uploadFiles(string $path, array $files): array
+  public static function uploadFiles(string $path, array $files, ?bool $sharding = false): array
   {
+    $path = self::createFolder('/', $path, true, $sharding);
+
     $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
     $url = $storageConfig['url'] . '/api/uploadFile';
 
@@ -91,8 +100,10 @@ class Storage
    * @return array|File[]
    * @throws Exception
    */
-  public static function uploadDatum(string $path, array $datum): array
+  public static function uploadDatum(string $path, array $datum, ?bool $sharding = false): array
   {
+    $path = self::createFolder('/', $path, true, $sharding);
+
     $response = self::action('uploadDatum', [
       'path' => $path,
       'datum' => $datum,
@@ -115,7 +126,7 @@ class Storage
    * @return File[]
    * @throws Exception
    */
-  public static function uploadBase64Datum(string $path, array $datum): array
+  public static function uploadBase64Datum(string $path, array $datum, ?bool $sharding = false): array
   {
     foreach ($datum as $index => $image) {
       $datum[$index] = [
@@ -123,7 +134,7 @@ class Storage
         'data' => $image
       ];
     }
-    return self::uploadDatum($path, $datum);
+    return self::uploadDatum($path, $datum, $sharding);
   }
 
   public static function action(string $endpoint, ?array $params = []): Response
@@ -192,5 +203,25 @@ class Storage
     }
 
     return new File($response->body);
+  }
+
+  public static function isImage(string $input): bool
+  {
+    if (stripos($input, 'data:') === 0) {
+      $commaPos = strpos($input, ',');
+      if ($commaPos === false) {
+        return false;
+      }
+      $input = substr($input, $commaPos + 1);
+    }
+
+    $input = preg_replace('/\s+/', '', $input);
+
+    $binary = base64_decode($input, true);
+    if ($binary === false || $binary === '') {
+      return false;
+    }
+
+    return !!getimagesizefromstring($binary);
   }
 }

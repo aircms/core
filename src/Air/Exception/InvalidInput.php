@@ -10,6 +10,6 @@ class InvalidInput extends Exception
 {
   public function __construct(?string $message = null)
   {
-    parent::__construct($message, 400);
+    parent::__construct($message ?? '', 400);
   }
 }

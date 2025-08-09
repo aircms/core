@@ -16,6 +16,9 @@ class Document extends DocumentAbstract
   protected function castDataType(Property $property, $value, bool $isSet = true, bool $toArray = false): mixed
   {
     if (in_array($property->getType(), ['integer', 'float', 'double', 'array', 'string', 'boolean', 'NULL'])) {
+      if (is_null($value)) {
+        return $value;
+      }
       settype($value, $property->getType());
       return $value;
     }

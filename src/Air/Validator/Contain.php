@@ -29,12 +29,12 @@ class Contain extends ValidatorAbstract
     return !!in_array($value, $this->list);
   }
 
-  public static function valid(string $errorMessage = '', array $list = [], bool $allowNull = false): static
+  public static function valid(string $errorMessage = '', bool $allowNull = false, array $list = []): static
   {
     return new static([
       'errorMessage' => $errorMessage,
+      'allowNull' => $allowNull,
       'list' => $list,
-      'allowNull' => $allowNull
     ]);
   }
 }

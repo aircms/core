@@ -8,6 +8,6 @@ class Phone extends FilterAbstract
 {
   public function filter($value): string
   {
-    return trim(str_replace(['+', '-', ' ', '-', '(', ')', '.', ','], '', $value));
+    return trim(str_replace(['+', '-', ' ', '-', '(', ')', '.', ','], '', $value ?? ''));
   }
 }

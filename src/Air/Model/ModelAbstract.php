@@ -116,6 +116,11 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     );
   }
 
+  public static function object(array|string|int $cond = [], array $sort = [], array $map = []): static|null
+  {
+    return static::one($cond, $sort, $map) ?? new static();
+  }
+
   public static function one(array|string|int $cond = [], array $sort = [], array $map = []): static|null
   {
     return static::fetchOne(static::addCond($cond), static::addPosition($sort), $map);

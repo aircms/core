@@ -166,6 +166,10 @@ abstract class ElementAbstract
   {
     // $value = $value ?? $this->getCleanValue();
 
+    if ($this->isAllowNull() && is_null($value)) {
+      return true;
+    }
+
     $this->errorMessages = [];
 
     foreach ($this->getValidators() as $validatorClassName => $settings) {
@@ -206,8 +210,10 @@ abstract class ElementAbstract
       }
 
       $options = [];
+
       if (isset($settings['options'])) {
         $options = $settings['options'];
+
       } else if (is_array($settings)) {
         $options = $settings;
       }
