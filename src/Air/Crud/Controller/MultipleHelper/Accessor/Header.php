@@ -178,8 +178,8 @@ class Header
   public static function createdAndUpdated(): array
   {
     return self::source('Updated', fn(ModelAbstract $model) => Ui::multiple([
-      Ui::badge(date('Y/m/d H:i', $model->updatedAt), Ui::LIGHT),
-      Ui::badge(date('Y/m/d H:i', $model->createdAt), Ui::DARK),
+      Ui::badge(Ui::date($model->updatedAt), Ui::LIGHT),
+      Ui::badge(Ui::date($model->createdAt), Ui::DARK),
     ]));
   }
 }

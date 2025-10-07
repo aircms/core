@@ -44,7 +44,7 @@ class Control
     return ['type' => 'print'];
   }
 
-  public static function runAndReload(array $url, string $icon, string $title, string|false $confirm = false): array
+  public static function runAndReload(array|string $url, string $icon, string $title, string|false $confirm = false): array
   {
     $url['controller'] = $url['controller'] ?? Front::getInstance()->getRouter()->getController();
 
@@ -62,7 +62,7 @@ class Control
     return ['type' => 'custom', 'source' => $source];
   }
 
-  public static function item(array $url, string $icon, string $title, string|false $confirm = false): array
+  public static function item(array|string $url, string $icon, string $title, string|false $confirm = false): array
   {
     return [
       'url' => $url,
@@ -72,7 +72,7 @@ class Control
     ];
   }
 
-  public static function modal(array $url, string $icon, string $title, string|false $confirm = false): array
+  public static function modal(array|string $url, string $icon, string $title, string|false $confirm = false): array
   {
     return [
       'url' => $url,
@@ -83,7 +83,7 @@ class Control
     ];
   }
 
-  public static function html(array $url, string $icon, string $title, string|false $confirm = false): array
+  public static function html(array|string $url, string $icon, string $title, string|false $confirm = false): array
   {
     $url['controller'] = $url['controller'] ?? Front::getInstance()->getRouter()->getController();
     return [

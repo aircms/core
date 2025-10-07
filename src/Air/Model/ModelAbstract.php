@@ -14,7 +14,7 @@ use Air\Model\Exception\DriverClassDoesNotExists;
 use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use ArrayAccess;
 
-abstract class ModelAbstract implements ModelInterface, ArrayAccess
+class ModelAbstract implements ModelInterface, ArrayAccess
 {
   private static DocumentAbstract|string $driverClassName = '';
   private ?Meta $meta = null;
@@ -100,7 +100,7 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     return self::__callStatic(__FUNCTION__, func_get_args());
   }
 
-  public static function update(array $cond = [], array $data = []): int
+  public static function update(array|string|int $cond = [], array $data = []): int
   {
     return self::__callStatic(__FUNCTION__, func_get_args());
   }
@@ -169,11 +169,11 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
    * @throws CallUndefinedMethod
    */
   public static function singleAll(
-    array $cond = [],
-    array $sort = [],
-    ?int  $count = null,
-    ?int  $offset = null,
-    array $map = []
+    array|string|int $cond = [],
+    array            $sort = [],
+    ?int             $count = null,
+    ?int             $offset = null,
+    array            $map = []
   ): CursorAbstract|array
   {
     $cond = static::addCond($cond);
@@ -195,11 +195,11 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
    * @throws CallUndefinedMethod
    */
   public static function all(
-    array $cond = [],
-    array $sort = [],
-    ?int  $count = null,
-    ?int  $offset = null,
-    array $map = []
+    array|string|int $cond = [],
+    array            $sort = [],
+    ?int             $count = null,
+    ?int             $offset = null,
+    array            $map = []
   ): CursorAbstract|array
   {
     return static::fetchAll(static::addCond($cond), static::addPosition($sort), $count, $offset, $map);
@@ -215,22 +215,22 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
    * @throws CallUndefinedMethod
    */
   public static function fetchAll(
-    array $cond = [],
-    array $sort = [],
-    ?int  $count = null,
-    ?int  $offset = null,
-    array $map = []
+    array|string|int $cond = [],
+    array            $sort = [],
+    ?int             $count = null,
+    ?int             $offset = null,
+    array            $map = []
   ): CursorAbstract|array
   {
     return self::__callStatic(__FUNCTION__, func_get_args());
   }
 
-  public static function quantity(array $cond = []): int
+  public static function quantity(array|string|int $cond = []): int
   {
     return static::count(static::addCond($cond));
   }
 
-  public static function count(array $cond = []): int
+  public static function count(array|string|int $cond = []): int
   {
     return self::__callStatic(__FUNCTION__, func_get_args());
   }
@@ -346,13 +346,18 @@ abstract class ModelAbstract implements ModelInterface, ArrayAccess
     return $this->getDocument()->toArray();
   }
 
+  public function remove(): void
+  {
+    self::__call(__FUNCTION__, []);
+  }
+
   public static function reflectSchema(): void
   {
     self::__callStatic(__FUNCTION__, []);
   }
 
-  public static function remove(array $cond = [], ?int $limit = null): int
+  public static function batchRemove(array|string|int $cond = [], ?int $limit = null): int
   {
-    return self::__callStatic(__FUNCTION__, func_get_args());
+    return self::__callStatic('remove', func_get_args());
   }
 }

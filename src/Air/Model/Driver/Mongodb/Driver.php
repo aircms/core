@@ -32,6 +32,7 @@ class Driver extends DriverAbstract
       $updatedAtProperty = $this->getModel()->getMeta()->getPropertyWithName('updatedAt');
       if ($updatedAtProperty->getType() === 'integer') {
         $data['updatedAt'] = time();
+        $this->getModel()->updatedAt = $data['updatedAt'];
       }
     }
 
@@ -45,6 +46,7 @@ class Driver extends DriverAbstract
         $createdAtProperty = $this->getModel()->getMeta()->getPropertyWithName('createdAt');
         if ($createdAtProperty->getType() === 'integer') {
           $data['createdAt'] = time();
+          $this->getModel()->createdAt = $data['createdAt'];
         }
       }
       $this->getModel()->id = (string)$bulk->insert($data);
@@ -152,12 +154,11 @@ class Driver extends DriverAbstract
     }
 
     if ($this->getModel()->id) {
-
       $cond = $this->replaceIdToObjectId([
         'id' => $this->getModel()->id
       ]);
-
       $limit = 1;
+
     } else {
       list($cond) = $this->processQuery($cond);
       $cond = $this->normalizeDataTypes($cond);

@@ -243,7 +243,7 @@ abstract class ElementAbstract
         }
 
         try {
-
+          
           /** @var FilterAbstract $filter */
 
           if (is_string($filterClassName)) {
@@ -254,8 +254,7 @@ abstract class ElementAbstract
             $this->value = $filter->filter($this->value);
           }
 
-        } catch (Throwable) {
-
+        } catch (Throwable $e) {
           try {
             $this->value = $filterClassName($this->value);
 

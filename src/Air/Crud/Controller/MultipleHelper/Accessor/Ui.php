@@ -52,6 +52,11 @@ class Ui
     return implode(' ', $parts);
   }
 
+  public static function date(int $timestamp, string $format = 'Y/m/d H:i'): string
+  {
+    return date($format, $timestamp);
+  }
+
   public static function badge(mixed $label, string $style = 'primary'): string
   {
     return span(content: (string)$label, class: ['badge', 'badge-' . $style]);
@@ -61,7 +66,7 @@ class Ui
     string  $label,
     string  $url,
     ?string $confirm = null,
-    string  $style = 'primary',
+    string  $style = Ui::PRIMARY,
     ?string $icon = null,
     array   $attributes = [],
   ): string
@@ -113,6 +118,17 @@ class Ui
     );
   }
 
+  public static function modelPreviewInline(ModelAbstract $model): string
+  {
+    return div(class: '', content: div(
+      class: 'd-flex align-items-center',
+      content: [
+        $model->getMeta()->hasProperty('image') ? div(class: 'bg-image', content: self::imgPreview($model->image, 'w-auto')) : null,
+        span($model->title)
+      ]
+    ));
+  }
+
   public static function modelPreview(ModelAbstract $model): string
   {
     return div(class: 'admin-table-row-image', content: div(
@@ -124,7 +140,16 @@ class Ui
     ));
   }
 
-  public static function imgPreview(File|string $image): string
+  public static function imgsPreview(?array $files = null): string
+  {
+    $previews = [];
+    foreach (($files ?? []) as $file) {
+      $previews[] = self::imgPreview($file, 'w-auto');
+    }
+    return div(class: 'd-flex', content: Ui::multipleLine($previews));
+  }
+
+  public static function imgPreview(File|string $image, ?string $class = null): string
   {
     $alt = '';
     $title = '';
@@ -141,7 +166,7 @@ class Ui
     }
 
     return div(
-      class: 'admin-table-row-image',
+      class: 'admin-table-row-image ' . $class,
       content: div(
         class: 'bg-image rounded-4 shadow-5-strong me-3',
         attributes: ['role' => 'button'],
@@ -178,6 +203,14 @@ class Ui
     return "<script>nav.back()</script>";
   }
 
+  public static function modal(string $url, Closure|string|array|null $content): string
+  {
+    return div(content: render(content($content)), attributes: [
+      'onclick' => "modal.embed('" . $url . "');",
+      'role' => 'button'
+    ]);
+  }
+
   public static function header(Closure|string|array|null $title, string $icon = null, array $buttons = []): string
   {
     return div(
@@ -192,12 +225,29 @@ class Ui
               $title,
             ]),
             div(
-              class: 'd-flex align-items-center',
+              class: 'd-flex align-items-center gap-2',
               content: $buttons
             )
           ]
         )
       )
+    );
+  }
+
+  public static function properties(array $keyValues = []): string
+  {
+    return row(
+      class: 'gy-2',
+      content: function () use ($keyValues) {
+        foreach (array_filter($keyValues) as $key => $value) {
+          $collClass = 'col-12';
+          if (!is_int($key)) {
+            $collClass = 'col-6';
+            yield col($collClass . ' small', render(content($key)));
+          }
+          yield col($collClass, render(content($value)));
+        }
+      }
     );
   }
 
