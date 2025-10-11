@@ -40,8 +40,8 @@ foreach ($header as $key => $col) : ?>
 
   <?php elseif ($type == 'longtext') : ?>
     <td class="admin-table-row-default <?php echo $size; ?>">
-      <?php $longText = htmlspecialchars(mb_substr(strip_tags($row->$key), 0, 150));
-      echo $longText . (strlen($row->$key) > 150 ? '...' : ''); ?>
+      <?php $longText = htmlspecialchars(mb_substr(strip_tags($row->$key ?? ''), 0, 150));
+      echo $longText . (strlen($row->$key ?? '') > 150 ? '...' : ''); ?>
     </td>
 
   <?php elseif ($type == 'link') : ?>
