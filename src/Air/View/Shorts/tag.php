@@ -315,6 +315,7 @@ function script(
   bool                      $defer = false,
   string                    $src = null,
   array|string              $attributes = null,
+  string                    $type = null
 ): string
 {
   $attributes = (array)$attributes ?? [];
@@ -329,6 +330,10 @@ function script(
 
   if ($src) {
     $attributes['src'] = $src;
+  }
+
+  if ($type) {
+    $attributes['type'] = $type;
   }
 
   return tag(
