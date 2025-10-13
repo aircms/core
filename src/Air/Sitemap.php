@@ -22,14 +22,14 @@ class Sitemap
     $this->languages = Language::all();
   }
 
-  public function addUrl(array $route, array $params, int $lastMod, string $priority): static
+  public function addUrl(array $route, array $params, int $lastMod, string $priority = '0.80'): static
   {
     if (!$lastMod) {
       $lastMod = time();
     }
 
     $url = [
-      'loc' => Route::assembleWithLanguage($route, $params, false, $this->defaultLanguage),
+      'loc' => Route::assembleWithLanguage($this->defaultLanguage, $route, $params, false),
       'priority' => $priority,
       'lastmod' => $lastMod,
       'alternate' => []
@@ -37,9 +37,9 @@ class Sitemap
 
     foreach ($this->languages as $language) {
       if ($language->isDefault) {
-        $url['alternate']['x-default'] = Route::assembleWithLanguage($route, $params, false, $language);
+        $url['alternate']['x-default'] = Route::assembleWithLanguage($language, $route, $params, false);
       } else {
-        $url['alternate'][$language->key] = Route::assembleWithLanguage($route, $params, false, $language);
+        $url['alternate'][$language->key] = Route::assembleWithLanguage($language, $route, $params, false);
       }
     }
 

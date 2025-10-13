@@ -45,8 +45,6 @@ class Storage
 
   public static function uploadByUrl(string $path, string $url, ?string $name = null, ?bool $sharding = false): File
   {
-    $path = self::createFolder('/', $path, true, $sharding);
-
     $r = self::action('uploadByUrl', [
       'path' => $path,
       'url' => $url,

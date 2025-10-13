@@ -65,39 +65,44 @@ class File extends TypeAbstract
     return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->thumbnail;
   }
 
-  public function getSrc(?int $width = null, ?int $height = null, ?int $quality = null): string
+  public function getSrc(
+    ?int    $width = null,
+    ?int    $height = null,
+    ?int    $quality = null,
+    ?string $format = null
+  ): string
   {
     if (str_starts_with($this->src, 'http')) {
-      $src = $this->src;
-    } else {
-      $src = Front::getInstance()->getConfig()['air']['storage']['url'] . $this->src;
+      return $this->src;
     }
 
-    if (!$width && !$height && !$quality) {
-      return $src;
+    $src = $this->src;
+
+    $pathInfo = pathinfo($src);
+    $dirname = $pathInfo['dirname'] ?? '';
+    $filename = $pathInfo['filename'] ?? '';
+    $ext = strtolower($pathInfo['extension'] ?? '');
+
+    // собираем модификаторы
+    $mods = [];
+    if ($width !== null) $mods[] = 'w' . $width;
+    if ($height !== null) $mods[] = 'h' . $height;
+    if ($quality !== null) $mods[] = 'q' . $quality;
+
+    $newFilename = $filename;
+
+    if (!empty($mods)) {
+      $newFilename .= '_mod_' . implode('_', $mods);
     }
 
-    $suffix = '';
+    // формат: если передан — используем его, иначе исходное расширение
+    $newExt = $format ? strtolower($format) : $ext;
 
-    if ($width !== null || $height !== null) {
-      $suffix .= '_r';
-      if ($width !== null) {
-        $suffix .= $width;
-      }
-      if ($height !== null) {
-        $suffix .= 'x' . $height;
-      }
-    }
 
-    if ($quality !== null) {
-      $suffix .= '_q' . $quality;
-    }
+    $src = array_values(array_filter(explode('/', "{$dirname}/{$newFilename}.{$newExt}")));
+    $src = implode('/', $src);
 
-    if ($suffix === '') {
-      return $src;
-    }
-
-    return preg_replace('/(\\.[^\\.\\/\\?]+)(\\?.*)?$/', $suffix . '$1$2', $src);
+    return Front::getInstance()->getConfig()['air']['storage']['url'] . $src;
   }
 
   public function getSrcContent(): string|false
