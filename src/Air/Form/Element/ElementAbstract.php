@@ -164,9 +164,8 @@ abstract class ElementAbstract
 
   public function isValid($value): bool
   {
-    // $value = $value ?? $this->getCleanValue();
-
     if ($this->isAllowNull() && is_null($value)) {
+      $this->value = $value;
       return true;
     }
 
@@ -254,8 +253,7 @@ abstract class ElementAbstract
             $this->value = $filter->filter($this->value);
           }
 
-        } catch (Throwable) {
-
+        } catch (Throwable $e) {
           try {
             $this->value = $filterClassName($this->value);
 

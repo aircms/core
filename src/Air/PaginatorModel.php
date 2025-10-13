@@ -72,8 +72,8 @@ class PaginatorModel
   public function getItems(): CursorAbstract
   {
     if ($this->strict) {
-      return ($this->model)::all($this->cond, $this->sort, $this->itemsPerPage, ($this->itemsPerPage - 1) * $this->page);
+      return ($this->model)::all($this->cond, $this->sort, $this->itemsPerPage, $this->itemsPerPage * ($this->page - 1));
     }
-    return ($this->model)::fetchAll($this->cond, $this->sort, $this->itemsPerPage, ($this->itemsPerPage - 1) * $this->page);
+    return ($this->model)::fetchAll($this->cond, $this->sort, $this->itemsPerPage, $this->itemsPerPage * ($this->page - 1));
   }
 }

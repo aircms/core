@@ -43,9 +43,9 @@ class Controller
     $this->view = $view;
   }
 
-  public function redirect(string $uri): void
+  public function redirect(string $uri, ?int $code = 0): void
   {
-    header('Location: ' . $uri);
+    header('Location: ' . $uri, true, $code);
     die();
   }
 

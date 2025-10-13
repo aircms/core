@@ -94,7 +94,7 @@ const modal = new class {
 
   prompt(title, label, options) {
     return new Promise((resolve) => {
-      this.open(this.templates.prompt, {title, label}, this.mergeOpts(options, {size: 'small'}));
+      this.open(this.templates.prompt, {title, label}, this.mergeOpts(options, {}));
       $(this.selector).find('[data-admin-modal-prompt]').on('submit', (e) => {
         const val = $(e.currentTarget).find('input[type=text]').val();
         if (val.length) {

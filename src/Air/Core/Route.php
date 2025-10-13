@@ -36,6 +36,27 @@ class Route
     return $route;
   }
 
+  public static function assembleRoute(
+    ?string $context = null,
+    ?string $controller = '',
+    ?string $action = '',
+    ?array  $params = [],
+    ?bool   $onlyUrl = true
+  ): string
+  {
+    return self::assembleCleanRoute(self::r($context, $controller, $action, $params), $onlyUrl);
+  }
+
+  public static function assembleCleanRoute(array $route, bool $onlyUri = true): string
+  {
+    $url = trim(Front::getInstance()->getRouter()->assemble($route, $route['params'] ?? [], true, $onlyUri));
+
+    if (str_ends_with($url, '?')) {
+      $url = substr($url, 0, strlen($url) - 1);
+    }
+    return $url;
+  }
+
   public static function assemble(array $route = [], array $params = [], bool $onlyUri = true): string
   {
     if (!isset($params['language'])) {

@@ -27,12 +27,22 @@ const nav = new class {
       loader.show();
     });
 
-    const _nav = (href, force) => {
+    const _nav = (href, force, isBlank) => {
+      if (isBlank) {
+        window.open(href);
+        return true;
+      }
+
       if (force) {
         location.href = href;
         return true;
       }
-      if (href.length && !href.startsWith('#') && !href.startsWith('javascript')) {
+
+      if (href.startsWith('#') || href.startsWith('tel:') || href.startsWith('mailto:') || href.startsWith('javascript')) {
+        return true;
+      }
+
+      if (href.length) {
         this.nav(href);
         return false;
       }
@@ -43,15 +53,16 @@ const nav = new class {
 
       const href = $(event.currentTarget).attr('href');
       const confirm = $(event.currentTarget).data('confirm');
-      const force = $(event.currentTarget).data('force');
+      const force = $(event.currentTarget).data('force') || $(event.currentTarget).attr('target') === '_blank';
+      const isBlank = $(event.currentTarget).attr('target') === '_blank';
 
       $(event.currentTarget).blur();
 
       if (confirm) {
-        modal.question(confirm).then(() => _nav(href, force));
+        modal.question(confirm).then(() => _nav(href, force, isBlank));
         return false;
       }
-      return _nav(href, force);
+      return _nav(href, force, isBlank);
     });
     this.start();
   }

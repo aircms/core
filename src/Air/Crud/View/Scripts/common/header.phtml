@@ -73,7 +73,7 @@ $isMultipleManage = $this->isMultipleManage;
         <?php if ($mode === 'manage') : ?>
 
           <?php if ($model && $model->id && $model->getMeta()->hasProperty('language') && ($model->getMeta()->hasProperty('url') || $isSingle)) : ?>
-            <div data-admin-manage-switch-language="<?php echo $model->language->id; ?>">
+            <div data-admin-manage-switch-language="<?php echo $model->language?->id; ?>">
               <?php
               $cond = $isSingle ? [] : ['url' => $model->url];
               echo script(
@@ -81,7 +81,7 @@ $isMultipleManage = $this->isMultipleManage;
                 content: json_encode(Map::execute($model::fetchAll($cond), function (ModelAbstract $m) use ($controller, $isQuickManage) {
                   return [
                     'controller' => $controller,
-                    'languageId' => $m->language->id,
+                    'languageId' => $m->language?->id,
                     'recordId' => $m->id,
                     'isQuickManage' => $isQuickManage
                   ];
@@ -89,7 +89,7 @@ $isMultipleManage = $this->isMultipleManage;
               <?php echo $this->partial('table/partial/filter/model', ['filter' => [
                 'model' => Language::class,
                 'by' => 'language',
-                'value' => $model->language->id
+                'value' => $model->language?->id
               ]]); ?>
             </div>
           <?php endif; ?>

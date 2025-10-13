@@ -9,6 +9,7 @@ use Air\Http\Request;
 use Air\Http\Response;
 use Air\Type\File;
 use Exception;
+use Throwable;
 
 class Storage
 {
@@ -44,8 +45,6 @@ class Storage
 
   public static function uploadByUrl(string $path, string $url, ?string $name = null, ?bool $sharding = false): File
   {
-    $path = self::createFolder('/', $path, true, $sharding);
-
     $r = self::action('uploadByUrl', [
       'path' => $path,
       'url' => $url,
@@ -205,23 +204,38 @@ class Storage
     return new File($response->body);
   }
 
-  public static function isImage(string $input): bool
+  public static function isImage(string|array $input): bool
   {
-    if (stripos($input, 'data:') === 0) {
-      $commaPos = strpos($input, ',');
-      if ($commaPos === false) {
-        return false;
+    try {
+      if (is_array($input)
+        && str_starts_with($input['src'], Front::getInstance()->getConfig()['air']['storage']['url'])
+        && str_starts_with($input['thumbnail'], Front::getInstance()->getConfig()['air']['storage']['url'])) {
+        return true;
       }
-      $input = substr($input, $commaPos + 1);
-    }
-
-    $input = preg_replace('/\s+/', '', $input);
-
-    $binary = base64_decode($input, true);
-    if ($binary === false || $binary === '') {
+    } catch (Throwable) {
       return false;
     }
 
-    return !!getimagesizefromstring($binary);
+    try {
+      if (stripos($input, 'data:') === 0) {
+        $commaPos = strpos($input, ',');
+        if ($commaPos === false) {
+          return false;
+        }
+        $input = substr($input, $commaPos + 1);
+      }
+
+      $input = preg_replace('/\s+/', '', $input);
+
+      $binary = base64_decode($input, true);
+      if ($binary === false || $binary === '') {
+        return false;
+      }
+
+      return !!getimagesizefromstring($binary);
+
+    } catch (Throwable) {
+      return false;
+    }
   }
 }

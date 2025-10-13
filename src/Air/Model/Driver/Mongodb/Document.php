@@ -55,6 +55,8 @@ class Document extends DocumentAbstract
         $items[] = $modelClassName::fetchOne([$modelClassName::meta()->getPrimary() => $id]);
       }
 
+      $items = array_values(array_filter($items));
+
       if ($toArray) {
         foreach ($items as $index => $item) {
           $items[$index] = $item->toArray();

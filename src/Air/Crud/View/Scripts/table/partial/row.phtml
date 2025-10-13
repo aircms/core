@@ -40,8 +40,8 @@ foreach ($header as $key => $col) : ?>
 
   <?php elseif ($type == 'longtext') : ?>
     <td class="admin-table-row-default <?php echo $size; ?>">
-      <?php $longText = htmlspecialchars(mb_substr(strip_tags($row->$key), 0, 150));
-      echo $longText . (strlen($row->$key) > 150 ? '...' : ''); ?>
+      <?php $longText = htmlspecialchars(mb_substr(strip_tags($row->$key ?? ''), 0, 150));
+      echo $longText . (strlen($row->$key ?? '') > 150 ? '...' : ''); ?>
     </td>
 
   <?php elseif ($type == 'link') : ?>
@@ -127,12 +127,12 @@ foreach ($header as $key => $col) : ?>
       <div class="bg-image rounded-4 shadow-5-strong"
            role="button"
            data-admin-embed-modal
-           data-admin-embed-modal-alt="<?php echo $file->getAlt(); ?>"
-           data-admin-embed-modal-title="<?php echo $file->getTitle(); ?>"
-           data-admin-embed-modal-src="<?php echo $file->getSrc(); ?>"
+           data-admin-embed-modal-alt="<?php echo $file?->getAlt(); ?>"
+           data-admin-embed-modal-title="<?php echo $file?->getTitle(); ?>"
+           data-admin-embed-modal-src="<?php echo $file?->getSrc(); ?>"
            data-admin-embed-modal-mime="<?php echo $file?->getMime() ?? ''; ?>"
 
-           data-admin-async-image="<?php echo $file->getThumbnail(); ?>"
+           data-admin-async-image="<?php echo $file?->getThumbnail(); ?>"
            data-mdb-ripple-init></div>
     </td>
 
