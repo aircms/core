@@ -64,7 +64,7 @@ class Map
   public static function multiple(mixed $data, mixed $mapper, array $userData = []): array
   {
     $result = self::execute($data, $mapper, $userData);
-    return $result ?: [];
+    return array_values(array_filter($result ?: []));
   }
 
   public static function isSingle(mixed $data): bool

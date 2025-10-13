@@ -91,14 +91,33 @@ class Dom
     return trim($n->textContent ?? '');
   }
 
-  public function html(): string
+  public function html(?bool $clean = false): string
   {
     $n = $this->node ?? $this->doc->documentElement;
-    $inner = '';
-    foreach ($n->childNodes as $child) {
-      $inner .= $this->doc->saveHTML($child);
+
+    if ($clean !== true) {
+      $inner = '';
+      foreach ($n->childNodes as $child) {
+        $inner .= $this->doc->saveHTML($child);
+      }
+      return trim($inner);
     }
-    return $inner;
+
+    $tmp = new DOMDocument('1.0', 'UTF-8');
+    $tmp->formatOutput = false;
+
+    $root = $tmp->appendChild($tmp->createElement('root'));
+    foreach ($n->childNodes as $child) {
+      $root->appendChild($tmp->importNode($child, true));
+    }
+
+    self::removeEmptyNodes($root);
+
+    $out = '';
+    foreach ($root->childNodes as $child) {
+      $out .= $tmp->saveHTML($child);
+    }
+    return trim($out);
   }
 
   public function outerHtml(): string
@@ -111,7 +130,7 @@ class Dom
   {
     $n = $this->node;
     if ($n instanceof DOMElement && $n->hasAttribute($name)) {
-      return $n->getAttribute($name);
+      return trim($n->getAttribute($name));
     }
     return null;
   }
@@ -153,14 +172,38 @@ class Dom
     return null;
   }
 
-  private static function cssToXPath(string $selector): string
+  public function remove(string $cssSelector): static
+  {
+    $xpathExpr = self::cssToXPath($cssSelector);
+    $ctx = $this->node ?? $this->doc;
+
+    $nodes = $this->xpath->query($xpathExpr, $ctx);
+    if ($nodes === false) {
+      return $this;
+    }
+
+    $toRemove = [];
+    foreach ($nodes as $n) {
+      $toRemove[spl_object_hash($n)] = $n;
+    }
+
+    foreach ($toRemove as $n) {
+      if ($n->parentNode instanceof DOMNode) {
+        $n->parentNode->removeChild($n);
+      }
+    }
+
+    return $this;
+  }
+
+  public static function cssToXPath(string $selector): string
   {
     $parts = preg_split('/\s*,\s*/', trim($selector));
-    $xpaths = [];
+    $xPaths = [];
     foreach ($parts as $part) {
-      $xpaths[] = self::compileSelector(trim($part));
+      $xPaths[] = self::compileSelector(trim($part));
     }
-    return implode('|', $xpaths);
+    return implode('|', $xPaths);
   }
 
   private static function compileSelector(string $selector): string
@@ -289,7 +332,80 @@ class Dom
   private static function stripContextPrefix(string $xpath): string
   {
     $part = explode('|', $xpath)[0];
-    $part = preg_replace('#^\.\/*#', '', $part);
-    return $part;
+    return preg_replace('#^\.\/*#', '', $part);
+  }
+
+  private static function removeEmptyNodes(DOMNode $node): void
+  {
+    for ($i = $node->childNodes->length - 1; $i >= 0; $i--) {
+      /** @var DOMNode $child */
+      $child = $node->childNodes->item($i);
+
+      if ($child->hasChildNodes()) {
+        self::removeEmptyNodes($child);
+      }
+
+      if ($child->nodeType === XML_COMMENT_NODE) {
+        $node->removeChild($child);
+        continue;
+      }
+
+      if ($child->nodeType === XML_TEXT_NODE) {
+        if (self::isWhitespace($child->nodeValue ?? '')) {
+          $node->removeChild($child);
+        }
+        continue;
+      }
+
+      if ($child instanceof DOMElement) {
+        if (self::isElementEmpty($child)) {
+          $node->removeChild($child);
+        }
+      }
+    }
+  }
+
+  private static function isElementEmpty(DOMElement $el): bool
+  {
+    if (self::isVoidElement($el->tagName)) {
+      return false;
+    }
+
+    if (!$el->hasChildNodes()) {
+      return true;
+    }
+
+    foreach ($el->childNodes as $c) {
+      if ($c->nodeType === XML_TEXT_NODE) {
+        if (!self::isWhitespace($c->nodeValue ?? '')) {
+          return false;
+        }
+      } elseif ($c->nodeType === XML_COMMENT_NODE) {
+        continue;
+      } elseif ($c instanceof DOMElement) {
+        if (!self::isElementEmpty($c)) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private static function isWhitespace(string $s): bool
+  {
+    $s = preg_replace('/[\x{00A0}\x{2007}\x{202F}]/u', ' ', $s);
+    return trim($s) === '';
+  }
+
+  private static function isVoidElement(string $tag): bool
+  {
+    static $void = [
+      'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+      'link', 'meta', 'param', 'source', 'track', 'wbr'
+    ];
+    return in_array(strtolower($tag), $void, true);
   }
 }
