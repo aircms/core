@@ -12,6 +12,7 @@ class Status extends TypeAbstract
   public ?string $orderId = null;
   public ?string $status = null;
   public ?bool $isPaid = false;
+  public ?bool $isSandbox = false;
   public ?array $raw = [];
 
   public function getInvoiceId(): ?string
@@ -32,6 +33,11 @@ class Status extends TypeAbstract
   public function isPaid(): ?bool
   {
     return $this->isPaid;
+  }
+
+  public function isSandbox(): ?bool
+  {
+    return $this->isSandbox;
   }
 
   public function getRaw(): ?array

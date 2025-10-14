@@ -236,7 +236,7 @@ $billing = $route($config['admin']['billing'] ?? null);
               </a>
             </li>
           <?php endif; ?>
-          <?php if ($deepl) : ?>
+          <?php if ($billing) : ?>
             <li class="dropdown-divider"></li>
             <li>
               <a class="dropdown-item" href="<?php echo $billing; ?>" data-deepl>

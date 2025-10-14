@@ -23,8 +23,11 @@ class PaymentFactory
 
   public static function monoPay(): MonoPay
   {
+    $settings = Billing::one();
     return new MonoPay([
-      'key' => Billing::one()->monoPayKey
+      'key' => $settings->monoPayKey,
+      'sandboxEnabled' => $settings->monoPaySandboxEnabled,
+      'sandboxKey' => $settings->monoPaySandboxKey
     ]);
   }
 
@@ -34,7 +37,10 @@ class PaymentFactory
 
     return new LiqPay([
       'publicKey' => $billing->liqPayPublicKey,
-      'privateKey' => $billing->liqPayPrivateKey
+      'privateKey' => $billing->liqPayPrivateKey,
+      'sandboxEnabled' => $billing->liqPaySandboxEnabled,
+      'sandboxPublicKey' => $billing->liqPaySandboxPublicKey,
+      'sandboxPrivateKey' => $billing->liqPaySandboxPrivateKey,
     ]);
   }
 }

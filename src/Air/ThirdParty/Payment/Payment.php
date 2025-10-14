@@ -12,6 +12,12 @@ abstract class Payment
   {
   }
 
+  abstract public function setSandboxEnabled(
+    bool $sandboxEnabled
+  ): void;
+
+  abstract public function isSandboxEnabled(): bool;
+
   abstract public function create(
     string $orderId,
     float  $amount,
