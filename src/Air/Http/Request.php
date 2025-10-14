@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Air\Http;
 
-use Air\Model\Driver\Mysql\Driver;
 use Exception;
 
 class Request
 {
   const string GET = 'GET';
   const string POST = 'POST';
+
+  const string CONTENT_TYPE_JSON = 'application/json';
+  const string CONTENT_TYPE_FORM_DATA = 'multipart/form-data';
+  const string CONTENT_TYPE_X_FORM_DATA = 'application/x-www-form-urlencoded';
 
   public string $url;
   public string $method = self::GET;
@@ -67,9 +70,9 @@ class Request
   public function type(string $type): self
   {
     $types = [
-      'json' => 'application/json',
-      'formData' => 'multipart/form-data',
-      'xFormData' => 'application/x-www-form-urlencoded',
+      'json' => self::CONTENT_TYPE_JSON,
+      'formData' => self::CONTENT_TYPE_FORM_DATA,
+      'xFormData' => self::CONTENT_TYPE_X_FORM_DATA,
     ];
 
     $this->headers['content-type'] = $types[$type] ?? $type;
@@ -220,5 +223,57 @@ class Request
       'type' => 'json',
       'get' => $get
     ]);
+  }
+
+  public static function fetch(
+    string  $url,
+    ?array  $get = null,
+    ?array  $headers = null,
+  ): Response
+  {
+    $request = new self();
+    $request->method(self::GET);
+    $request->url($url);
+
+    if ($get) {
+      $request->get($get);
+    }
+
+    if ($headers) {
+      $request->headers($headers);
+    }
+
+    return $request->do();
+  }
+
+  public static function post(
+    string  $url,
+    ?array  $get = null,
+    ?array  $body = null,
+    ?array  $headers = null,
+    ?string $type = self::CONTENT_TYPE_X_FORM_DATA
+  ): Response
+  {
+    $request = new self();
+    $request->method(self::POST);
+    $request->url($url);
+
+    if ($get) {
+      $request->get($get);
+    }
+
+    if ($body) {
+      $request->body($body);
+    }
+
+    if ($type) {
+      $request->type($type);
+    }
+
+    if ($headers) {
+      $request->headers($headers);
+    }
+
+    return $request->do();
   }
 }

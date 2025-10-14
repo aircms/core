@@ -9,6 +9,7 @@ use Air\Core\Exception\ActionMethodWasNotFound;
 use Air\Core\Exception\ControllerClassWasNotFound;
 use Air\Core\Exception\Stop;
 use Air\Crud\Controller\Admin;
+use Air\Crud\Controller\Billing;
 use Air\Crud\Controller\Cache;
 use Air\Crud\Controller\Codes;
 use Air\Crud\Controller\Deepl;
@@ -493,6 +494,9 @@ final class Front
 
     } else if (($this->getConfig()['air']['admin']['deepseek'] ?? false) === $controller) {
       return DeepSeek::class;
+
+    } else if (($this->getConfig()['air']['admin']['billing'] ?? false) === $controller) {
+      return Billing::class;
     }
 
     if ($this->config['air']['contexts'] ?? false) {

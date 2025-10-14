@@ -93,6 +93,9 @@ $deepl = $route($config['admin']['deepl'] ?? null);
 
 /** @var string $deepSeek */
 $deepSeek = $route($config['admin']['deepseek'] ?? null);
+
+/** @var string $billing */
+$billing = $route($config['admin']['billing'] ?? null);
 ?>
 
 <div class="d-flex flex-column h-100">
@@ -230,6 +233,14 @@ $deepSeek = $route($config['admin']['deepseek'] ?? null);
             <li>
               <a class="dropdown-item" href="<?php echo $deepl; ?>" data-deepl>
                 <i class="fas fa-globe me-1"></i> <?php echo Locale::t('Deepl'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($deepl) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $billing; ?>" data-deepl>
+                <i class="fas fa-money-bill-1 me-1"></i> <?php echo Locale::t('Billing'); ?>
               </a>
             </li>
           <?php endif; ?>
