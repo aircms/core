@@ -325,3 +325,8 @@ table.csv {
     background-color: var(--mdb-primary-border-subtle);
   }
 }
+
+[data-zoom] {
+  height: 100%;
+  width: auto;
+}

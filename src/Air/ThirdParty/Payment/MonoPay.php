@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\ThirdParty\Payment;
 
 use Air\Http\Request;
+use Air\Log;
 use Exception;
 use InvalidArgumentException;
 use Throwable;
@@ -12,6 +13,9 @@ use Throwable;
 class MonoPay extends Payment
 {
   private string $key;
+
+  private bool $sandboxEnabled;
+  private string $sandboxKey;
 
   public function __construct(array $settings)
   {
@@ -22,6 +26,19 @@ class MonoPay extends Payment
     }
 
     $this->key = $this->settings['key'];
+
+    $this->sandboxEnabled = $this->settings['sandboxEnabled'];
+    $this->sandboxKey = $this->settings['sandboxKey'];
+  }
+
+  public function isSandboxEnabled(): bool
+  {
+    return $this->sandboxEnabled;
+  }
+
+  public function setSandboxEnabled(bool $sandboxEnabled): void
+  {
+    $this->sandboxEnabled = $sandboxEnabled;
   }
 
   public function create(
@@ -33,7 +50,7 @@ class MonoPay extends Payment
   ): Invoice
   {
     $request = [
-      'amount' => $amount * 100,
+      'amount' => ceil($amount * 100),
       'redirectUrl' => $redirect,
       'webHookUrl' => $callback,
       'merchantPaymInfo' => [
@@ -44,7 +61,7 @@ class MonoPay extends Payment
 
     $response = Request::post(
       url: 'https://api.monobank.ua/api/merchant/invoice/create',
-      headers: ['X-Token' => $this->key],
+      headers: ['X-Token' => $this->getKey()],
       type: Request::CONTENT_TYPE_JSON,
       body: $request,
     );
@@ -54,16 +71,17 @@ class MonoPay extends Payment
     }
 
     return new Invoice([
+      'orderId' => $orderId,
       'invoiceId' => $response->body['invoiceId'],
       'url' => $response->body['pageUrl'],
-      'orderId' => $orderId,
+      'isSandbox' => $this->isSandboxEnabled(),
     ]);
   }
 
   public function validate(array $response): false|Status
   {
     try {
-      return self::dataToStatus($response);
+      return $this->dataToStatus($response);
     } catch (Throwable) {
       return false;
     }
@@ -75,24 +93,30 @@ class MonoPay extends Payment
 
     $response = Request::fetch(
       url: "https://api.monobank.ua/api/merchant/invoice/status",
-      headers: ['X-Token' => $this->key],
+      headers: ['X-Token' => $this->getKey()],
       get: ['invoiceId' => $invoice]
     );
 
     if ($response->isOk()) {
-      return self::dataToStatus($response->body);
+      return $this->dataToStatus($response->body);
     }
 
     throw new Exception('MonoPay status error: [order: ' . $invoice . ', errCode: ' . $response->body['errCode']);
   }
 
-  protected static function dataToStatus(array $data): Status
+  protected function getKey(): string
+  {
+    return $this->isSandboxEnabled() ? $this->sandboxKey : $this->key;
+  }
+
+  protected function dataToStatus(array $data): Status
   {
     return new Status([
       'invoiceId' => $data['invoiceId'],
       'orderId' => $data['reference'],
       'status' => $data['status'],
       'isPaid' => $data['status'] === 'success',
+      'isSandbox' => $this->isSandboxEnabled(),
       'raw' => $data
     ]);
   }

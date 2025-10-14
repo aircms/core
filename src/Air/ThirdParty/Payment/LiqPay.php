@@ -6,23 +6,46 @@ namespace Air\ThirdParty\Payment;
 
 use Air\Http\Request;
 use Exception;
-use InvalidArgumentException;
 
 class LiqPay extends Payment
 {
   private string $publicKey;
   private string $privateKey;
 
+  private bool $sandboxEnabled;
+  private string $sandboxPublicKey;
+  private string $sandboxPrivateKey;
+
   public function __construct(array $settings)
   {
     parent::__construct($settings);
 
-    if (!isset($this->settings['publicKey']) || !isset($this->settings['privateKey'])) {
-      throw new InvalidArgumentException("LiqPay settings are missing");
-    }
-
     $this->publicKey = $this->settings['publicKey'];
     $this->privateKey = $this->settings['privateKey'];
+
+    $this->sandboxEnabled = $this->settings['sandboxEnabled'];
+    $this->sandboxPublicKey = $this->settings['sandboxPublicKey'];
+    $this->sandboxPrivateKey = $this->settings['sandboxPrivateKey'];
+  }
+
+  public function isSandboxEnabled(): bool
+  {
+    return $this->sandboxEnabled;
+  }
+
+  public function setSandboxEnabled(bool $sandboxEnabled): void
+  {
+    $this->sandboxEnabled = $sandboxEnabled;
+  }
+
+  public function getPublicKey(): string
+  {
+    return $this->isSandboxEnabled() ? $this->sandboxPublicKey : $this->publicKey;
+  }
+
+  public function getPrivateKey(): string
+  {
+    return $this->isSandboxEnabled() ? $this->sandboxPrivateKey : $this->privateKey;
   }
 
   public function create(
@@ -37,18 +60,19 @@ class LiqPay extends Payment
       'version' => 3,
       'action' => 'pay',
       'currency' => 'UAH',
-      'public_key' => $this->publicKey,
+      'public_key' => $this->getPublicKey(),
       'amount' => $amount,
       'description' => $description,
       'result_url' => $redirect,
       'server_url' => $callback,
-      'order_id' => $orderId
+      'order_id' => $orderId,
     ];
 
     return new Invoice([
       'orderId' => $orderId,
       'invoiceId' => $orderId,
       'url' => "https://www.liqpay.ua/api/3/checkout?" . http_build_query($this->sign($request)),
+      'isSandbox' => $this->isSandboxEnabled(),
     ]);
   }
 
@@ -61,7 +85,7 @@ class LiqPay extends Payment
     $signature = $response['signature'];
     $response = $response['data'];
 
-    $requestedSignature = base64_encode(sha1($this->privateKey . $response . $this->privateKey, true));
+    $requestedSignature = base64_encode(sha1($this->getPrivateKey() . $response . $this->getPrivateKey(), true));
 
     if ($signature !== $requestedSignature) {
       return false;
@@ -69,7 +93,7 @@ class LiqPay extends Payment
 
     $response = json_decode(base64_decode($response), true);
 
-    return self::dataToStatus($response);
+    return $this->dataToStatus($response);
   }
 
   public function status(Invoice|string $invoice): Status
@@ -79,7 +103,7 @@ class LiqPay extends Payment
     $request = [
       'version' => 3,
       'action' => 'status',
-      'public_key' => $this->publicKey,
+      'public_key' => $this->getPublicKey(),
       'order_id' => $orderId
     ];
 
@@ -89,7 +113,7 @@ class LiqPay extends Payment
     );
 
     if ($response->body['result'] === 'ok') {
-      return self::dataToStatus($response->body);
+      return $this->dataToStatus($response->body);
     }
 
     throw new Exception('LiqPay status error: [order: ' . $orderId . ', err_code: ' . $response->body['err_code']);
@@ -98,7 +122,7 @@ class LiqPay extends Payment
   protected function sign(array $request): array
   {
     $request = base64_encode(json_encode($request));
-    $signature = base64_encode(sha1($this->privateKey . $request . $this->privateKey, true));
+    $signature = base64_encode(sha1($this->getPrivateKey() . $request . $this->getPrivateKey(), true));
 
     return [
       'signature' => $signature,
@@ -106,14 +130,15 @@ class LiqPay extends Payment
     ];
   }
 
-  protected static function dataToStatus(array $data): Status
+  protected function dataToStatus(array $data): Status
   {
     return new Status([
       'invoiceId' => $data['order_id'],
       'orderId' => $data['order_id'],
       'status' => $data['status'],
       'isPaid' => $data['status'] === 'success',
-      'raw' => $data
+      'isSandbox' => $this->isSandboxEnabled(),
+      'raw' => $data,
     ]);
   }
 }

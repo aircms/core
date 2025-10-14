@@ -11,6 +11,7 @@ class Invoice extends TypeAbstract
   public ?string $orderId = null;
   public ?string $invoiceId = null;
   public ?string $url = null;
+  public ?bool $isSandbox = false;
 
   public function getOrderId(): ?string
   {
@@ -25,5 +26,10 @@ class Invoice extends TypeAbstract
   public function getUrl(): ?string
   {
     return $this->url;
+  }
+
+  public function isSandbox(): ?bool
+  {
+    return $this->isSandbox;
   }
 }
