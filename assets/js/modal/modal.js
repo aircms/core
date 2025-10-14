@@ -123,7 +123,13 @@ const modal = new class {
   }
 
   image(src, alt, title) {
-    return this.html(locale('Image'), this.replace(this.embedTemplates.image, {src, alt, title}), {size: 'xLarge'});
+    return this.html(locale('Image'), this.replace(this.embedTemplates.image, {
+      src,
+      alt,
+      title
+    }), {size: 'xLarge'}).then(() => {
+      setTimeout(() => wheelzoom(document.querySelector('.modal img[data-zoom]')), 300);
+    });
   }
 
   video(src, alt, title) {
