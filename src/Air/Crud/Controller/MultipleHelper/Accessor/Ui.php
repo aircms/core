@@ -245,7 +245,7 @@ class Ui
             $collClass = 'col-6';
             yield col($collClass . ' small', render(content($key)));
           }
-          yield col($collClass, render(content($value)));
+          yield col($collClass, render(content((string)$value)));
         }
       }
     );

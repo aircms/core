@@ -56,7 +56,7 @@ class Map
     return null;
   }
 
-  public static function single(mixed $data, mixed $mapper, array $userData = []): ?array
+  public static function single(mixed $data, mixed $mapper, array $userData = []): mixed
   {
     return self::execute($data, $mapper, $userData);
   }
