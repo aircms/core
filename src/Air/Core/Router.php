@@ -233,7 +233,7 @@ class Router
 
       $isSet = false;
       foreach ($this->routes as $route => $settings) {
-        if (str_contains($domain, str_replace('*', '', $route))) {
+        if (str_contains($domain, str_replace('*', '', $route)) && $route !== 'cli') {
           $domain = $route;
           $isSet = true;
           break;
