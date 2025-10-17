@@ -55,11 +55,14 @@ class Group extends ElementAbstract
 
   public function isValid($value): bool
   {
+    /** @var ElementAbstract $element */
+
     $isValid = true;
 
     foreach ($this->getElements() as $index => $element) {
       $_value = $value[$this->originalElementNames[$index]] ?? null;
       if (!$element->isValid($_value)) {
+        $this->errorMessages[$this->originalElementNames[$index]] = $element->getErrorMessages();
         $isValid = false;
       }
     }
