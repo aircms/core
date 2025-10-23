@@ -18,6 +18,9 @@ $title = Front::getInstance()->getConfig()['air']['admin']['title'];
 /** @var string $deepl */
 $deepl = Front::getInstance()->getConfig()['air']['admin']['deepl'] ?? '';
 
+/** @var string $googleTranslate */
+$googleTranslate = Front::getInstance()->getConfig()['air']['admin']['googleTranslate'] ?? '';
+
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
@@ -55,6 +58,7 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
       return value || key;
     };
     window.deepl = '<?php echo $deepl; ?>';
+    window.googleTranslate = '<?php echo $googleTranslate; ?>';
   </script>
 
   <?php echo $this->asset([
@@ -134,6 +138,8 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/crud-elements/url.js',
 
     'js/deepl.js',
+    'js/google-translate.js',
+
     'js/csv.js',
     'js/general.js',
 

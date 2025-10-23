@@ -90,7 +90,7 @@ class EmailQueue extends Multiple
 
   public function clear(): void
   {
-    \Air\Crud\Model\EmailQueue::remove([
+    \Air\Crud\Model\EmailQueue::batchRemove([
       'status' => ['$ne' => \Air\Crud\Model\EmailQueue::STATUS_NEW]
     ]);
 
@@ -99,7 +99,7 @@ class EmailQueue extends Multiple
 
   public function clearAllForce(): void
   {
-    \Air\Crud\Model\EmailQueue::remove();
+    \Air\Crud\Model\EmailQueue::batchRemove();
     $this->redirect('/' . $this->getEntity());
   }
 

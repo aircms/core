@@ -73,7 +73,9 @@ $isMultipleManage = $this->isMultipleManage;
         <?php if ($mode === 'manage') : ?>
 
           <?php if ($model && $model->id && $model->getMeta()->hasProperty('language') && ($model->getMeta()->hasProperty('url') || $isSingle)) : ?>
-            <div data-admin-manage-switch-language="<?php echo $model->language?->id; ?>">
+            <div data-admin-manage-switch-language-quick-manage="<?php echo $isQuickManage ? 'yes' : 'no'; ?>"
+                 data-admin-manage-switch-language-controller="<?php echo $controller; ?>"
+                 data-admin-manage-switch-language="<?php echo $model->language?->id; ?>">
               <?php
               $cond = $isSingle ? [] : ['url' => $model->url];
               echo script(

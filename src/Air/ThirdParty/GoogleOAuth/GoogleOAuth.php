@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\ThirdParty\GoogleOAuth;
 
+use Air\Dom;
 use Air\Http\Request;
 use Air\ThirdParty\GoogleOAuth\Exception\InvalidCode;
 use Air\ThirdParty\GoogleOAuth\Exception\UnableToGetUserByAccessToken;
@@ -29,8 +30,6 @@ class GoogleOAuth
       'client_id' => $this->clientId,
       'redirect_uri' => $this->redirectUrl,
       'scope' => 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
-      'access_type' => 'offline',
-      'prompt' => 'consent'
     ];
     return 'https://accounts.google.com/o/oauth2/auth?' . http_build_query($params);
   }

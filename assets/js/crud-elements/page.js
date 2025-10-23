@@ -268,13 +268,12 @@ $(document).ready(() => {
   $(document).on('click', '[data-admin-form-doc-toolbar-set-background-image]', (e) => {
     const button = $(e.currentTarget);
     context(button, ({page, url, key, container, index, name}) => {
-      modal.file(url, key, false, (file) => {
+      modal.file(url, key, false, '/', (file) => {
         modal.hide();
 
         if (file.mime.search('video') !== -1) {
           page.css('background-image', "url('" + url + file.thumbnail + "')");
-        }
-        else {
+        } else {
           page.css('background-image', "url('" + url + file.src + "')");
         }
 
@@ -481,7 +480,7 @@ $(document).ready(() => {
 
   $(document).on('click', '[data-admin-form-doc-toolbar-add-file]', (e) => {
     context(e.currentTarget, ({name, page, url, key}) => {
-      modal.file(url, key, false, (file) => {
+      modal.file(url, key, false, '/', (file) => {
         modal.hide();
 
         const template = $('[data-admin-form-doc-page-item-image-template]').html()

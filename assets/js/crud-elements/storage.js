@@ -26,12 +26,24 @@ $(document).ready(() => {
         const isMultiple = !!$(e.currentTarget).data('admin-form-storage-multiple');
         const storageUrl = $(e.currentTarget).data('admin-form-storage-add-url');
         const storageKey = $(e.currentTarget).data('admin-form-storage-add-key');
+        let path = '/';
+
+        try {
+          const images = $(e.currentTarget).next().find('[data-admin-file-json]');
+          if (images.length) {
+            const firstImage = JSON.parse($(images[0]).html());
+            if (firstImage && firstImage.src) {
+              path = '/' + firstImage.src.split('/').slice(2, -1).join('/');
+            }
+          }
+        } catch {
+        }
 
         const storageList = $(e.currentTarget)
           .closest('[data-admin-form-storage]')
           .find('[data-admin-form-storage-list]');
 
-        modal.file(storageUrl, storageKey, isMultiple, (file) => {
+        modal.file(storageUrl, storageKey, isMultiple, path, (file) => {
           if (!file.alt) {
             file.alt = locale('Untitled');
           }
@@ -53,8 +65,7 @@ $(document).ready(() => {
 
           storageList.find('[data-admin-file]').each((i, e) => {
             new File(e, {
-              change: () => setTimeout(() => updateValue(), 100),
-              remove: () => setTimeout(() => updateValue(), 100),
+              change: () => setTimeout(() => updateValue(), 100), remove: () => setTimeout(() => updateValue(), 100),
             });
           });
 
@@ -64,15 +75,13 @@ $(document).ready(() => {
 
       if ($(input).find('[data-admin-form-storage-sortable]').length) {
         new Sortable($(input).find('[data-admin-form-storage-sortable]')[0], {
-          animation: 150,
-          onUpdate: () => updateValue()
+          animation: 150, onUpdate: () => updateValue()
         });
       }
 
       $(input).find('[data-admin-file]').each((i, e) => {
         new File(e, {
-          change: () => setTimeout(() => updateValue(), 100),
-          remove: () => setTimeout(() => updateValue(), 100)
+          change: () => setTimeout(() => updateValue(), 100), remove: () => setTimeout(() => updateValue(), 100)
         });
       });
     });

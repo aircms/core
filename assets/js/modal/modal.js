@@ -202,11 +202,12 @@ const modal = new class {
     return this.any(src, alt, title, mime);
   }
 
-  file(url, key, isMultiple, cb) {
+  file(url, key, isMultiple, path, cb) {
     const modalHtml = this.templates.file
       .replaceAll('{{url}}', url)
       .replaceAll('{{key}}', key)
       .replaceAll('{{theme}}', theme.theme)
+      .replaceAll('{{path}}', path ?? '/')
       .replaceAll('{{isMultiple}}', isMultiple ? '1' : '0');
 
     modal.html(locale('Select file'), modalHtml, {size: 'xxLarge'}).then(() => {

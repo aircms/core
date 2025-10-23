@@ -98,7 +98,6 @@ class File extends TypeAbstract
     // формат: если передан — используем его, иначе исходное расширение
     $newExt = $format ? strtolower($format) : $ext;
 
-
     $src = array_values(array_filter(explode('/', "{$dirname}/{$newFilename}.{$newExt}")));
     $src = implode('/', $src);
 

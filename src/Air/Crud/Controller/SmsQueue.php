@@ -86,7 +86,7 @@ class SmsQueue extends Multiple
 
   public function clear(): void
   {
-    \Air\Crud\Model\SmsQueue::remove([
+    \Air\Crud\Model\SmsQueue::batchRemove([
       'status' => ['$ne' => \Air\Crud\Model\SmsQueue::STATUS_NEW]
     ]);
 
@@ -95,7 +95,7 @@ class SmsQueue extends Multiple
 
   public function clearAllForce(): void
   {
-    \Air\Crud\Model\SmsQueue::remove();
+    \Air\Crud\Model\SmsQueue::batchRemove();
     $this->redirect('/' . $this->getEntity());
   }
 

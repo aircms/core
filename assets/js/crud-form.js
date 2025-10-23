@@ -82,19 +82,40 @@ $(document).ready(() => {
 
   $(document).on('click', '[data-admin-manage-switch-language] [data-admin-select-option]', function () {
     const languageId = $(this).data('value');
-    const map = JSON.parse($(this).closest('[data-admin-manage-switch-language]').find('[data-admin-manage-switch-language-map]').text().trim());
+    let map = JSON.parse($(this).closest('[data-admin-manage-switch-language]').find('[data-admin-manage-switch-language-map]').text().trim());
+    map = map.find(m => m.languageId === languageId);
+
+    if (!map) {
+      const ctrl = $(this).closest('[data-admin-manage-switch-language-controller]').data('admin-manage-switch-language-controller');
+      const quckManage = $(this).closest('[data-admin-manage-switch-language-controller]').data('admin-manage-switch-language-quick-manage') === 'yes';
+
+      loader.show();
+      $.post("/" + ctrl + "/localizeCopy?language=" + languageId)
+        .done((id) => {
+          let url = '/' + ctrl + '/manage?id=' + id;
+          if (quckManage) {
+            url += '&isQuickManage=1';
+          }
+          nav.nav(url);
+        })
+        .fail(() => notify.success(locale('Error while doing localized copy!')))
+        .always(() => loader.hide());
+
+      return;
+    }
 
     try {
-      const recordId = map.find(m => m.languageId === languageId).recordId;
-      const controller = map.find(m => m.languageId === languageId).controller;
-      const isQuickManage = map.find(m => m.languageId === languageId).isQuickManage;
+      const recordId = map.recordId;
+      const controller = map.controller;
+      const isQuickManage = map.isQuickManage;
 
       let url = '/' + controller + '/manage?id=' + recordId;
       if (isQuickManage) {
         url += '&isQuickManage=1';
       }
       nav.nav(url);
-    } catch {
+    } catch (e) {
+      console.log(e);
     }
   });
 });

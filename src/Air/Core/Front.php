@@ -20,6 +20,7 @@ use Air\Crud\Controller\EmailTemplate;
 use Air\Crud\Controller\FaIcon;
 use Air\Crud\Controller\Font;
 use Air\Crud\Controller\FontsUi;
+use Air\Crud\Controller\GoogleTranslate;
 use Air\Crud\Controller\History;
 use Air\Crud\Controller\Language;
 use Air\Crud\Controller\Log;
@@ -497,18 +498,21 @@ final class Front
 
     } else if (($this->getConfig()['air']['admin']['billing'] ?? false) === $controller) {
       return Billing::class;
+
+    } else if (($this->getConfig()['air']['admin']['googleTranslate'] ?? false) === $controller) {
+      return GoogleTranslate::class;
     }
 
     if ($this->config['air']['contexts'] ?? false) {
-      $contextContoller = implode('\\', [
+      $contextController = implode('\\', [
         $this->config['air']['contexts'],
         ucfirst($router->getContext()),
         'Controller',
         ucfirst($controller),
       ]);
 
-      if (class_exists($contextContoller)) {
-        return $contextContoller;
+      if (class_exists($contextController)) {
+        return $contextController;
       }
     }
 
