@@ -330,3 +330,54 @@ table.csv {
   height: 100%;
   width: auto;
 }
+
+.admin-file-image-preview {
+  width: 140px;
+  height: 42px;
+}
+
+.admin-file-image-preview .bg-image {
+  width: 42px;
+  height: 42px;
+}
+
+.admin-file-image-preview-text-container {
+  padding: 2px;
+}
+
+[data-admin-form-tiny-preview] {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+[data-admin-form-tiny-preview] * {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.text-countable {
+  position: absolute;
+  bottom: 12px;
+  right: 10px;
+  background-color: var(--mdb-surface-inverted-bg);
+  border-radius: 5px;
+  font-size: 12px;
+  line-height: 12px;
+  padding: 4px;
+}
+
+.text-countable.overinputed {
+  background-color: var(--mdb-danger-bg-subtle);
+  color: var(--mdb-danger-text-emphasis);
+}
+
+[data-text-countable] input {
+  padding-right: 50px;
+}
+
+.json-viewer {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 500px;
+}

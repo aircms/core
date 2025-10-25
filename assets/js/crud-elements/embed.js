@@ -1,4 +1,5 @@
 $(document).ready(() => {
+
   function getYouTubeVideoId(url) {
     try {
       const parsedUrl = new URL(url);
@@ -14,9 +15,33 @@ $(document).ready(() => {
         return parts.includes('embed') ? parts.pop() : null;
       }
       return null;
-    } catch (e) {
+    } catch {
       return null;
     }
+  }
+
+  window.getIframeSrc = (url) => {
+    try {
+      const iframe = $(url).find('iframe');
+      if (iframe.length) {
+        return iframe.attr('src');
+      }
+    } catch {
+    }
+  }
+
+  function proceedLink(url) {
+    const videoId = getYouTubeVideoId(url);
+    if (videoId) {
+      return "https://www.youtube.com/embed/" + videoId;
+    }
+
+    const iframe = getIframeSrc(url);
+    if (iframe) {
+      return iframe;
+    }
+
+    return url;
   }
 
   Embed.ready(() => {
@@ -32,10 +57,7 @@ $(document).ready(() => {
       $(addEmbedBtn).click(() => {
         modal.prompt(locale('Enter embed URL'), 'URL').then((url) => {
 
-          const videoId = getYouTubeVideoId(url);
-          if (videoId) {
-            url = "https://www.youtube.com/embed/" + videoId;
-          }
+          url = proceedLink(url);
 
           const container = $(addEmbedBtn).closest('[data-admin-form-embed-container]')
           const name = container.data('admin-form-embed-container');
@@ -46,9 +68,7 @@ $(document).ready(() => {
           }
 
           embedInput.val(url);
-          container.find('[data-admin-form-embed-value]').html(
-            `<div data-admin-form-embed data-admin-embed-id="${name}" data-admin-embed-src="${url}"></div>`
-          );
+          container.find('[data-admin-form-embed-value]').html(`<div data-admin-form-embed data-admin-embed-id="${name}" data-admin-embed-src="${url}"></div>`);
         });
       });
     });

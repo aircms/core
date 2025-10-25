@@ -72,12 +72,14 @@ class Phrase extends Multiple
     return Front::getInstance()->getConfig()['air']['admin']['phrases'];
   }
 
-  protected function getForm($model = null): Form
+  protected function getForm($model = null): null
   {
-    return Generator::full($model, [
-      Input::text('key'),
-      Input::text('value'),
-    ]);
+    return null;
+  }
+
+  protected function getControls(): array
+  {
+    return [];
   }
 
   protected function didSaved(ModelAbstract $model, array $formData, ModelAbstract $oldModel): void

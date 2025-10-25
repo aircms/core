@@ -21,6 +21,9 @@ $deepl = Front::getInstance()->getConfig()['air']['admin']['deepl'] ?? '';
 /** @var string $googleTranslate */
 $googleTranslate = Front::getInstance()->getConfig()['air']['admin']['googleTranslate'] ?? '';
 
+/** @var string $deepSeek */
+$deepSeek = Front::getInstance()->getConfig()['air']['admin']['deepSeek'] ?? '';
+
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
@@ -59,6 +62,7 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     };
     window.deepl = '<?php echo $deepl; ?>';
     window.googleTranslate = '<?php echo $googleTranslate; ?>';
+    window.deepSeek = '<?php echo $deepSeek; ?>';
   </script>
 
   <?php echo $this->asset([
@@ -95,6 +99,7 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'css/bg-image.css',
     'css/z-index.css',
     'css/ratio.css',
+    'css/font.css',
 
     'css/admin.css',
 
@@ -117,6 +122,9 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/datepicker.js',
     'js/bg-image.js',
     'js/crud-locale.js',
+    'js/json-viewer.js',
+
+    'js/side/side.js',
 
     'js/crud-table.js',
     'js/crud-form.js',
@@ -136,14 +144,21 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/crud-elements/icon.js',
     'js/crud-elements/fa-icon.js',
     'js/crud-elements/url.js',
+    'js/text-countable.js',
 
     'js/deepl.js',
     'js/google-translate.js',
+    'js/text-assistance.js',
+    'js/deep-seek.js',
 
     'js/csv.js',
     'js/general.js',
 
-    '/' . $fonts . '/css'
+    '/' . $fonts . '/css',
+
+    'https://abodelot.github.io/jquery.json-viewer/json-viewer/jquery.json-viewer.js',
+    'https://abodelot.github.io/jquery.json-viewer/json-viewer/jquery.json-viewer.css'
+
   ]); ?>
 </head>
 <body data-mdb-theme="<?php echo $theme; ?>" class="overflow-hidden">

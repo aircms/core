@@ -493,7 +493,7 @@ final class Front
     } else if (($this->getConfig()['air']['admin']['deepl'] ?? false) === $controller) {
       return Deepl::class;
 
-    } else if (($this->getConfig()['air']['admin']['deepseek'] ?? false) === $controller) {
+    } else if (($this->getConfig()['air']['admin']['deepSeek'] ?? false) === $controller) {
       return DeepSeek::class;
 
     } else if (($this->getConfig()['air']['admin']['billing'] ?? false) === $controller) {

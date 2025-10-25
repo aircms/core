@@ -17,7 +17,7 @@ $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
     <?php echo json_encode($element->getValue(), JSON_PRETTY_PRINT); ?>
   </textarea>
 
-  <a class="btn btn-primary btn-block"
+  <a class="btn btn-primary btn-block btn-lg"
      data-admin-form-storage-add
      data-admin-form-storage-add-key="<?php echo $storageConfig['key']; ?>"
      data-admin-form-storage-add-url="<?php echo $storageConfig['url']; ?>"

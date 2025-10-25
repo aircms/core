@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Air\ThirdParty;
 
-use Air\Core\Front;
 use Air\Http\Request;
 use Exception;
 
@@ -18,7 +17,7 @@ class DeepSeek
   )
   {
     if (!$this->key || !$this->model) {
-      $settings = \Air\Crud\Model\OpenAi::one();
+      $settings = \Air\Crud\Model\DeepSeek::one();
       $this->key = $settings->key;
       $this->model = $settings->model;
     }
@@ -57,7 +56,7 @@ class DeepSeek
     }
 
     $answer = (new Request())
-      ->url('https://api.openai.com/v1/chat/completions')
+      ->url('https://api.deepseek.com/chat/completions')
       ->method(Request::POST)
       ->type('json')
       ->bearer($this->key)

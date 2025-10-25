@@ -115,7 +115,6 @@ $(document).ready(() => {
       }
       nav.nav(url);
     } catch (e) {
-      console.log(e);
     }
   });
 });

@@ -13,40 +13,21 @@ $(document).ready(() => {
       });
     };
 
-    wait.on('input.form-control, textarea.form-control', (el) => {
-      if (
-        $(el).attr('data-admin-datetimepicker') === undefined
-        && $(el).attr('type') !== 'search'
-        && !$(el).closest('.dropdown-menu').length
-      ) {
-        $(el).parent().append('<button data-localized class="localized"><i class="fas fa-globe"></i></button>');
-      }
-    });
-
-    wait.on('[data-admin-form-tiny]', (el) => {
-      $(el).append('<button data-localized-tiny class="localized"><i class="fas fa-globe"></i></button>');
-    });
-
-    $(document).on('click', '[data-localized-tiny]', function () {
-      const container = $(this).closest('[data-admin-form-tiny]');
-      getPhrase(container.find('textarea').val()).then((phrase) => {
-        container.find('textarea').val(phrase);
-        container.find('[data-admin-form-tiny-preview]').html(phrase);
+    wait.on('[data-accessory-deepl]', (el) => {
+      $(el).click(() => {
+        const phrase = getAccessoryValue($(el).data('accessory-deepl'));
+        if (!phrase) {
+          notify.danger("Phrase is empty");
+          return;
+        }
+        loader.show();
+        getPhrase(phrase)
+          .then((value) => {
+            applyAccessoryValue($(el).data('accessory-deepl'), value);
+            notify.success('Phrase replaced');
+          })
+          .finally(() => loader.hide());
       });
-      return false;
-    });
-
-    $(document).on('click', '[data-localized]', function () {
-      let input = $(this).parent().find('input');
-      if (!input.length) {
-        input = $(this).parent().find('textarea');
-      }
-      let language = getLanguage();
-      if (input.length && input.data('phrase-language')) {
-        language = input.data('phrase-language');
-      }
-      getPhrase(input.val(), language).then((phrase) => input.val(phrase));
-      return false;
     });
   }
 });

@@ -25,6 +25,7 @@ const nav = new class {
     this.listen('before', () => {
       modal.hide();
       loader.show();
+      side.hide();
     });
 
     const _nav = (href, force, isBlank) => {

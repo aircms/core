@@ -25,7 +25,7 @@ class GoogleTranslate extends Single
 
   protected function getIcon(): string
   {
-    return FaIcon::ICON_GLOBE;
+    return FaIcon::ICON_LANGUAGE;
   }
 
   protected function getEntity(): string

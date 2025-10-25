@@ -29,7 +29,7 @@ $name = $element->getName();
   <div data-admin-meta-user-data class="position-relative">
     <div data-admin-meta-user-data-overlay class="bg-blur-1 d-none disable-overlay"></div>
 
-    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
+    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init data-text-countable="60">
       <input type="text"
              class="form-control form-control-lg"
              id="<?php echo $name; ?>[title]"
@@ -39,7 +39,7 @@ $name = $element->getName();
       <label class="form-label" for="<?php echo $name; ?>"><?php echo \Air\Crud\Locale::t('Title'); ?></label>
     </div>
 
-    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
+    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init data-text-countable="120">
   <textarea class="form-control"
             rows="5"
             id="<?php echo $name; ?>[description]"
@@ -50,7 +50,7 @@ $name = $element->getName();
       </label>
     </div>
 
-    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
+    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init data-text-countable="60">
       <input type="text"
              class="form-control form-control-lg"
              id="<?php echo $name; ?>[ogTitle]"
@@ -60,7 +60,7 @@ $name = $element->getName();
       <label class="form-label" for="<?php echo $name; ?>"><?php echo \Air\Crud\Locale::t('OG title'); ?></label>
     </div>
 
-    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init>
+    <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init data-text-countable="120">
   <textarea class="form-control"
             rows="5"
             id="<?php echo $name; ?>[ogDescription]"

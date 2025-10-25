@@ -92,7 +92,10 @@ $openAi = $route($config['admin']['openAi'] ?? null);
 $deepl = $route($config['admin']['deepl'] ?? null);
 
 /** @var string $deepSeek */
-$deepSeek = $route($config['admin']['deepseek'] ?? null);
+$deepSeek = $route($config['admin']['deepSeek'] ?? null);
+
+/** @var string $googleTranslate */
+$googleTranslate = $route($config['admin']['googleTranslate'] ?? null);
 
 /** @var string $billing */
 $billing = $route($config['admin']['billing'] ?? null);
@@ -225,6 +228,14 @@ $billing = $route($config['admin']['billing'] ?? null);
             <li>
               <a class="dropdown-item" href="<?php echo $openAi; ?>">
                 <i class="fas fa-robot me-1"></i> <?php echo Locale::t('OpenAi'); ?>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($googleTranslate) : ?>
+            <li class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="<?php echo $googleTranslate; ?>">
+                <i class="fas fa-language me-1"></i> <?php echo Locale::t('Google translate'); ?>
               </a>
             </li>
           <?php endif; ?>
