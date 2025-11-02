@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Model\ModelAbstract;
 use Air\Paginator;
 
 class FaIcon extends Multiple
@@ -19,6 +20,11 @@ class FaIcon extends Multiple
 
     $this->search = $filter['search'] ?? '';
     $this->style = $filter['style'] ?? \Air\Type\FaIcon::STYLE_SOLID;
+  }
+
+  public function index(string $id = null)
+  {
+    $this->select();
   }
 
   protected function getFilterWithValues(array $filter = []): array

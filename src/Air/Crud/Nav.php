@@ -55,6 +55,7 @@ class Nav
   const string SETTINGS_SMS_SETTINGS = 'SMSSettings';
   const string SETTINGS_SMS_TEMPLATES = 'SMSTemplates';
   const string SETTINGS_SMS_QUEUE = 'SMSQueue';
+  const string SETTINGS_FAICON = 'faIcon';
 
   const array SETTINGS = [
     self::SETTINGS_STORAGE => [
@@ -171,6 +172,11 @@ class Nav
       'icon' => FaIcon::ICON_DATABASE,
       'title' => 'SMS / Queue'
     ],
+    self::SETTINGS_FAICON => [
+      'controller' => \Air\Crud\Controller\FaIcon::class,
+      'icon' => FaIcon::ICON_ICONS,
+      'title' => 'Font awesome icons'
+    ],
   ];
 
   private static ?array $settingsMenuItems = null;
@@ -238,6 +244,7 @@ class Nav
         self::SETTINGS_FONTS,
         self::SETTINGS_SYSTEM,
         self::SETTINGS_LOGS,
+        self::SETTINGS_FAICON,
       ],
       [
         self::SETTINGS_LANGUAGES,
