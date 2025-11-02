@@ -20,7 +20,6 @@ class Locale
     }
 
     self::$keys[$key] = $key;
-
     if ($filename = Front::getInstance()->getConfig()['air']['admin']['locale'] ?? false) {
       file_put_contents($filename, json_encode(self::$keys, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }

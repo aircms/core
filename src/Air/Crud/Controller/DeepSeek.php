@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Front;
+use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
-use Air\Type\FaIcon;
+use Air\Model\ModelAbstract;
 
 class DeepSeek extends Single
 {
   protected function getTitle(): string
   {
-    return Locale::t('DeepSeek Settings');
+    return Nav::getSettingsItem(Nav::SETTINGS_DEEPSEEK)['title'];
   }
 
   public function getModelClassName(): string
@@ -25,21 +26,41 @@ class DeepSeek extends Single
 
   protected function getIcon(): string
   {
-    return FaIcon::ICON_ROBOT;
+    return Nav::getSettingsItem(Nav::SETTINGS_DEEPSEEK)['icon'];
   }
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['deepSeek'];
+    return Nav::getSettingsItem(Nav::SETTINGS_DEEPSEEK)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\DeepSeek $model
+   * @return string|null
+   */
+  protected function getFormBlock(ModelAbstract $model): ?string
+  {
+    $deepSeek = new \Air\ThirdParty\DeepSeek();
+    $balance = $deepSeek->balance();
+
+    return div(content: [
+      match ($balance['isAvailable']) {
+        true => Ui::badge(Locale::t('Available'), Ui::SUCCESS),
+        false => Ui::badge(Locale::t('Not available'), Ui::DANGER),
+      },
+      Ui::badge($balance['balance'], Ui::LIGHT),
+    ]);
+  }
+
+  /**
+   * @param \Air\Crud\Model\DeepSeek $model
+   * @return Form|null
+   */
   protected function getForm($model = null): ?Form
   {
-    /** @var \Air\Crud\Model\DeepSeek $model */
-
     return Generator::full($model, [
-      Input::text('key'),
-      Input::text('model'),
+      Input::text('key', allowNull: true),
+      Input::text('model', allowNull: true),
     ]);
   }
 
@@ -91,6 +112,18 @@ class DeepSeek extends Single
     }
 
     $question[] = 'I need a strict JSON response, exactly like this: {"answer": "{{your-answer}}"}';
+
+    return \Air\ThirdParty\DeepSeek::ask(implode("\n", $question), true);
+  }
+
+  public function phrase(string $phrase, \Air\Crud\Model\Language $language): array
+  {
+    $question = [
+      'Translate this phrase into the following language: ' . $language->title,
+      $phrase,
+      '--------------',
+      'I need a strict JSON response, exactly like this: {"translation": "{{translation}}"}'
+    ];
 
     return \Air\ThirdParty\DeepSeek::ask(implode("\n", $question), true);
   }

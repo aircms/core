@@ -9,6 +9,8 @@ use Air\Crud\Controller\MultipleHelper\Accessor\Control;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Controller\MultipleHelper\Accessor\HeaderButton;
 use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
+use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Sms;
 use Air\Type\FaIcon;
 
@@ -21,7 +23,7 @@ class SmsQueue extends Multiple
 {
   protected function getTitle(): string
   {
-    return 'Sms / Queue';
+    return Locale::t('Sms / Queue');
   }
 
   protected function getModelClassName(): string
@@ -36,7 +38,7 @@ class SmsQueue extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['smsQueue'];
+    return Nav::getSettingsItem(Nav::SETTINGS_SMS_QUEUE)['alias'];
   }
 
   public function manage(string $id = null): void

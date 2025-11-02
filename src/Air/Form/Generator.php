@@ -7,6 +7,7 @@ namespace Air\Form;
 use Air\Core\Front;
 use Air\Crud\Locale;
 use Air\Crud\Model\Language;
+use Air\Crud\Nav;
 use Air\Filter\Lowercase;
 use Air\Filter\Trim;
 use Air\Form\Element\Checkbox;
@@ -80,6 +81,7 @@ final class Generator
         'name' => null,
         'login' => null,
         'password' => null,
+        'language' => null
       ],
       'Documents' => [
         'page' => null,
@@ -95,7 +97,7 @@ final class Generator
       ],
     ];
 
-    if (Front::getInstance()->getConfig()['air']['admin']['languages'] ?? false) {
+    if (!Nav::getSettingsItem(Nav::SETTINGS_LANGUAGES)) {
       $formElements['General']['language'] = null;
     }
 

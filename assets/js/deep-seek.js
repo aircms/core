@@ -32,8 +32,8 @@ const deepSeek = new class {
   }
 };
 
-wait.on('[data-accessory-deep-seek]', (el) => $(el).click(() => {
-  const accessoryItem = $(el).data('accessory-deep-seek');
+wait.on('[data-accessory-help-deep-seek]', (el) => $(el).click(() => {
+  const accessoryItem = $(el).data('accessory-help-deep-seek');
   const input = getAccessoryInput(accessoryItem);
   const currentValue = getAccessoryValue(accessoryItem);
   const currentName = input.attr('name');
@@ -41,9 +41,8 @@ wait.on('[data-accessory-deep-seek]', (el) => $(el).click(() => {
   const form = $('[data-admin-from-manage]');
 
   if (form.length) {
-    const controller = location.pathname.split('/').filter((i) => !!i)[0];
     loader.show();
-    $.post('/' + controller + '/data', form.serialize())
+    $.post('/' + getController() + '/data', form.serialize())
       .done((recordData) => {
         deepSeek
           .run(currentName, currentValue, recordData)
@@ -57,4 +56,22 @@ wait.on('[data-accessory-deep-seek]', (el) => $(el).click(() => {
       .run(currentName, currentValue)
       .then((value) => applyAccessoryValue(accessoryItem, value));
   }
+}));
+
+wait.on('[data-accessory-translate-deep-seek]', (el) => $(el).click(() => {
+  const accessoryItem = $(el).data('accessory-translate-deep-seek');
+  const phrase = getAccessoryValue(accessoryItem);
+
+  loader.show();
+  $.post('/' + window.deepSeek + '/phrase', {phrase, language: getLanguage()})
+    .done((value) => {
+      if (value.translation) {
+        applyAccessoryValue(accessoryItem, value.translation);
+        notify.success(locale('Translation replaced'));
+        return;
+      }
+      notify.danger('Unexpected error during getting translation');
+    })
+    .fail(() => notify.danger('Unexpected error during getting translation'))
+    .always(() => loader.hide());
 }));

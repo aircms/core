@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Front;
+use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -14,7 +15,7 @@ class SmsSettings extends Single
 {
   protected function getTitle(): string
   {
-    return 'Sms / Settings';
+    return Locale::t('Sms / Settings');
   }
 
   protected function getModelClassName(): string
@@ -29,33 +30,27 @@ class SmsSettings extends Single
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['smsSettings'];
+    return Nav::getSettingsItem(Nav::SETTINGS_SMS_SETTINGS)['alias'];
   }
 
   protected function getForm($model = null): Form
   {
-    $config = Front::getInstance()->getConfig()['air']['admin']['sms'] ?? [];
-
     return Generator::full($model, [
       'General' => [
         Input::checkbox('smsQueueEnabled'),
         Input::select('gateway', options: array_filter([
-          ...in_array(\Air\Crud\Model\SmsSettings::GATEWAY_SMSTO, $config) ? [\Air\Crud\Model\SmsSettings::GATEWAY_SMSTO] : [],
-          ...in_array(\Air\Crud\Model\SmsSettings::GATEWAY_GATEWAYAPI, $config) ? [\Air\Crud\Model\SmsSettings::GATEWAY_GATEWAYAPI] : [],
+          \Air\Crud\Model\SmsSettings::GATEWAY_SMSTO,
+          \Air\Crud\Model\SmsSettings::GATEWAY_GATEWAYAPI,
         ]))
       ],
-      ...in_array(\Air\Crud\Model\SmsSettings::GATEWAY_SMSTO, $config) ? [
-        'SMSto' => [
-          Input::text('smstoApiKey', allowNull: true),
-          Input::text('smstoSenderId', allowNull: true),
-        ]
-      ] : [],
-      ...in_array(\Air\Crud\Model\SmsSettings::GATEWAY_GATEWAYAPI, $config) ? [
-        'Gateway API' => [
-          Input::text('gatewayapiApiKey', allowNull: true),
-          Input::text('gatewayapiSender', allowNull: true),
-        ]
-      ] : [],
+      'SMSto' => [
+        Input::text('smstoApiKey', allowNull: true),
+        Input::text('smstoSenderId', allowNull: true),
+      ],
+      'Gateway API' => [
+        Input::text('gatewayapiApiKey', allowNull: true),
+        Input::text('gatewayapiSender', allowNull: true),
+      ],
     ]);
   }
 }

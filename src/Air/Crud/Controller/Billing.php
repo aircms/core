@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Input;
 use Air\Type\FaIcon;
@@ -28,7 +29,7 @@ class Billing extends Single
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['billing'];
+    return Nav::getSettingsItem(Nav::SETTINGS_BILLING)['alias'];
   }
 
   protected function getForm($model = null): ?Form

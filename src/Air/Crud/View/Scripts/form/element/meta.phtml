@@ -40,11 +40,10 @@ $name = $element->getName();
     </div>
 
     <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init data-text-countable="120">
-  <textarea class="form-control"
-            rows="5"
-            id="<?php echo $name; ?>[description]"
-            name="<?php echo $name; ?>[description]"><?php echo $value->getDescription(); ?></textarea>
-
+      <textarea class="form-control"
+                rows="2"
+                id="<?php echo $name; ?>[description]"
+                name="<?php echo $name; ?>[description]"><?php echo $value->getDescription(); ?></textarea>
       <label class="form-label" for="<?php echo $name; ?>[description]">
         <?php echo \Air\Crud\Locale::t('Description'); ?>
       </label>
@@ -61,11 +60,10 @@ $name = $element->getName();
     </div>
 
     <div class="form-outline bg-body-tertiary mt-3" data-mdb-input-init data-text-countable="120">
-  <textarea class="form-control"
-            rows="5"
-            id="<?php echo $name; ?>[ogDescription]"
-            name="<?php echo $name; ?>[ogDescription]"><?php echo $value->getOgDescription(); ?></textarea>
-
+      <textarea class="form-control"
+                rows="2"
+                id="<?php echo $name; ?>[ogDescription]"
+                name="<?php echo $name; ?>[ogDescription]"><?php echo $value->getOgDescription(); ?></textarea>
       <label class="form-label" for="<?php echo $name; ?>[ogDescription]">
         <?php echo \Air\Crud\Locale::t('OG description'); ?>
       </label>

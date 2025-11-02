@@ -13,6 +13,7 @@ use Air\Model\ModelAbstract;
  *
  * @property string $key
  * @property boolean $isFree
+ * @property boolean $enabled
  */
 class Deepl extends ModelAbstract
 {

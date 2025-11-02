@@ -7,6 +7,7 @@ namespace Air\Crud\Controller;
 use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -24,7 +25,8 @@ class SmsTemplate extends Multiple
       Header::longtext(by: 'message'),
       Header::enabled(),
     ];
-    if (Front::getInstance()->getConfig()['air']['admin']['languages'] ?? false) {
+
+    if (!!Nav::getSettingsItem(Nav::SETTINGS_LANGUAGES)) {
       $headers[] = Header::language();
     }
     return $headers;
@@ -47,7 +49,7 @@ class SmsTemplate extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['smsTemplates'];
+    return Nav::getSettingsItem(Nav::SETTINGS_SMS_TEMPLATES)['alias'];
   }
 
   protected function getForm($model = null): Form

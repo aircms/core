@@ -38,6 +38,7 @@ const modal = new class {
     message: '',
     question: '',
     prompt: '',
+    promptBig: '',
     html: '',
     container: '',
     file: '',
@@ -59,6 +60,7 @@ const modal = new class {
     $.get(modalScriptDir + '/templates/message.html', (t) => this.templates.message = t);
     $.get(modalScriptDir + '/templates/question.html', (t) => this.templates.question = t);
     $.get(modalScriptDir + '/templates/prompt.html', (t) => this.templates.prompt = t);
+    $.get(modalScriptDir + '/templates/promptBig.html', (t) => this.templates.promptBig = t);
     $.get(modalScriptDir + '/templates/html.html', (t) => this.templates.html = t);
     $.get(modalScriptDir + '/templates/file.html', (t) => this.templates.file = t);
     $.get(modalScriptDir + '/templates/model.html', (t) => this.templates.model = t);
@@ -97,6 +99,20 @@ const modal = new class {
       this.open(this.templates.prompt, {title, label}, this.mergeOpts(options, {}));
       $(this.selector).find('[data-admin-modal-prompt]').on('submit', (e) => {
         const val = $(e.currentTarget).find('input[type=text]').val();
+        if (val.length) {
+          resolve(val);
+          this.hide();
+        }
+        return false;
+      });
+    });
+  }
+
+  promptBig(title, label, options) {
+    return new Promise((resolve) => {
+      this.open(this.templates.promptBig, {title, label}, this.mergeOpts(options, {}));
+      $(this.selector).find('[data-admin-modal-prompt-big]').on('submit', (e) => {
+        const val = $(e.currentTarget).find('textarea').val();
         if (val.length) {
           resolve(val);
           this.hide();

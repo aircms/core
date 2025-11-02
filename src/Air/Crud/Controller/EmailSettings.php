@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Front;
-use Air\Form\Element\Text;
+use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -15,7 +15,7 @@ class EmailSettings extends Single
 {
   protected function getTitle(): string
   {
-    return 'Email / Settings';
+    return Locale::t('Email / Settings');
   }
 
   protected function getModelClassName(): string
@@ -30,24 +30,35 @@ class EmailSettings extends Single
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['emailSettings'];
+    return Nav::getSettingsItem(Nav::SETTINGS_EMAIL_SETTINGS)['alias'];
   }
 
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      'SMTP Settings' => [
+      'General' => [
         Input::checkbox('emailQueueEnabled'),
-        Input::text('server'),
-        Input::text('port', type: Text::TYPE_NUMBER),
-        Input::select('protocol', options: [
+        Input::select('gateway', allowNull: true, options: [
+          \Air\Crud\Model\EmailSettings::GATEWAY_SMTP,
+          \Air\Crud\Model\EmailSettings::GATEWAY_RESEND,
+        ])
+      ],
+      'SMTP' => [
+        Input::text('smtpServer', allowNull: true),
+        Input::number('smtpPort', allowNull: true),
+        Input::select('smtpProtocol', allowNull: true, options: [
           \Air\Crud\Model\EmailSettings::SSL,
           \Air\Crud\Model\EmailSettings::TSL
         ]),
-        Input::text('name'),
-        Input::text('address'),
-        Input::text('password'),
-        Input::text('from'),
+        Input::text('smtpAddress', allowNull: true),
+        Input::text('smtpPassword', allowNull: true),
+        Input::text('smtpFromName', allowNull: true),
+        Input::text('smtpFromAddress', allowNull: true),
+      ],
+      'Resend' => [
+        Input::text('resendApiKey', allowNull: true),
+        Input::text('resendFromEmail', allowNull: true),
+        Input::text('resendFromName', allowNull: true),
       ]
     ]);
   }

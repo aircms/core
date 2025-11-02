@@ -59,6 +59,11 @@ abstract class TypeAbstract
             }
           }
         } else {
+          try {
+            settype($value, $type);
+          } catch (Throwable) {
+          }
+
           $this->{$var} = $value;
         }
       }

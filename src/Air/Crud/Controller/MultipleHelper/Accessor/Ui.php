@@ -57,7 +57,7 @@ class Ui
     return date($format, $timestamp);
   }
 
-  public static function badge(mixed $label, string $style = 'primary'): string
+  public static function badge(mixed $label, ?string $style = Ui::PRIMARY): string
   {
     return span(content: (string)$label, class: ['badge', 'badge-' . $style]);
   }
@@ -211,7 +211,7 @@ class Ui
     ]);
   }
 
-  public static function header(Closure|string|array|null $title, string $icon = null, array $buttons = []): string
+  public static function header(Closure|string|array|null $title, ?string $icon = null, ?array $buttons = []): string
   {
     return div(
       class: 'p-3 position-sticky top-0 z-i-1001 header',
@@ -222,7 +222,7 @@ class Ui
           content: [
             h5(class: 'm-0 p-0', content: [
               $icon ? faIcon($icon, class: 'me-2') : null,
-              $title,
+              self::content($title),
             ]),
             div(
               class: 'd-flex align-items-center gap-2',
@@ -260,7 +260,7 @@ class Ui
     Closure|string|array|null $header1 = null,
     Closure|string|array|null $header2 = null,
     Closure|string|array|null $content = null,
-    string|array              $containerClass = null,
+    string|array|null              $containerClass = null,
   ): string
   {
     return div(

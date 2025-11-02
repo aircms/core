@@ -4,80 +4,66 @@ declare(strict_types=1);
 
 namespace Air\ThirdParty;
 
-use Air\Core\Front;
+use Air\Crud\Model\OpenAiLog;
 use Air\Http\Request;
+use Air\Log;
+use Air\Type\File;
 use Exception;
 
 class OpenAi
 {
-  private array $messages = [];
-  private ?array $function = null;
-  private ?float $temperature = null;
+  private array $inputs = [];
 
   public function __construct(
     private ?string $key = null,
     private ?string $model = null,
   )
   {
-    if (!$this->key || !$this->model) {
+    if (!$this->key) {
       $settings = \Air\Crud\Model\OpenAi::one();
+
       $this->key = $settings->key;
       $this->model = $settings->model;
     }
   }
 
-  public function setFunction(array $function): void
+  public function addInput(string $question, ?File $file = null, string $role = 'user'): static
   {
-    $this->function = $function;
-  }
-
-  public function setTemperature(?float $temperature): void
-  {
-    $this->temperature = $temperature;
-  }
-
-  public function addMessage(string $role, string $content): void
-  {
-    $this->messages[] = [
+    $item = [
       'role' => $role,
-      'content' => $content
+      'content' => [
+        [
+          'type' => 'input_text',
+          'text' => $question
+        ]
+      ]
     ];
-  }
-
-  public function message(string $question, ?bool $json = false): mixed
-  {
-    if ($json) {
-      $this->messages[] = [
-        'role' => 'system',
-        'content' => 'You are a helpful assistant designed to output JSON.'
+    if ($file) {
+      $item['content'][] = [
+        'type' => 'input_file',
+        'file_url' => $file->getSrc(),
       ];
     }
 
-    $this->messages[] = [
-      'role' => 'user',
-      'content' => $question
-    ];
+    $this->inputs[] = $item;
+    return $this;
+  }
 
+  public function ask(?bool $json = false): mixed
+  {
     $body = [
       'model' => $this->model,
-      'messages' => $this->messages,
+      'input' => $this->inputs,
     ];
 
-    if ($this->function) {
-      $body['functions'] = [$this->function];
-      $body['function_call'] = ["name" => $this->function['name']];
-    }
-
-    if ($this->temperature) {
-      $body['temperature'] = $this->temperature;
-    }
-
     if ($json) {
-      $body['response_format'] = ['type' => 'json_object'];
+      $body['text'] = [
+        'format' => ['type' => 'json_object']
+      ];
     }
 
     $answer = (new Request())
-      ->url('https://api.openai.com/v1/chat/completions')
+      ->url('https://api.openai.com/v1/responses')
       ->method(Request::POST)
       ->type('json')
       ->bearer($this->key)
@@ -86,60 +72,27 @@ class OpenAi
       ->do()
       ->body;
 
-    $message = $answer['choices'][0]['message'] ?? false;
+    $message = null;
+    foreach ($answer['output'] as $output) {
+      if ($output['type'] === 'message') {
+        if ($json) {
+          $message = json_decode($output['content'][0]['text'], true);
+        } else {
+          $message = $output['content'][0]['text'];
+        }
+      }
+    }
+
+    OpenAiLog::add($this->key, $this->model, $body, (array)$message);
 
     if (!$message) {
-      throw new Exception('OpenAi error:' . $answer['error']['type'] . '. Message: ' . $answer['error']['message']);
+      Log::error('OpenAi error', [
+        'request' => $body,
+        'response' => $answer
+      ]);
+      throw new Exception('OpenAi error');
     }
 
-    $this->messages[] = $message;
-
-    if ($this->function) {
-      $content = $message['function_call']['arguments'];
-    } else {
-      $content = $message['content'];
-    }
-
-    if ($json) {
-      return json_decode($content, true);
-    }
-
-    return $message['content'];
-  }
-
-  public function image(string $prompt, ?int $width = 1024, ?int $height = 1024): string
-  {
-    $body = [
-      'model' => $this->model,
-      'prompt' => $prompt,
-      'n' => 1,
-      'size' => $width . 'x' . $height
-    ];
-
-    $answer = (new Request())
-      ->url('https://api.openai.com/v1/images/generations')
-      ->method(Request::POST)
-      ->type('json')
-      ->bearer($this->key)
-      ->timeout(30000)
-      ->body($body)
-      ->do()
-      ->body;
-
-    if (isset($answer['error'])) {
-      throw new Exception('OpenAi error:' . $answer['error']['type'] . '. Message: ' . $answer['error']['message']);
-    }
-
-    return $answer['data'][0]['url'];
-  }
-
-  public static function ask(string $question, ?bool $json = false): mixed
-  {
-    return (new self())->message($question, $json);
-  }
-
-  public function img(string $prompt, ?int $width = 1024, ?int $height = 1024): string
-  {
-    return (new self())->image($prompt, $width, $height);
+    return $message;
   }
 }

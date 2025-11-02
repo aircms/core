@@ -16,6 +16,7 @@ use Air\Model\ModelAbstract;
  * @property string $subject
  * @property string $body
  * @property array $attachments
+ *
  * @property string $status
  * @property string $debugOutput
  */

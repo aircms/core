@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
+use Air\Crud\Nav;
 use Air\Type\FaIcon;
 
 class RobotsTxt extends Single
@@ -26,6 +27,6 @@ class RobotsTxt extends Single
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['robotsTxt'];
+    return Nav::getSettingsItem(Nav::SETTINGS_ROBOTSTXT)['alias'];
   }
 }

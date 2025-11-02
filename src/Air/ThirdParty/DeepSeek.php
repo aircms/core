@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\ThirdParty;
 
+use Air\Crud\Model\DeepSeekLog;
 use Air\Http\Request;
 use Exception;
 
@@ -23,7 +24,7 @@ class DeepSeek
     }
   }
 
-  public function addMessage(string $role, string $content): void
+  public function addMessage(string $content, string $role = 'user'): void
   {
     $this->messages[] = [
       'role' => $role,
@@ -71,13 +72,31 @@ class DeepSeek
       throw new Exception('OpenAi error:' . $answer['error']['type'] . '. Message: ' . $answer['error']['message']);
     }
 
-    $this->messages[] = $message;
-
     if ($json) {
-      return json_decode($message['content'], true);
+      $response = json_decode($message['content'], true);
+    } else {
+      $response = $message['content'];
     }
 
-    return $message['content'];
+    DeepSeekLog::add($this->key, $this->model, $body, (array)$response);
+
+    return $response;
+  }
+
+  public function balance(): array
+  {
+    $balance = (new Request())
+      ->url('https://api.deepseek.com/user/balance')
+      ->method(Request::GET)
+      ->type('json')
+      ->bearer($this->key)
+      ->do()
+      ->body;
+
+    return [
+      'isAvailable' => $balance['is_available'],
+      'balance' => $balance['balance_infos'][0]['total_balance'] . ' ' . $balance['balance_infos'][0]['currency'],
+    ];
   }
 
   public static function ask(string $question, ?bool $json = false): mixed

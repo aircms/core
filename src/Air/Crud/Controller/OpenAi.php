@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Front;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -15,7 +15,7 @@ class OpenAi extends Single
 {
   protected function getTitle(): string
   {
-    return Locale::t('Open Ai Settings');
+    return Locale::t('Open Ai');
   }
 
   public function getModelClassName(): string
@@ -30,16 +30,18 @@ class OpenAi extends Single
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['openAi'];
+    return Nav::getSettingsItem(Nav::SETTINGS_OPENAI)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\OpenAi $model
+   * @return Form|null
+   */
   protected function getForm($model = null): ?Form
   {
-    /** @var \Air\Crud\Model\OpenAi $model */
-
     return Generator::full($model, [
-      Input::text('key'),
-      Input::text('model'),
+      Input::text('key', allowNull: true),
+      Input::text('model', allowNull: true),
     ]);
   }
 }

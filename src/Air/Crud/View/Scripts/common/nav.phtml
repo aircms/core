@@ -3,112 +3,32 @@
 use Air\Cookie;
 use Air\Core\Front;
 use Air\Crud\Locale;
-
-/**
- * @param mixed $value
- * @param mixed $default
- * @return mixed
- */
-$value = function (mixed $value, mixed $default = '') {
-  return $value ?: $default;
-};
-
-$route = function (?string $controller = null) {
-  return $controller ? $this->uri(['controller' => $controller]) : null;
-};
+use Air\Crud\Nav;
 
 $config = Front::getInstance()->getConfig()['air'];
 
 /** @var string $title */
-$title = $value($config['admin']['title'] ?? null, 'AirCms');
+$title = $config['admin']['title'] ?? null;
 
 /** @var array $menu */
-$menu = $value($config['admin']['menu'] ?? null, []);
+$menu = $config['admin']['menu'] ?? null;
 
 /** @var string $logo */
-$logo = $value($config['admin']['logo'] ?? null);
+$logo = $config['admin']['logo'] ?? null;
 
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
 /** @var string $logout */
 $logout = $this->uri(['controller' => $config['admin']['auth']['route'], 'action' => 'logout']);
-
-/** @var string $storage */
-$storage = $route($config['storage']['route'] ?? null);
-
-/** @var string $system */
-$system = $route($config['admin']['system'] ?? null);
-
-/** @var string $logs */
-$logs = $route($config['logs']['route'] ?? null);
-
-/** @var string $administrators */
-$administrators = $route($config['admin']['manage'] ?? null);
-
-/** @var string $administratorsHistory */
-$administratorsHistory = $route($config['admin']['history'] ?? null);
-
-/** @var string $fonts */
-$fonts = $route($config['admin']['fonts'] ?? null);
-
-/** @var string $codes */
-$codes = $route($config['admin']['codes'] ?? null);
-
-/** @var string $languages */
-$languages = $route($config['admin']['languages'] ?? null);
-
-/** @var string $phrases */
-$phrases = $route($config['admin']['phrases'] ?? null);
-
-/** @var string $robotsTxt */
-$robotsTxt = $route($config['admin']['robotsTxt'] ?? null);
-
-/** @var string $emailQueue */
-$emailQueue = $route($config['admin']['emailQueue'] ?? null);
-
-/** @var string $emailTemplates */
-$emailTemplates = $route($config['admin']['emailTemplates'] ?? null);
-
-/** @var string $emailSettings */
-$emailSettings = $route($config['admin']['emailSettings'] ?? null);
-
-/** @var string $smsSettings */
-$smsSettings = $route($config['admin']['smsSettings'] ?? null);
-
-/** @var string $smsQueue */
-$smsQueue = $route($config['admin']['smsQueue'] ?? null);
-
-/** @var string $smsTemplates */
-$smsTemplates = $route($config['admin']['smsTemplates'] ?? null);
-
-/** @var string $cache */
-$cache = $route($config['admin']['cache'] ?? null);
-
-/** @var string $openAi */
-$openAi = $route($config['admin']['openAi'] ?? null);
-
-/** @var string $deepl */
-$deepl = $route($config['admin']['deepl'] ?? null);
-
-/** @var string $deepSeek */
-$deepSeek = $route($config['admin']['deepSeek'] ?? null);
-
-/** @var string $googleTranslate */
-$googleTranslate = $route($config['admin']['googleTranslate'] ?? null);
-
-/** @var string $billing */
-$billing = $route($config['admin']['billing'] ?? null);
 ?>
 
 <div class="d-flex flex-column h-100">
   <div class="d-flex flex-column flex-grow-1">
-
-    <div class="p-3 position-sticky top-0 z-1 header-menu">
+    <div class="p-3 position-sticky top-0 z-1 header">
       <div class="card position-sticky w-100">
         <div class="card-body p-3 d-flex justify-content-between align-items-center"
-             href="<?php echo $this->uri(['controller' => 'index']); ?>"
-             role="button">
+             href="<?php echo $this->uri(['controller' => 'index']); ?>">
           <div class="d-flex align-items-center">
             <div class="logo bg-image bg-image-contain me-2" data-admin-async-image="<?php echo $logo; ?>"></div>
             <h5 class="p-0 m-0"><?php echo $title; ?></h5>
@@ -116,46 +36,35 @@ $billing = $route($config['admin']['billing'] ?? null);
         </div>
       </div>
     </div>
-
-
     <div class="px-3" data-admin-accordion>
-
       <?php foreach ($menu as $subMenu) : ?>
-
         <div class="mb-3">
-
           <div class="rounded-4 p-3 d-flex justify-content-between transition-1 shadow-5-strong"
                role="button"
                data-admin-accordion-nav>
             <h6 class="m-0 admin-nav-section">
-              <i class="fas fa-<?php echo $subMenu['icon']; ?> me-1"></i>
+              <?php echo faIcon($subMenu['icon'], class: 'me-1'); ?>
               <?php echo Locale::t($subMenu['title']); ?>
             </h6>
             <i class="fas fa-chevron-right transition-2" data-admin-accordion-nav-icon></i>
           </div>
-
-          <div class="transition-2 rounded-bottom-3 overflow-hidden"
-               data-admin-accordion-content>
+          <div class="transition-2 rounded-bottom-3 overflow-hidden" data-admin-accordion-content>
             <div>
               <?php foreach ($subMenu['items'] as $subMenuItems) : ?>
-
                 <?php if ($subMenuItems === 'divider') : ?>
                   <div class="dropdown-divider"></div>
                   <?php continue; ?>
                 <?php endif; ?>
-
                 <a class="btn btn-link btn-block text-start btn-lg text-capitalize m-0 px-3 admin-nav-link"
                    href="<?php echo $this->uri($subMenuItems['url'], [], true); ?>"
                    data-mdb-ripple-init>
-                  <i class="fas fa-<?php echo $subMenuItems['icon']; ?> me-1"></i>
+                  <?php echo faIcon($subMenuItems['icon'], class: 'me-1'); ?>
                   <?php echo Locale::t($subMenuItems['title']); ?>
                 </a>
               <?php endforeach; ?>
             </div>
           </div>
-
         </div>
-
       <?php endforeach; ?>
     </div>
   </div>
@@ -163,11 +72,7 @@ $billing = $route($config['admin']['billing'] ?? null);
   <div class="card">
     <div class="card-body p-3">
       <div class="btn-group w-100">
-        <button
-          type="button"
-          class="btn btn-primary dropdown-toggle"
-          data-mdb-dropdown-init
-          data-mdb-ripple-init>
+        <button type="button" class="btn btn-primary dropdown-toggle" data-mdb-dropdown-init data-mdb-ripple-init>
           <i class="fas fa-power-off me-1"></i>
           <?php echo Locale::t('Settings'); ?>
         </button>
@@ -181,186 +86,16 @@ $billing = $route($config['admin']['billing'] ?? null);
             </a>
           </li>
           <li class="dropdown-divider mt-0 pt-0"></li>
-          <?php if ($storage) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $storage; ?>">
-                <i class="fas fa-folder me-1"></i> <?php echo Locale::t('File storage'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($fonts) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $fonts; ?>">
-                <i class="fas fa-font me-1"></i> <?php echo Locale::t('Fonts'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($system) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $system; ?>">
-                <i class="fas fa-pie-chart me-1"></i> <?php echo Locale::t('System monitor'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($languages && $phrases) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $languages; ?>">
-                <i class="fas fa-globe me-1"></i> <?php echo Locale::t('Languages'); ?>
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $phrases; ?>">
-                <i class="fas fa-language me-1"></i> <?php echo Locale::t('Phrases'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($logs) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $logs; ?>">
-                <i class="fas fa-list me-1"></i> <?php echo Locale::t('Logs'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($openAi) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $openAi; ?>">
-                <i class="fas fa-robot me-1"></i> <?php echo Locale::t('OpenAi'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($googleTranslate) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $googleTranslate; ?>">
-                <i class="fas fa-language me-1"></i> <?php echo Locale::t('Google translate'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($deepl) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $deepl; ?>" data-deepl>
-                <i class="fas fa-globe me-1"></i> <?php echo Locale::t('Deepl'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($billing) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $billing; ?>" data-deepl>
-                <i class="fas fa-money-bill-1 me-1"></i> <?php echo Locale::t('Billing'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($deepSeek) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $deepSeek; ?>">
-                <i class="fas fa-robot me-1"></i> <?php echo Locale::t('DeepSeek'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if ($administrators) : ?>
-            <li class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $administrators; ?>">
-                <i class="fas fa-users me-1"></i> <?php echo Locale::t('Administrators'); ?>
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="<?php echo $administratorsHistory; ?>">
-                <i class="fas fa-clock me-1"></i> <?php echo Locale::t('Administrator history'); ?>
-              </a>
-            </li>
-            <li class="dropdown-divider"></li>
-          <?php endif; ?>
-          <?php if ($codes) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $codes; ?>">
-                <i class="fas fa-code me-1"></i> <?php echo Locale::t('Codes'); ?>
-              </a>
-            </li>
-            <?php if ($robotsTxt) : ?>
+          <?php foreach (Nav::getSettingItems() as $index => $group) : ?>
+            <?php foreach ($group as $item) : ?>
               <li>
-                <a class="dropdown-item" href="<?php echo $robotsTxt; ?>">
-                  <i class="fas fa-robot me-1"></i> <?php echo Locale::t('Robots.txt'); ?>
+                <a class="dropdown-item" href="<?php echo $this->uri(['controller' => $item['alias']]); ?>">
+                  <i class="fas fa-<?php echo $item['icon']; ?> me-1"></i> <?php echo Locale::t($item['title']); ?>
                 </a>
               </li>
-            <?php endif; ?>
+            <?php endforeach; ?>
             <li class="dropdown-divider"></li>
-          <?php endif; ?>
-
-          <?php if ($emailSettings) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $emailSettings; ?>">
-                <i class="fas fa-cogs me-1"></i> <?php echo Locale::t('Email / Settings'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-
-          <?php if ($emailTemplates) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $emailTemplates; ?>">
-                <i class="fas fa-page me-1"></i> <?php echo Locale::t('Email / Templates'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-
-          <?php if ($emailQueue) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $emailQueue; ?>">
-                <i class="fas fa-database me-1"></i> <?php echo Locale::t('Email / Queue'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-
-          <?php if ($emailSettings || $emailTemplates || $emailQueue) : ?>
-            <li class="dropdown-divider"></li>
-          <?php endif; ?>
-
-          <?php if ($smsSettings) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $smsSettings; ?>">
-                <i class="fas fa-cogs me-1"></i> <?php echo Locale::t('Sms / Settings'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-
-          <?php if ($smsTemplates) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $smsTemplates; ?>">
-                <i class="fas fa-page me-1"></i> <?php echo Locale::t('Sms / Templates'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-
-          <?php if ($smsQueue) : ?>
-            <li>
-              <a class="dropdown-item" href="<?php echo $smsQueue; ?>">
-                <i class="fas fa-database me-1"></i> <?php echo Locale::t('Sms / Queue'); ?>
-              </a>
-            </li>
-          <?php endif; ?>
-
-          <?php if ($smsSettings || $smsTemplates || $smsQueue) : ?>
-            <li class="dropdown-divider"></li>
-          <?php endif; ?>
-
-          <?php if ($cache) : ?>
-            <li>
-              <a class="dropdown-item text-danger-emphasis"
-                 role="button"
-                 data-admin-clean-cache
-                 data-href="<?php echo $cache; ?>"
-                 data-confirm="<?php echo Locale::t('Clear cache now?'); ?>">
-                <i class="fa fa-trash me-1"></i> <?php echo Locale::t('Clean cache'); ?>
-              </a>
-            </li>
-            <li class="dropdown-divider"></li>
-          <?php endif; ?>
+          <?php endforeach; ?>
           <li>
             <a class="dropdown-item text-danger-emphasis"
                href="<?php echo $logout; ?>"

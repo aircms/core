@@ -83,7 +83,6 @@ class File extends TypeAbstract
     $filename = $pathInfo['filename'] ?? '';
     $ext = strtolower($pathInfo['extension'] ?? '');
 
-    // собираем модификаторы
     $mods = [];
     if ($width !== null) $mods[] = 'w' . $width;
     if ($height !== null) $mods[] = 'h' . $height;
@@ -95,7 +94,6 @@ class File extends TypeAbstract
       $newFilename .= '_mod_' . implode('_', $mods);
     }
 
-    // формат: если передан — используем его, иначе исходное расширение
     $newExt = $format ? strtolower($format) : $ext;
 
     $src = array_values(array_filter(explode('/', "{$dirname}/{$newFilename}.{$newExt}")));
@@ -104,9 +102,22 @@ class File extends TypeAbstract
     return Front::getInstance()->getConfig()['air']['storage']['url'] . $src;
   }
 
+  public function getFilename(): string
+  {
+    $src = explode('/', $this->src);
+    $src = array_pop($src);
+
+    return $src;
+  }
+
   public function getSrcContent(): string|false
   {
     return file_get_contents($this->getSrc());
+  }
+
+  public function getBase64Content(): string
+  {
+    return base64_encode($this->getSrcContent());
   }
 
   public function isImage(): bool

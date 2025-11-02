@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Control;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Controller\MultipleHelper\Accessor\HeaderButton;
 use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
+use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Email;
 use Air\Type\FaIcon;
 
@@ -21,7 +22,7 @@ class EmailQueue extends Multiple
 {
   protected function getTitle(): string
   {
-    return 'Email / Queue';
+    return Locale::t('Email / Queue');
   }
 
   protected function getModelClassName(): string
@@ -36,17 +37,24 @@ class EmailQueue extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['emailQueue'];
+    return Nav::getSettingsItem(Nav::SETTINGS_EMAIL_QUEUE)['alias'];
   }
 
-  public function manage(string $id = null): void
+  /**
+   * @param \Air\Crud\Model\EmailQueue $model
+   * @return null
+   */
+  protected function getForm($model = null): null
   {
-    $email = \Air\Crud\Model\EmailQueue::fetchOne(['id' => $id]);
+    return null;
+  }
 
-    $this->getView()->assign('email', $email);
+  public function details(\Air\Crud\Model\EmailQueue $id): string
+  {
+    $this->getView()->assign('email', $id);
     $this->getView()->assign('entity', $this->getEntity());
 
-    $this->getView()->setScript('emailQueue/manage');
+    return $this->getView()->render('emailQueue/details');
   }
 
   public function body(string $id): string
@@ -62,11 +70,12 @@ class EmailQueue extends Multiple
     return [
       Header::source('Status', function (\Air\Crud\Model\EmailQueue $emailQueue) {
         return Ui::multiple([
-          Ui::badge(date('Y-m-d H:i', $emailQueue->when), Ui::DARK),
+          Ui::badge(Ui::date($emailQueue->when), Ui::LIGHT),
+          Ui::badge(Ui::date($emailQueue->when), Ui::DARK),
           match ($emailQueue->status) {
-            \Air\Crud\Model\EmailQueue::STATUS_NEW => Ui::badge('Planned', Ui::WARNING),
-            \Air\Crud\Model\EmailQueue::STATUS_SUCCESS => Ui::badge('Success', Ui::SUCCESS),
-            \Air\Crud\Model\EmailQueue::STATUS_FAIL => Ui::badge('Fail', Ui::DANGER),
+            \Air\Crud\Model\EmailQueue::STATUS_NEW => Ui::badge(Locale::t('Planned'), Ui::WARNING),
+            \Air\Crud\Model\EmailQueue::STATUS_SUCCESS => Ui::badge(Locale::t('Success'), Ui::SUCCESS),
+            \Air\Crud\Model\EmailQueue::STATUS_FAIL => Ui::badge(Locale::t('Fail'), Ui::DANGER),
           }
         ]);
       }),
@@ -81,11 +90,9 @@ class EmailQueue extends Multiple
     ];
   }
 
-  public function send(string $id): array
+  public function send(\Air\Crud\Model\EmailQueue $id): array
   {
-    return ['success' => Email::send(
-      \Air\Crud\Model\EmailQueue::one(['id' => $id])
-    )];
+    return ['success' => Email::send($id)];
   }
 
   public function clear(): void
@@ -107,16 +114,16 @@ class EmailQueue extends Multiple
   {
     return [
       HeaderButton::item(
-        title: 'Delete all successful ones?',
+        title: Locale::t('Delete all successful ones?'),
         url: ['controller' => $this->getEntity(), 'action' => 'clear'],
-        confirm: 'Are you sure want to remove all successful emails?',
+        confirm: Locale::t('Are you sure want to remove all successful emails?'),
         style: Ui::DANGER,
         icon: FaIcon::ICON_XMARK
       ),
       HeaderButton::item(
-        title: 'Clear all Emails?',
+        title: Locale::t('Clear all Emails?'),
         url: ['controller' => $this->getEntity(), 'action' => 'clearAllForce'],
-        confirm: 'Are you sure want to remove all successful emails?',
+        confirm: Locale::t('Are you sure want to remove all successful emails?'),
         style: Ui::DANGER,
         icon: FaIcon::ICON_XMARK
       ),
@@ -126,9 +133,9 @@ class EmailQueue extends Multiple
   protected function getControls(): array
   {
     return [
-      Control::item(
-        title: 'Details',
-        url: ['controller' => $this->getEntity(), 'action' => 'manage'],
+      Control::html(
+        title: Locale::t('Details'),
+        url: ['controller' => $this->getEntity(), 'action' => 'details'],
         icon: FaIcon::ICON_PAGE
       )
     ];

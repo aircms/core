@@ -7,6 +7,7 @@ namespace Air\Crud\Controller;
 use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -25,7 +26,7 @@ class EmailTemplate extends Multiple
       Header::longtext(by: 'body'),
       Header::enabled(),
     ];
-    if (Front::getInstance()->getConfig()['air']['admin']['languages'] ?? false) {
+    if (Nav::getSettingsItem(Nav::SETTINGS_LANGUAGES)) {
       $headers[] = Header::language();
     }
     return $headers;
@@ -33,7 +34,7 @@ class EmailTemplate extends Multiple
 
   protected function getTitle(): string
   {
-    return 'Email / Templates';
+    return Locale::t('Email / Templates');
   }
 
   protected function getModelClassName(): string
@@ -48,7 +49,7 @@ class EmailTemplate extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['emailTemplates'];
+    return Nav::getSettingsItem(Nav::SETTINGS_EMAIL_TEMPLATES)['alias'];
   }
 
   protected function getForm($model = null): Form

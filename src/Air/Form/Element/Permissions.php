@@ -6,6 +6,7 @@ namespace Air\Form\Element;
 
 use Air\Core\Front;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 
 class Permissions extends ElementAbstract
 {
@@ -19,22 +20,16 @@ class Permissions extends ElementAbstract
 
   public function getPermissions(): array
   {
-    $config = Front::getInstance()->getConfig()['air'];
     $permissions = Front::getInstance()->getConfig()['air']['admin']['menu'];
 
-    $sections = [
-      Locale::t('File storage') => $config['storage']['route'] ?? false,
-      Locale::t('Fonts') => $config['admin']['fonts'] ?? false,
-      Locale::t('System monitor') => $config['admin']['system'] ?? false,
-      Locale::t('Languages') => $config['admin']['languages'] ?? false,
-      Locale::t('Phrases') => $config['admin']['phrases'] ?? false,
-      Locale::t('Logs') => $config['logs']['route'] ?? false,
-      Locale::t('Administrators') => $config['admin']['manage'] ?? false,
-      Locale::t('Administrator history') => $config['admin']['history'] ?? false,
-      Locale::t('Codes') => $config['admin']['codes'] ?? false,
-      Locale::t('Robots.txt') => $config['admin']['robotsTxt'] ?? false,
-    ];
+    $sections = [];
+    foreach (Nav::getSettingItems() as $group) {
+      foreach ($group as $setting) {
+        $sections[$setting['title']] = $setting['alias'];
+      }
+    }
 
+    $systemPermissions = [];
     foreach ($sections as $title => $controller) {
       $systemPermissions[] = [
         'title' => $title,

@@ -24,41 +24,39 @@ function render(Closure|string|array|null|Generator $content = null): string
   return implode('', $content);
 }
 
-function content(Closure|string|array|null|Generator $content = null): array
+function content(Closure|string|array|null|int|Generator $content = null): array
 {
-  if ($content) {
+  if (is_string($content)) {
+    $content = (array)$content;
 
-    if (is_string($content)) {
-      $content = (array)$content;
+  } else if (is_int($content)) {
+    $content = (array)((string)$content);
 
-    } else if ($content instanceof Generator) {
-      $contentArray = [];
-      foreach ($content as $item) {
-        $contentArray[] = $item;
-      }
-
-      $content = $contentArray;
-
-    } else if ($content instanceof Closure) {
-      ob_start();
-      $content = $content();
-      if (!$content) {
-        $content = ob_get_contents();
-      }
-      if ($content instanceof Generator || is_array($content)) {
-        $contentItems = [];
-        foreach ($content as $contentItem) {
-          $contentItems[] = $contentItem;
-        }
-        $content = $contentItems;
-      }
-      ob_end_clean();
+  } else if ($content instanceof Generator) {
+    $contentArray = [];
+    foreach ($content as $item) {
+      $contentArray[] = $item;
     }
 
-    return (array)$content;
+    $content = $contentArray;
+
+  } else if ($content instanceof Closure) {
+    ob_start();
+    $content = $content();
+    if (!$content) {
+      $content = ob_get_contents();
+    }
+    if ($content instanceof Generator || is_array($content)) {
+      $contentItems = [];
+      foreach ($content as $contentItem) {
+        $contentItems[] = $contentItem;
+      }
+      $content = $contentItems;
+    }
+    ob_end_clean();
   }
 
-  return [];
+  return (array)$content;
 }
 
 function image(File|string $image): string
@@ -71,12 +69,12 @@ function image(File|string $image): string
 }
 
 function tag(
-  string                              $tagName,
-  Closure|string|array|null|Generator $content = null,
-  string|array                        $class = null,
-  array|string                        $attributes = null,
-  array|string                        $data = null,
-  File|string                         $bgImage = null
+  string                                  $tagName,
+  Closure|string|array|null|int|Generator $content = null,
+  string|array|null                       $class = null,
+  array|string|null                       $attributes = null,
+  array|string|null                       $data = null,
+  File|string|null                        $bgImage = null
 ): string
 {
   $tagName = trim(strtolower($tagName));
@@ -138,7 +136,9 @@ function tag(
 
   $html[] = '</' . $tagName . '>';
 
-  return implode('', array_filter($html));
+  return implode('', array_filter($html, function ($item) {
+    return $item !== null;
+  }));
 }
 
 function div(
@@ -176,11 +176,11 @@ function pre(
 }
 
 function span(
-  Closure|string|array|null $content = null,
-  string|array              $class = null,
-  array|string              $attributes = null,
-  array|string              $data = null,
-  File|string               $bgImage = null
+  Closure|string|array|int|null $content = null,
+  string|array                  $class = null,
+  array|string                  $attributes = null,
+  array|string                  $data = null,
+  File|string                   $bgImage = null
 ): string
 {
   return tag(

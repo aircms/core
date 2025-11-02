@@ -6,6 +6,7 @@ namespace Air\Crud\Controller;
 
 use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -22,7 +23,7 @@ class Language extends Multiple
 {
   public static function isAvailable(): bool
   {
-    return !!(Front::getInstance()->getConfig()['air']['admin']['languages'] ?? false);
+    return !!Nav::getSettingsItem(Nav::SETTINGS_LANGUAGES);
   }
 
   protected function getTitle(): string
@@ -52,7 +53,7 @@ class Language extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['languages'];
+    return Nav::getSettingsItem(Nav::SETTINGS_LANGUAGES)['alias'];
   }
 
   protected function getForm($model = null): Form

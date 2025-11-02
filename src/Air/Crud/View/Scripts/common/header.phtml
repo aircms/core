@@ -6,6 +6,7 @@ use Air\Core\Front;
 use Air\Crud\Model\Language;
 use Air\Map;
 use Air\Model\ModelAbstract;
+use Air\Crud\Locale;
 
 $title = $this->title;
 
@@ -55,7 +56,6 @@ $model = $this->model;
 
 /** @var boolean $isMultipleManage */
 $isMultipleManage = $this->isMultipleManage;
-
 ?>
 <div class="p-3 position-sticky top-0 z-i-1001 header">
   <div class="card position-sticky w-100">
@@ -99,13 +99,13 @@ $isMultipleManage = $this->isMultipleManage;
           <?php if (!$isQuickManage && !$isSingle) : ?>
             <a class="btn btn-secondary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-back>
               <i class="fa fa-arrow-left me-1"></i>
-              <?php echo \Air\Crud\Locale::t('Go back'); ?>
+              <?php echo Locale::t('Go back'); ?>
             </a>
           <?php endif; ?>
 
           <a class="btn btn-primary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-save>
             <i class="fa fa-save me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Save (CTRL+S)'); ?>
+            <?php echo Locale::t('Save (CTRL+S)'); ?>
           </a>
         <?php endif; ?>
 
@@ -113,7 +113,7 @@ $isMultipleManage = $this->isMultipleManage;
           <a href="<?php echo $this->uri(['controller' => $controller]); ?>" class="btn btn-danger ms-2 px-3"
              data-mdb-ripple-init>
             <i class="fa fa-filter me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Clear filter'); ?>
+            <?php echo Locale::t('Clear filter'); ?>
           </a>
         <?php endif; ?>
 
@@ -123,7 +123,7 @@ $isMultipleManage = $this->isMultipleManage;
             class="btn btn-primary ms-2 px-3"
             data-mdb-ripple-init>
             <i class="fas fa-plus me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Add'); ?>
+            <?php echo Locale::t('Add'); ?>
           </a>
         <?php endif; ?>
 
@@ -134,7 +134,7 @@ $isMultipleManage = $this->isMultipleManage;
             class="btn btn-primary ms-2 px-3"
             data-mdb-ripple-init>
             <i class="fas fa-edit me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Bulk manage'); ?>
+            <?php echo Locale::t('Bulk manage'); ?>
             <span></span>
           </a>
         <?php endif; ?>
@@ -146,7 +146,7 @@ $isMultipleManage = $this->isMultipleManage;
              data-force="true"
              data-mdb-ripple-init>
             <i class="fas fa-print me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Print'); ?>
+            <?php echo Locale::t('Print'); ?>
           </a>
         <?php endif; ?>
 
@@ -155,7 +155,7 @@ $isMultipleManage = $this->isMultipleManage;
              href="<?php echo $this->uri(['controller' => $controller, 'action' => 'position'], $request->getParams()); ?>"
              data-mdb-ripple-init>
             <i class="fas fa-sort me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Sort'); ?>
+            <?php echo Locale::t('Sort'); ?>
           </a>
         <?php endif; ?>
 
@@ -163,12 +163,12 @@ $isMultipleManage = $this->isMultipleManage;
 
           <a class="btn btn-secondary ms-2 px-3" data-mdb-ripple-init data-admin-from-manage-back>
             <i class="fa fa-arrow-left me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Go back'); ?>
+            <?php echo Locale::t('Go back'); ?>
           </a>
 
           <a class="btn btn-primary ms-2 px-3" data-mdb-ripple-init data-admin-from-positioning-save>
             <i class="fa fa-save me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Save (CTRL+S)'); ?>
+            <?php echo Locale::t('Save (CTRL+S)'); ?>
           </a>
 
         <?php endif; ?>
@@ -180,7 +180,7 @@ $isMultipleManage = $this->isMultipleManage;
             data-mdb-ripple-init
             data-force="true">
             <i class="fas fa-download me-1"></i>
-            <?php echo \Air\Crud\Locale::t('Export'); ?>
+            <?php echo Locale::t('Export'); ?>
           </a>
         <?php endif; ?>
 

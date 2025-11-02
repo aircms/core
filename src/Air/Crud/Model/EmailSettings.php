@@ -11,18 +11,26 @@ use Air\Model\ModelAbstract;
  *
  * @property string $id
  *
- * @property string $server
- * @property string $port
- * @property string $protocol
- * @property string $name
- * @property string $address
- * @property string $password
- * @property string $from
+ * @property string $smtpServer
+ * @property string $smtpPort
+ * @property string $smtpProtocol
+ * @property string $smtpAddress
+ * @property string $smtpPassword
+ * @property string $smtpFromName
+ * @property string $smtpFromAddress
+ *
+ * @property string $resendApiKey
+ * @property string $resendFromEmail
+ * @property string $resendFromName
  *
  * @property boolean $emailQueueEnabled
+ * @property string $gateway
  */
 class EmailSettings extends ModelAbstract
 {
   const string TSL = 'tls';
   const string SSL = 'ssl';
+
+  const string GATEWAY_SMTP = 'smtp';
+  const string GATEWAY_RESEND = 'resend';
 }

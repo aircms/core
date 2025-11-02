@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Crud\Controller;
 
 use Air\Core\Front;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -39,7 +40,7 @@ class Codes extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['codes'];
+    return Nav::getSettingsItem(Nav::SETTINGS_CODES)['alias'];
   }
 
   protected function getForm($model = null): Form

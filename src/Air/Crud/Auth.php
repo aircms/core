@@ -5,13 +5,8 @@ declare(strict_types=1);
 namespace Air\Crud;
 
 use Air\Cookie;
-use Air\Core\Exception\ClassWasNotFound;
 use Air\Core\Front;
 use Air\Crud\Model\Admin;
-use Air\Model\Exception\CallUndefinedMethod;
-use Air\Model\Exception\ConfigWasNotProvided;
-use Air\Model\Exception\DriverClassDoesNotExists;
-use Air\Model\Exception\DriverClassDoesNotExtendsFromDriverAbstract;
 use Throwable;
 
 class Auth
@@ -29,11 +24,6 @@ class Auth
     }
 
     return self::$instance;
-  }
-
-  private function __construct()
-  {
-    $this->cookieName = Front::getInstance()->getConfig()['air']['admin']['auth']['cookieName'] ?? $this->cookieName;
   }
 
   private function isControllerAllowedForUser(string $controller, Admin $admin): bool

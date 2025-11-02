@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Air\System;
 
-use Air\Core\Exception\SystemProcNotReadable;
 use DateTime;
 use Exception;
 use Throwable;

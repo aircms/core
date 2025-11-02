@@ -52,6 +52,11 @@ trait Manage
     return $form->getCleanValues();
   }
 
+  protected function getFormBlock(ModelAbstract $model): ?string
+  {
+    return null;
+  }
+
   protected function saveModel($formData, $model): void
   {
     /** @var ModelAbstract $modelClassName */
@@ -235,7 +240,7 @@ trait Manage
 
     $this->getView()->setVars([
       'icon' => $this->getAdminMenuItem()['icon'] ?? $this->getIcon() ?? null,
-      'title' => Locale::t($this->getTitle()),
+      'title' => $this->getTitle(),
       'form' => $form,
       'model' => $model,
       'controller' => $this->getRouter()->getController(),
@@ -243,6 +248,10 @@ trait Manage
       'isQuickManage' => (bool)$this->getParam('isQuickManage') ?? false,
       'isSelectControl' => (bool)$this->getParam('isQuickManage') ?? false,
       'isSingle' => is_subclass_of($this, Single::class),
+      'isOpenAiEnabled' => $this->isOpenAiEnabled(),
+      'isDeepSeekEnabled' => $this->isDeepSeekEnabled(),
+      'structure' => $this->getStructure(),
+      'formBlock' => $this->getFormBlock($model)
     ]);
 
     $this->getView()->setScript('form/index');

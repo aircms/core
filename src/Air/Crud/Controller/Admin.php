@@ -7,6 +7,7 @@ namespace Air\Crud\Controller;
 use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Filter\Lowercase;
 use Air\Filter\Trim;
 use Air\Form\Element\Text;
@@ -48,7 +49,7 @@ class Admin extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['manage'];
+    return Nav::getSettingsItem(Nav::SETTINGS_ADMINISTRATORS)['alias'];
   }
 
   protected function getForm($model = null): ?Form

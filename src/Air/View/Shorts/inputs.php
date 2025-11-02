@@ -90,6 +90,30 @@ function text(
   );
 }
 
+function textarea(
+  string       $name = null,
+  string       $value = null,
+  array|string $class = null,
+  array|string $attributes = [],
+  array|string $data = [],
+  string       $placeholder = null,
+): string
+{
+  return tag(
+    tagName: 'textarea',
+    class: $class,
+    data: $data,
+    content: $value,
+    attributes: [
+      ...$attributes,
+      ...[
+        'name' => $name,
+        'placeholder' => $placeholder
+      ]
+    ]
+  );
+}
+
 function tel(
   string       $name = null,
   string       $value = null,

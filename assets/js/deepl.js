@@ -13,7 +13,7 @@ $(document).ready(() => {
       });
     };
 
-    wait.on('[data-accessory-deepl]', (el) => {
+    wait.on('[data-accessory-translate-deepl]', (el) => {
       $(el).click(() => {
         const phrase = getAccessoryValue($(el).data('accessory-deepl'));
         if (!phrase) {

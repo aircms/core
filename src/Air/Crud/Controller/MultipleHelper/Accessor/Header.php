@@ -114,6 +114,13 @@ class Header
     return ['type' => self::SOURCE, 'title' => Locale::t($title), 'source' => $source];
   }
 
+  public static function badge(string $by, ?string $style = Ui::PRIMARY): array
+  {
+    return self::source(self::getTitleBasedOnModelOrPropertyName($by), function (ModelAbstract $model) use ($by, $style) {
+      return Ui::badge((string)$model->{$by}, $style);
+    });
+  }
+
   public static function text(string $title = null, string $by = null, string $size = null): array
   {
     return self::col(self::TEXT, $title, $by, $size);

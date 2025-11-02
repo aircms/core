@@ -16,6 +16,7 @@ use Air\Model\Paginator;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\Regex;
 use ReflectionClass;
+use Throwable;
 
 trait Table
 {
@@ -32,11 +33,12 @@ trait Table
       if ($filter['type'] == 'search') {
         if (count($filter['by']) > 1) {
           foreach ($filter['by'] as $field) {
-            if (str_starts_with($filter['value'], '!')) {
+            $value = $filter['value'];
+            if (str_starts_with($value, '!')) {
               $value = substr($filter['value'], 1);
               $conditions['$or'][] = [$field => ['$not' => new Regex(htmlspecialchars(quotemeta($value)), 'i')]];
             } else {
-              $conditions['$or'][] = [$field => new Regex(htmlspecialchars(quotemeta($filter['value'])), 'i')];
+              $conditions['$or'][] = [$field => new Regex(htmlspecialchars(quotemeta($value)), 'i')];
             }
           }
         } else {
@@ -44,7 +46,14 @@ trait Table
             $value = substr($filter['value'], 1);
             $conditions[$filter['by'][0]] = ['$not' => new Regex(htmlspecialchars(quotemeta($value)), 'i')];
           } else {
-            $conditions[$filter['by'][0]] = new Regex(htmlspecialchars(quotemeta($filter['value'])), 'i');
+            if ($filter['by'][0] === 'id') {
+              try {
+                $conditions['_id'] = new ObjectId($filter['value']);
+              } catch (Throwable) {
+              }
+            } else {
+              $conditions[$filter['by'][0]] = new Regex(htmlspecialchars(quotemeta($filter['value'])), 'i');
+            }
           }
         }
 
@@ -355,7 +364,7 @@ trait Table
 
     $this->getView()->setVars([
       'icon' => $this->getIcon(),
-      'title' => Locale::t($this->getTitle()),
+      'title' => $this->getTitle(),
       'manageable' => $this->getManageable(),
       'manageableMultiple' => $this->getManageableMultiple(),
       'quickManage' => $this->getQuickManage(),

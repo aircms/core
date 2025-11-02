@@ -8,33 +8,7 @@ use Air\Core\Exception\ActionMethodIsReserved;
 use Air\Core\Exception\ActionMethodWasNotFound;
 use Air\Core\Exception\ControllerClassWasNotFound;
 use Air\Core\Exception\Stop;
-use Air\Crud\Controller\Admin;
-use Air\Crud\Controller\Billing;
-use Air\Crud\Controller\Cache;
-use Air\Crud\Controller\Codes;
-use Air\Crud\Controller\Deepl;
-use Air\Crud\Controller\DeepSeek;
-use Air\Crud\Controller\EmailQueue;
-use Air\Crud\Controller\EmailSettings;
-use Air\Crud\Controller\EmailTemplate;
-use Air\Crud\Controller\FaIcon;
-use Air\Crud\Controller\Font;
-use Air\Crud\Controller\FontsUi;
-use Air\Crud\Controller\GoogleTranslate;
-use Air\Crud\Controller\History;
-use Air\Crud\Controller\Language;
-use Air\Crud\Controller\Log;
-use Air\Crud\Controller\Login;
-use Air\Crud\Controller\NotAllowed;
-use Air\Crud\Controller\OpenAi;
-use Air\Crud\Controller\Phrase;
-use Air\Crud\Controller\RobotsTxt;
-use Air\Crud\Controller\RobotsTxtUi;
-use Air\Crud\Controller\SmsQueue;
-use Air\Crud\Controller\SmsSettings;
-use Air\Crud\Controller\SmsTemplate;
-use Air\Crud\Controller\Storage;
-use Air\Crud\Controller\System;
+use Air\Crud\Nav;
 use Air\Model\ModelAbstract;
 use Air\View\View;
 use Error;
@@ -320,11 +294,8 @@ final class Front
       }
 
       foreach (array_filter($pluginsPaths) as $pluginNamespace => $pluginsPath) {
-
         foreach (glob($pluginsPath . '/*.php') as $pluginClass) {
-
           $pluginClassName = $pluginNamespace . str_replace('.php', '', basename($pluginClass));
-
           if (is_subclass_of($pluginClassName, Plugin::class)) {
             $plugins[] = new $pluginClassName();
           }
@@ -421,86 +392,8 @@ final class Front
     $module = $router->getModule();
     $controller = $router->getController();
 
-    if (($this->getConfig()['air']['storage']['route'] ?? false) === $controller) {
-      return Storage::class;
-
-    } else if (($this->getConfig()['air']['admin']['auth']['route'] ?? false) === $controller) {
-      return Login::class;
-
-    } else if (($this->getConfig()['air']['admin']['system'] ?? false) === $controller) {
-      return System::class;
-
-    } else if (($this->getConfig()['air']['admin']['manage'] ?? false) === $controller) {
-      return Admin::class;
-
-    } else if (($this->getConfig()['air']['admin']['history'] ?? false) === $controller) {
-      return History::class;
-
-    } else if (($this->getConfig()['air']['admin']['fonts'] ?? false) === $controller) {
-      return Font::class;
-
-    } else if (($this->getConfig()['air']['logs']['route'] ?? false) === $controller) {
-      return Log::class;
-
-    } else if (($this->getConfig()['air']['admin']['codes'] ?? false) === $controller) {
-      return Codes::class;
-
-    } else if (($this->getConfig()['air']['admin']['languages'] ?? false) === $controller) {
-      return Language::class;
-
-    } else if (($this->getConfig()['air']['admin']['phrases'] ?? false) === $controller) {
-      return Phrase::class;
-
-    } else if (($this->getConfig()['air']['admin']['robotsTxt'] ?? false) === $controller) {
-      return RobotsTxt::class;
-
-    } else if (($this->getConfig()['air']['admin']['cache'] ?? false) === $controller) {
-      return Cache::class;
-
-    } else if (($this->getConfig()['air']['admin']['faIcon'] ?? false) === $controller) {
-      return FaIcon::class;
-
-    } else if ('robots.txt' === $controller) {
-      return RobotsTxtUi::class;
-
-    } else if (($this->getConfig()['air']['fontsUi'] ?? false) === $controller) {
-      return FontsUi::class;
-
-    } else if (($this->getConfig()['air']['admin']['notAllowed'] ?? false) === $controller) {
-      return NotAllowed::class;
-
-    } else if (($this->getConfig()['air']['admin']['emailTemplates'] ?? false) === $controller) {
-      return EmailTemplate::class;
-
-    } else if (($this->getConfig()['air']['admin']['emailSettings'] ?? false) === $controller) {
-      return EmailSettings::class;
-
-    } else if (($this->getConfig()['air']['admin']['emailQueue'] ?? false) === $controller) {
-      return EmailQueue::class;
-
-    } else if (($this->getConfig()['air']['admin']['smsTemplates'] ?? false) === $controller) {
-      return SmsTemplate::class;
-
-    } else if (($this->getConfig()['air']['admin']['smsSettings'] ?? false) === $controller) {
-      return SmsSettings::class;
-
-    } else if (($this->getConfig()['air']['admin']['smsQueue'] ?? false) === $controller) {
-      return SmsQueue::class;
-
-    } else if (($this->getConfig()['air']['admin']['openAi'] ?? false) === $controller) {
-      return OpenAi::class;
-
-    } else if (($this->getConfig()['air']['admin']['deepl'] ?? false) === $controller) {
-      return Deepl::class;
-
-    } else if (($this->getConfig()['air']['admin']['deepSeek'] ?? false) === $controller) {
-      return DeepSeek::class;
-
-    } else if (($this->getConfig()['air']['admin']['billing'] ?? false) === $controller) {
-      return Billing::class;
-
-    } else if (($this->getConfig()['air']['admin']['googleTranslate'] ?? false) === $controller) {
-      return GoogleTranslate::class;
+    if ($nav = Nav::getSettingsItemWithAlias($controller)) {
+      return $nav['controller'];
     }
 
     if ($this->config['air']['contexts'] ?? false) {
@@ -694,7 +587,8 @@ final class Front
               } else {
                 $args[$var] = new $className($value);
               }
-            } catch (Throwable) {
+            } catch (Throwable $ee) {
+              var_dump($ee);
               $args[$var] = $value;
             }
         }

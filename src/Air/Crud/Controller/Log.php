@@ -8,14 +8,17 @@ use Air\Crud\Controller\MultipleHelper\Accessor\Control;
 use Air\Crud\Controller\MultipleHelper\Accessor\Filter;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
+
 use Air\Crud\Locale;
 use Air\Type\FaIcon;
 
-/**
- * @mod-sorting {"createdAt": -1}
- */
 class Log extends Multiple
 {
+  protected function getTitle(): string
+  {
+    return Locale::t("Logs");
+  }
+
   public function getModelClassName(): string
   {
     return \Air\Crud\Model\Log::class;
@@ -41,20 +44,17 @@ class Log extends Multiple
   protected function getHeader(): array
   {
     return [
-      Header::source('Record', function (\Air\Crud\Model\Log $log) {
-        return div(content: [
-          div(class: 'mb-2 d-flex gap-2', content: [
-            Ui::badge($log->level, match ($log->level) {
-              \Air\Crud\Model\Log::INFO => Ui::PRIMARY,
-              \Air\Crud\Model\Log::ERROR => Ui::DANGER,
-              default => Ui::DARK
-            }),
-            Ui::badge(date('r', $log->createdAt), Ui::LIGHT),
-          ]),
-          div(class: 'mb-2', content: Ui::badge($log->title, Ui::DARK)),
-          pre(content: json_encode($log->data, JSON_PRETTY_PRINT))
-        ]);
-      })
+      Header::source('Level', function (\Air\Crud\Model\Log $log) {
+        return Ui::badge($log->level, match ($log->level) {
+          \Air\Crud\Model\Log::INFO => Ui::PRIMARY,
+          \Air\Crud\Model\Log::ERROR => Ui::DANGER,
+          default => Ui::DARK
+        });
+      }),
+      Header::source('Message', function (\Air\Crud\Model\Log $log) {
+        return Ui::badge($log->title, Ui::DARK);
+      }),
+      Header::createdAt(),
     ];
   }
 
@@ -68,16 +68,18 @@ class Log extends Multiple
   public function details(\Air\Crud\Model\Log $id): string
   {
     return Ui::card(content: [
-      div(class: 'mb-2 d-flex gap-2', content: [
-        Ui::badge($id->level, match ($id->level) {
-          \Air\Crud\Model\Log::INFO => Ui::PRIMARY,
-          \Air\Crud\Model\Log::ERROR => Ui::DANGER,
-          default => Ui::DARK
-        }),
-        Ui::badge(date('r', $id->createdAt), Ui::LIGHT),
+      div(class: 'd-flex mb-2 gap-2 justify-content-between', content: [
+        div(class: 'd-flex gap-2', content: [
+          Ui::badge($id->level, match ($id->level) {
+            \Air\Crud\Model\Log::INFO => Ui::PRIMARY,
+            \Air\Crud\Model\Log::ERROR => Ui::DANGER,
+            default => Ui::DARK
+          }),
+          Ui::badge($id->title, Ui::DARK)
+        ]),
+        Ui::badge(date('r', $id->createdAt), Ui::LIGHT)
       ]),
-      div(class: 'mb-2', content: Ui::badge($id->title, Ui::DARK)),
-      pre(attributes: ['style' => 'max-height: 76vh; margin: 0;'], content: json_encode($id->data, JSON_PRETTY_PRINT))
+      div(class: 'card bg-body p-3 mt-3', content: textarea(value: json_encode($id->data), data: ['json-viewer']))
     ]);
   }
 }

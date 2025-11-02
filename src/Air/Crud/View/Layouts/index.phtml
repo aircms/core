@@ -2,39 +2,43 @@
 
 use Air\Cookie;
 use Air\Core\Front;
+use Air\Crud\Model\Deepl;
+use Air\Crud\Model\DeepSeek;
+use Air\Crud\Model\GoogleTranslate;
+use Air\Crud\Nav;
 use Air\View\View;
+use Air\Crud\Locale;
 
 /** @var View $this */
-
-/** @var string $tiny */
-$tiny = Front::getInstance()->getConfig()['air']['admin']['tiny'];
-
-/** @var string $fonts */
-$fonts = Front::getInstance()->getConfig()['air']['admin']['fonts'];
-
-/** @var string $title */
-$title = Front::getInstance()->getConfig()['air']['admin']['title'];
-
-/** @var string $deepl */
-$deepl = Front::getInstance()->getConfig()['air']['admin']['deepl'] ?? '';
-
-/** @var string $googleTranslate */
-$googleTranslate = Front::getInstance()->getConfig()['air']['admin']['googleTranslate'] ?? '';
-
-/** @var string $deepSeek */
-$deepSeek = Front::getInstance()->getConfig()['air']['admin']['deepSeek'] ?? '';
 
 /** @var string $theme */
 $theme = Cookie::get('theme') ?? 'dark';
 
+/** @var string $tiny */
+$tiny = Front::getInstance()->getConfig()['air']['admin']['tiny'];
+
+/** @var string $title */
+$title = Front::getInstance()->getConfig()['air']['admin']['title'];
+
 /** @var string $favicon */
 $favicon = Front::getInstance()->getConfig()['air']['admin']['favicon'];
 
+$fonts = Nav::getSettingsItem(Nav::SETTINGS_FONTS);
+
+if (GoogleTranslate::singleOne()?->enabled) {
+  $googleTranslate = Nav::getSettingsItem(Nav::SETTINGS_GOOGLE_TRANSLATE);
+}
+
+if (Deepl::singleOne()?->enabled) {
+  $deepl = Nav::getSettingsItem(Nav::SETTINGS_DEEPL);
+}
+
+if (DeepSeek::singleOne()?->enabled) {
+  $deepSeek = Nav::getSettingsItem(Nav::SETTINGS_DEEPSEEK);
+}
+
 /** @var bool $isSelectControl */
 $isSelectControl = $this->isSelectControl ?? false;
-
-/** @var array $adminConfig */
-$adminConfig = Front::getInstance()->getConfig()['air']['admin'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -44,15 +48,14 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
   echo tag('link', attributes: ['rel' => 'icon', 'href' => $favicon]);
   echo tag('meta', attributes: ['charset' => 'UTF-8']);
   echo tag('meta', attributes: ['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0']);
-  echo tag('title', content: $adminConfig['title']);
+  echo tag('title', content: $title);
 
   echo $this->base();
   ?>
 
   <script>
-    window.fontsUrl = '<?php echo $fonts; ?>';
     const locale = (key) => {
-      const value = (<?php echo json_encode(\Air\Crud\Locale::phrases(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); ?>)[key];
+      const value = (<?php echo json_encode(Locale::phrases(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); ?>)[key];
       if (!value) {
         const ph = JSON.parse(localStorage.getItem('phrases')) || {};
         ph[key] = key;
@@ -60,9 +63,11 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
       }
       return value || key;
     };
-    window.deepl = '<?php echo $deepl; ?>';
-    window.googleTranslate = '<?php echo $googleTranslate; ?>';
-    window.deepSeek = '<?php echo $deepSeek; ?>';
+
+    window.fontsUrl = '<?php echo $fonts['alias'] ?? null; ?>';
+    window.deepl = '<?php echo $deepl['alias'] ?? null; ?>';
+    window.googleTranslate = '<?php echo $googleTranslate['alias'] ?? null; ?>';
+    window.deepSeek = '<?php echo $deepSeek['alias'] ?? null; ?>';
   </script>
 
   <?php echo $this->asset([
@@ -90,6 +95,9 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'vendor/jq-ui/jquery-ui.js',
 
     'vendor/wheelzoom.js',
+
+    'vendor/json-viewer/json-viewer.js',
+    'vendor/json-viewer/json-viewer.css',
 
     'css/blur.css',
     'css/max-lines.css',
@@ -144,6 +152,8 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/crud-elements/icon.js',
     'js/crud-elements/fa-icon.js',
     'js/crud-elements/url.js',
+    'js/crud-elements/magic.js',
+
     'js/text-countable.js',
 
     'js/deepl.js',
@@ -154,12 +164,11 @@ $adminConfig = Front::getInstance()->getConfig()['air']['admin'];
     'js/csv.js',
     'js/general.js',
 
-    '/' . $fonts . '/css',
-
-    'https://abodelot.github.io/jquery.json-viewer/json-viewer/jquery.json-viewer.js',
-    'https://abodelot.github.io/jquery.json-viewer/json-viewer/jquery.json-viewer.css'
-
-  ]); ?>
+  ]);
+  if ($fonts) {
+    $this->asset('/' . $fonts['alias'] . '/css');
+  }
+  ?>
 </head>
 <body data-mdb-theme="<?php echo $theme; ?>" class="overflow-hidden">
 <main class="vh-100 vw-100 d-flex">

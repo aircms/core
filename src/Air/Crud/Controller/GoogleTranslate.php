@@ -6,6 +6,7 @@ namespace Air\Crud\Controller;
 
 use Air\Core\Front;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -30,7 +31,7 @@ class GoogleTranslate extends Single
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['googleTranslate'];
+    return Nav::getSettingsItem(Nav::SETTINGS_GOOGLE_TRANSLATE)['alias'];
   }
 
   /**
@@ -40,7 +41,7 @@ class GoogleTranslate extends Single
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
-      Input::text('key'),
+      Input::text('key', allowNull: true),
     ]);
   }
 
@@ -50,6 +51,10 @@ class GoogleTranslate extends Single
       'id' => $this->getParam('language')
     ]);
 
-    return ['translation' => \Air\ThirdParty\GoogleTranslate::instance()->translate([$this->getParam('phrase')], $language)[0]];
+    return [
+      'translation' =>
+        \Air\ThirdParty\GoogleTranslate::instance()
+          ->translate([$this->getParam('phrase')], $language)[0]
+    ];
   }
 }

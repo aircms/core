@@ -379,5 +379,10 @@ table.csv {
 .json-viewer {
   margin: 0 !important;
   padding: 0 !important;
-  height: 500px;
+  max-height: 75dvh;
+}
+
+[data-admin-form-tiny-preview] ul,
+[data-admin-form-tiny-preview] ol {
+  padding-left: 20px !important;
 }

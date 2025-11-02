@@ -8,9 +8,7 @@ use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Filter;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
-use Air\Form\Form;
-use Air\Form\Generator;
-use Air\Form\Input;
+use Air\Crud\Nav;
 use Air\Model\ModelAbstract;
 use Air\Type\FaIcon;
 
@@ -69,7 +67,7 @@ class Phrase extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['phrases'];
+    return Nav::getSettingsItem(Nav::SETTINGS_PHRASES)['alias'];
   }
 
   protected function getForm($model = null): null

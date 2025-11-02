@@ -8,7 +8,13 @@ $element = $this->element;
 if (!$element->hasError()) {
   return;
 }
+
+try {
+  $errors = implode('<br />', $element->getErrorMessages());
+} catch (Throwable) {
+  $errors = null;
+}
 ?>
 <div class="text-danger-emphasis small mt-2">
-  <?php echo implode('<br />', $element->getErrorMessages()); ?>
+  <?php echo $errors; ?>
 </div>

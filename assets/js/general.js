@@ -8,3 +8,10 @@ $(document).ready(() => {
     }
   });
 });
+
+const getController = () => {
+  try {
+    return location.pathname.split('/').filter((i) => !!i)[0];
+  } catch {
+  }
+}

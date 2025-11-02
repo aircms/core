@@ -37,9 +37,10 @@ $(document).ready(() => {
   const listContainerOpen = '<ul style="z-index: 2000" class="dropdown-menu shadow-5-strong overflow-hidden" data-admin-contextmenu-target="{id}">';
   const listContainerClose = '</ul>';
 
-  const listButtonGoogleTranslate = `<li><a class="dropdown-item" role="button" data-accessory-google-translate="{id}"><i class="fas fa-language me-2"></i>Google translate</a></li>`;
-  const listButtonDeepl = `<li><a class="dropdown-item" role="button" data-accessory-deepl="{id}"><i class="fas fa-language me-2"></i>Deepl</a></li>`;
-  const listButtonDeepSeek = `<li><a class="dropdown-item" role="button" data-accessory-deep-seek="{id}"><i class="fas fa-robot me-2"></i>Deep seek</a></li>`;
+  const listButtonTranslateGoogle = `<li><a class="dropdown-item" role="button" data-accessory-translate-google="{id}"><i class="fas fa-language me-2"></i>Translate Google</a></li>`;
+  const listButtonTranslateDeepl = `<li><a class="dropdown-item" role="button" data-accessory-translate-deepl="{id}"><i class="fas fa-language me-2"></i>Translate Deepl</a></li>`;
+  const listButtonTranslateDeepSeek = `<li><a class="dropdown-item" role="button" data-accessory-translate-deep-seek="{id}"><i class="fas fa-robot me-2"></i>Translate Deep seek</a></li>`;
+  const listButtonHelpDeepSeek = `<li><a class="dropdown-item" role="button" data-accessory-help-deep-seek="{id}"><i class="fas fa-robot me-2"></i>Help Deep seek</a></li>`;
 
   const appendAccessory = (container) => {
     if ((!window.googleTranslate && !window.deepl && !window.deepSeek) || $(container).data('target-accessory-id')) {
@@ -51,13 +52,14 @@ $(document).ready(() => {
     let contextMenu = listContainerOpen.replaceAll('{id}', contextmenuId);
 
     if (window.googleTranslate) {
-      contextMenu += listButtonGoogleTranslate.replaceAll('{id}', contextmenuId);
+      contextMenu += listButtonTranslateGoogle.replaceAll('{id}', contextmenuId);
     }
     if (window.deepl) {
-      contextMenu += listButtonDeepl.replaceAll('{id}', contextmenuId);
+      contextMenu += listButtonTranslateDeepl.replaceAll('{id}', contextmenuId);
     }
     if (window.deepSeek) {
-      contextMenu += listButtonDeepSeek.replaceAll('{id}', contextmenuId);
+      contextMenu += listButtonTranslateDeepSeek.replaceAll('{id}', contextmenuId);
+      contextMenu += listButtonHelpDeepSeek.replaceAll('{id}', contextmenuId);
     }
     contextMenu += listContainerClose;
     $(container).append(contextMenu);

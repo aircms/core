@@ -13,6 +13,7 @@ use Air\Model\ModelAbstract;
  *
  * @property string $key
  * @property string $model
+ * @property boolean $enabled
  */
 class OpenAi extends ModelAbstract
 {

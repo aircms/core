@@ -7,6 +7,7 @@ namespace Air\Crud\Controller\MultipleHelper;
 use Air\Core\Front;
 use Air\Crud\Auth;
 use Air\Crud\Model\History;
+use Air\Crud\Nav;
 
 trait AdminLog
 {
@@ -18,7 +19,7 @@ trait AdminLog
     array  $became = []
   ): void
   {
-    if (Front::getInstance()->getConfig()['air']['admin']['history'] ?? false) {
+    if (Nav::getSettingsItem(Nav::SETTINGS_ADMINISTRATORS_HISTORY) ?? false) {
       if ($this instanceof \Air\Crud\Controller\History) {
         return;
       }

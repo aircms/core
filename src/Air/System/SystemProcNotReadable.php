@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Air\Core\Exception;
+namespace Air\System;
 
 use Exception;
 

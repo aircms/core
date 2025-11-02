@@ -7,6 +7,7 @@ namespace Air\Crud\Controller;
 use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Form\Form;
 use Air\Form\Generator;
 use Air\Form\Input;
@@ -42,7 +43,7 @@ class Font extends Multiple
 
   protected function getEntity(): string
   {
-    return Front::getInstance()->getConfig()['air']['admin']['fonts'];
+    return Nav::getSettingsItem(Nav::SETTINGS_FONTS)['alias'];
   }
 
   protected function getForm($model = null): Form

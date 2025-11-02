@@ -12,6 +12,7 @@ use Air\Model\ModelAbstract;
  * @property string $id
  *
  * @property string $key
+ * @property boolean $enabled
  */
 class GoogleTranslate extends ModelAbstract
 {

@@ -16,6 +16,7 @@ use Air\Crud\Controller\MultipleHelper\Position;
 use Air\Crud\Controller\MultipleHelper\Printable;
 use Air\Crud\Controller\MultipleHelper\Select;
 use Air\Crud\Controller\MultipleHelper\Settings;
+use Air\Crud\Controller\MultipleHelper\Magic;
 use Air\Crud\Controller\MultipleHelper\Table;
 use Air\Crud\Controller\MultipleHelper\View;
 use Air\Model\ModelAbstract;
@@ -37,6 +38,7 @@ abstract class Multiple extends AuthCrud
   use Select;
   use View;
   use Printable;
+  use Magic;
 
   public function init(): void
   {
