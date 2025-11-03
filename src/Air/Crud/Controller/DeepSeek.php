@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Throwable;
 use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 use Air\Crud\Locale;
 use Air\Crud\Nav;
@@ -40,16 +41,20 @@ class DeepSeek extends Single
    */
   protected function getFormBlock(ModelAbstract $model): ?string
   {
-    $deepSeek = new \Air\ThirdParty\DeepSeek();
-    $balance = $deepSeek->balance();
+    try {
+      $deepSeek = new \Air\ThirdParty\DeepSeek();
+      $balance = $deepSeek->balance();
 
-    return div(content: [
-      match ($balance['isAvailable']) {
-        true => Ui::badge(Locale::t('Available'), Ui::SUCCESS),
-        false => Ui::badge(Locale::t('Not available'), Ui::DANGER),
-      },
-      Ui::badge($balance['balance'], Ui::LIGHT),
-    ]);
+      return div(content: [
+        match ($balance['isAvailable']) {
+          true => Ui::badge(Locale::t('Available'), Ui::SUCCESS),
+          false => Ui::badge(Locale::t('Not available'), Ui::DANGER),
+        },
+        Ui::badge($balance['balance'], Ui::LIGHT),
+      ]);
+    } catch (Throwable) {
+      return div(class: 'small text-muted', content: Locale::t('Balance is not available'));
+    }
   }
 
   /**

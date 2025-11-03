@@ -10,9 +10,9 @@ class Route
 {
   public static function r(
     ?string $context = null,
-    ?string $controller = '',
-    ?string $action = '',
-    ?array  $params = []
+    ?string $controller = null,
+    ?string $action = null,
+    ?array  $params = null
   ): array
   {
     $route = [];

@@ -285,8 +285,8 @@ class Nav
   }
 
   public static function item(
-    string  $icon,
     string  $title,
+    string  $icon = FaIcon::ICON_COGS,
     ?string $controller = null,
     ?array  $items = null,
     ?string $action = null,

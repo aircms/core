@@ -75,4 +75,15 @@ class RichContent extends TypeAbstract
       'value' => $value
     ];
   }
+
+  public static function getAllTypes(): array
+  {
+    return [
+      self::TYPE_FILE,
+      self::TYPE_FILES,
+      self::TYPE_TEXT,
+      self::TYPE_HTML,
+      self::TYPE_EMBED
+    ];
+  }
 }
