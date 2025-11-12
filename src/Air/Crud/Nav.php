@@ -187,7 +187,7 @@ class Nav
       return self::$settingsMenuItems;
     }
 
-    $settings = Front::getInstance()->getConfig()['air']['admin']['settings'];
+    $settings = Front::getInstance()->getConfig()['air']['admin']['settings'] ?? [];
     self::$settingsMenuItems = [];
 
     foreach ($settings as $settingGroup) {

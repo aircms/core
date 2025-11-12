@@ -29,16 +29,16 @@ class Filter
 
   public static function filter(
     string       $type,
-    string|array $by = null,
+    string|array $by,
     mixed        $value = null,
-    string       $title = null,
-    string       $true = null,
-    string       $false = null,
-    string       $field = null,
-    string       $model = null,
-    string       $parent = null,
+    ?string      $title = null,
+    ?string      $true = null,
+    ?string      $false = null,
+    ?string      $field = null,
+    ?string      $model = null,
+    ?string      $parent = null,
     ?Closure     $source = null,
-    array        $options = null,
+    ?array       $options = null,
   ): array
   {
     if (!$title && is_string($by)) {
@@ -65,12 +65,12 @@ class Filter
     ];
   }
 
-  public static function dateTime(string $by, string $value = null): array
+  public static function dateTime(string $by, ?string $value = null): array
   {
     return self::filter(self::DATETIME, $by, $value);
   }
 
-  public static function date(string $by, string $value = null): array
+  public static function date(string $by, ?string $value = null): array
   {
     return self::filter(self::DATE, $by, $value);
   }
@@ -80,25 +80,25 @@ class Filter
     return self::bool('Enabled', 'enabled', 'Enabled', 'Disabled', 'true');
   }
 
-  public static function createdAt(string $value = null): array
+  public static function createdAt(?string $value = null): array
   {
     return self::dateTime('createdAt', $value);
   }
 
-  public static function updatedAt(string $value = null): array
+  public static function updatedAt(?string $value = null): array
   {
     return self::dateTime('updatedAt', $value);
   }
 
   public static function search(
     array|string $by = ['search', 'id', 'title', 'subTitle', 'description'],
-    string       $value = null
+    ?string       $value = null
   ): array
   {
     return self::filter(self::SEARCH, $by, $value);
   }
 
-  public static function bool(string $title, string $by, string $true, string $false, string $value = null): array
+  public static function bool(string $title, string $by, string $true, string $false, ?string $value = null): array
   {
     return self::filter(self::BOOL, $by, $value, $title, $true, $false);
   }
@@ -125,14 +125,14 @@ class Filter
     return self::filter(self::MODEL, $by, $value, $title, field: $field, model: $model, source: $source, parent: $parent);
   }
 
-  public static function language(string $value = null): array
+  public static function language(?string $value = null): array
   {
     return self::model(Language::class, 'Language', 'language', value: $value);
   }
 
   public static function enum(
     string $by,
-    string $title = null,
+    ?string $title = null,
     mixed  $value = null,
   ): array
   {
@@ -161,10 +161,10 @@ class Filter
   }
 
   public static function select(
-    string $title = null,
-    string $by = null,
+    ?string $title = null,
+    ?string $by = null,
     mixed  $value = null,
-    array  $options = []
+    ?array  $options = []
   ): array
   {
     $_options = [];

@@ -12,11 +12,11 @@ use Air\Crud\Nav;
 trait AdminLog
 {
   protected function adminLog(
-    string $type,
-    array  $entity = [],
-    string $section = null,
-    array  $was = [],
-    array  $became = []
+    string  $type,
+    ?array  $entity = [],
+    ?string $section = null,
+    ?array  $was = [],
+    ?array  $became = []
   ): void
   {
     if (Nav::getSettingsItem(Nav::SETTINGS_ADMINISTRATORS_HISTORY) ?? false) {

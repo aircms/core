@@ -37,8 +37,8 @@ class Header
   }
 
   public static function getTitleBasedOnModelOrPropertyName(
-    string $by = null,
-    string $model = null,
+    ?string $by = null,
+    ?string $model = null,
   ): ?string
   {
     if (!$model && !$by) {
@@ -114,6 +114,15 @@ class Header
     return ['type' => self::SOURCE, 'title' => Locale::t($title), 'source' => $source];
   }
 
+  public static function color(?string $by = 'color', ?string $title = 'Color'): array
+  {
+    return self::source($title, function (ModelAbstract $modelAbstract) use ($by) {
+      return div(class: 'color-preview', attributes: [
+        'style' => 'background-color: ' . $modelAbstract->{$by}
+      ]);
+    });
+  }
+
   public static function badge(string $by, ?string $style = Ui::PRIMARY): array
   {
     return self::source(self::getTitleBasedOnModelOrPropertyName($by), function (ModelAbstract $model) use ($by, $style) {
@@ -121,22 +130,22 @@ class Header
     });
   }
 
-  public static function text(string $title = null, string $by = null, string $size = null): array
+  public static function text(?string $title = null, ?string $by = null, ?string $size = null): array
   {
     return self::col(self::TEXT, $title, $by, $size);
   }
 
-  public static function title(string $size = self::XL): array
+  public static function title(?string $size = self::XL): array
   {
     return self::text(by: 'title', size: $size);
   }
 
-  public static function longtext(string $title = null, string $by = null, string $size = self::LG): array
+  public static function longtext(?string $title = null, ?string $by = null, ?string $size = self::LG): array
   {
     return self::col(self::LONGTEXT, $title, $by, $size);
   }
 
-  public static function bool(string $title = null, string $by = null): array
+  public static function bool(?string $title = null, ?string $by = null): array
   {
     return self::col(self::BOOL, $title, $by, self::SM);
   }
@@ -146,12 +155,12 @@ class Header
     return self::bool(by: 'enabled');
   }
 
-  public static function dateTime(string $title = null, string $by = null): array
+  public static function dateTime(?string $title = null, ?string $by = null): array
   {
     return self::col(self::DATETIME, $title, $by);
   }
 
-  public static function date(string $title = null, string $by = null): array
+  public static function date(?string $title = null, ?string $by = null): array
   {
     return self::col(self::DATE, $title ?? 'Date', $by);
   }
@@ -167,11 +176,11 @@ class Header
   }
 
   public static function model(
-    string $model = null,
-    string $title = null,
-    string $by = null,
-    string $field = null,
-    string $size = self::SM
+    ?string $model = null,
+    ?string $title = null,
+    ?string $by = null,
+    ?string $field = null,
+    ?string $size = self::SM
   ): array
   {
     return self::col(self::MODEL, $title, $by, $size, $model, $field);

@@ -34,23 +34,23 @@ use Air\Model\ModelAbstract;
 
 final class Generator
 {
-  public static function minimal(ModelAbstract $model = null, array $elements = []): Form
+  public static function minimal(?ModelAbstract $model = null, array $elements = []): Form
   {
     return new Form(['data' => $model], self::defaultElement($model, $elements));
   }
 
-  public static function full(ModelAbstract $model = null, array $elements = []): Form
+  public static function full(?ModelAbstract $model = null, array $elements = []): Form
   {
     return new Form(['data' => $model], self::defaultElement($model, $elements, true));
   }
 
-  public static function fullRequired(ModelAbstract $model, array $elements = []): Form
+  public static function fullRequired(?ModelAbstract $model, array $elements = []): Form
   {
     return new Form(['data' => $model], self::defaultElement($model, $elements, true, false));
   }
 
   public static function defaultElement(
-    ModelAbstract $model = null,
+    ?ModelAbstract $model = null,
     array         $userElements = [],
     ?bool         $includeReferences = false,
     bool          $allowNull = true
@@ -198,7 +198,7 @@ final class Generator
   private static function addElement(
     string          $name,
     ModelAbstract   $model,
-    ElementAbstract $userElement = null,
+    ?ElementAbstract $userElement = null,
   ): ?ElementAbstract
   {
     $hasProperty = $model->getMeta()->hasProperty($name);

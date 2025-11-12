@@ -175,7 +175,7 @@ trait Manage
     $this->getView()->setScript('form/index');
   }
 
-  public function manage(string $id = null)
+  public function manage(?string $id = null)
   {
     /** @var ModelAbstract $modelClassName */
     $modelClassName = $this->getModelClassName();

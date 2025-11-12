@@ -6,21 +6,43 @@ namespace Air;
 
 use Air\Crud\Nav;
 use Air\Type\RichContent;
+use Throwable;
 
 class Config
 {
   public static function defaults(
     ?string $title = 'AirCms',
     ?array  $settings = null,
-    ?array  $extensions = null,
+    ?array  $extensions = [],
     ?array  $nav = null,
     ?array  $routes = null,
     ?bool   $reportErrors = false,
+    ?array  $richContent = null,
   ): array
   {
     $appEntryPoint = realpath(dirname($_SERVER['SCRIPT_FILENAME'], 2));
-    $routes = $routes ?: require_once $appEntryPoint . '/config/routes.php';
+    $routes = $routes ?: (is_file($appEntryPoint . '/config/routes.php') ? require_once $appEntryPoint . '/config/routes.php' : []);
     $nav = $nav ?: require_once $appEntryPoint . '/config/nav.php';
+
+    $contextAvailable = false;
+
+    try {
+      foreach (glob($appEntryPoint . '/app/Context/*') as $folder) {
+        $contextAvailable = true;
+        $folder = realpath($folder);
+
+        if (is_dir($folder)) {
+          if (is_file($folder . '/Routes.php')) {
+            $routes = array_merge($routes, require_once $folder . '/Routes.php');
+          }
+          if (is_file($folder . '/Config.php')) {
+            $extensions[lcfirst(basename($folder))] = require_once $folder . '/Config.php';
+          }
+        }
+      }
+    } catch (Throwable) {
+      $contextAvailable = false;
+    }
 
     return array_replace_recursive(
       [
@@ -64,7 +86,7 @@ class Config
             'favicon' => '/assets/ui/images/favicon.png',
             'notAllowed' => '_notAllowed',
             'settings' => $settings ?: Nav::getAllSettings(),
-            'rich-content' => RichContent::getAllTypes(),
+            'rich-content' => $richContent ?: RichContent::getAllTypes(),
             'auth' => [
               'route' => '_auth',
               'source' => 'database',
@@ -96,6 +118,7 @@ class Config
             'routes' => $routes,
             'air' => [
               'strictInject' => true,
+              'contexts' => $contextAvailable ? '\\App\\Context' : null
             ],
           ],
           '*' => [
