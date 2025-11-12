@@ -184,4 +184,9 @@ abstract class TypeAbstract
     }
     return $array;
   }
+
+  public function __toString(): string
+  {
+    return implode(', ', $this->toArray());
+  }
 }

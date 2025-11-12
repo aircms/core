@@ -18,6 +18,7 @@ class Config
     ?array  $routes = null,
     ?bool   $reportErrors = false,
     ?array  $richContent = null,
+    ?string $timezone = "Europe/Kyiv",
   ): array
   {
     $appEntryPoint = realpath(dirname($_SERVER['SCRIPT_FILENAME'], 2));
@@ -54,7 +55,7 @@ class Config
           ],
           'startup' => [
             'error_reporting' => $reportErrors ? E_ALL : 0,
-            'date_default_timezone_set' => 'Europe/Kyiv',
+            'date_default_timezone_set' => $timezone,
           ],
           'loader' => [
             'namespace' => 'App',
@@ -82,8 +83,8 @@ class Config
           'fontsUi' => 'fontsUi',
           'admin' => [
             'title' => $title,
-            'logo' => '/assets/ui/images/favicon.png',
-            'favicon' => '/assets/ui/images/favicon.png',
+            'logo' => '/assets/air/logo.png',
+            'favicon' => '/assets/air/logo.png',
             'notAllowed' => '_notAllowed',
             'settings' => $settings ?: Nav::getAllSettings(),
             'rich-content' => $richContent ?: RichContent::getAllTypes(),

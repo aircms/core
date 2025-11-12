@@ -9,9 +9,9 @@ class HeaderButton
   public static function item(
     array|string $url = [],
     array        $params = [],
-    string       $icon = null,
-    string       $style = null,
-    string       $title = null,
+    ?string      $icon = null,
+    ?string      $style = null,
+    ?string      $title = null,
     string|false $confirm = false,
     bool         $force = false
   ): array

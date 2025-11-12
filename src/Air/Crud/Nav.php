@@ -173,7 +173,7 @@ class Nav
       'title' => 'SMS / Queue'
     ],
     self::SETTINGS_FAICON => [
-      'controller' => \Air\Crud\Controller\FaIcon::class,
+      'controller' => Controller\FaIcon::class,
       'icon' => FaIcon::ICON_ICONS,
       'title' => 'Font awesome icons'
     ],

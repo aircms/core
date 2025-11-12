@@ -222,7 +222,7 @@ class Ui
           content: [
             h5(class: 'm-0 p-0', content: [
               $icon ? faIcon($icon, class: 'me-2') : null,
-              self::content($title),
+              render(content($title)),
             ]),
             div(
               class: 'd-flex align-items-center gap-2',
@@ -245,7 +245,7 @@ class Ui
             $collClass = 'col-6';
             yield col($collClass . ' small', render(content($key)));
           }
-          yield col($collClass, render(content((string)$value)));
+          yield col($collClass, render(content($value)));
         }
       }
     );

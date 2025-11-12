@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
-use Air\Core\Front;
 use Air\Crud\Controller\MultipleHelper\Accessor\Control;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
 use Air\Crud\Controller\MultipleHelper\Accessor\HeaderButton;
@@ -41,7 +40,7 @@ class SmsQueue extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_SMS_QUEUE)['alias'];
   }
 
-  public function manage(string $id = null): void
+  public function manage(?string $id = null): void
   {
     $sms = \Air\Crud\Model\SmsQueue::fetchOne(['id' => $id]);
 
