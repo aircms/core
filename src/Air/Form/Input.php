@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Air\Form;
 
 use Air\Crud\Locale;
+use Air\Filter\Email;
+use Air\Filter\HtmlSpecialChars;
+use Air\Filter\Phone;
+use Air\Filter\Trim;
 use Air\Form\Element\Checkbox;
 use Air\Form\Element\Date;
 use Air\Form\Element\DateTime;
@@ -67,6 +71,9 @@ use Air\Form\Element\Url;
  * @method static Textarea textarea(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  * @method static Tiny tiny(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  * @method static TreeModel treeModel(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
+ * @method static Text phone(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
+ * @method static Text email(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
+ * @method static Text safe(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  */
 final class Input
 {
@@ -75,6 +82,38 @@ final class Input
     if ($name === 'number') {
       $name = 'text';
       $arguments['type'] = 'number';
+    }
+
+    if ($name === 'safe') {
+      $name = 'text';
+      $arguments['filters'] = [
+        ...$arguments['filters'] ?? [],
+        ...[Trim::class, HtmlSpecialChars::class]
+      ];
+    }
+
+    if ($name === 'phone') {
+      $name = 'text';
+      $arguments['filters'] = [
+        ...$arguments['filters'] ?? [],
+        ...[Phone::class]
+      ];
+      $arguments['validators'] = [
+        ...$arguments['validators'] ?? [],
+        ...[\Air\Validator\Phone::class]
+      ];
+    }
+
+    if ($name === 'email') {
+      $name = 'text';
+      $arguments['filters'] = [
+        ...$arguments['filters'] ?? [],
+        ...[Email::class]
+      ];
+      $arguments['validators'] = [
+        ...$arguments['validators'] ?? [],
+        ...[\Air\Validator\Email::class]
+      ];
     }
 
     $inputClassName = 'Air\Form\Element\\' . ucfirst($name);
