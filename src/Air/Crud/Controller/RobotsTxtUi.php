@@ -10,7 +10,7 @@ class RobotsTxtUi extends Controller
 {
   public function index(): string
   {
-    $this->getResponse()->setHeader('Content-Type', 'text/plain');
+    $this->getResponse()->setHeader('Content-type', 'text/plain');
     return \Air\Crud\Model\RobotsTxt::one()->description;
   }
 }
