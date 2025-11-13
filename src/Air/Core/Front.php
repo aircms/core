@@ -8,6 +8,7 @@ use Air\Core\Exception\ActionMethodIsReserved;
 use Air\Core\Exception\ActionMethodWasNotFound;
 use Air\Core\Exception\ControllerClassWasNotFound;
 use Air\Core\Exception\Stop;
+use Air\Crud\Controller\RobotsTxtUi;
 use Air\Crud\Nav;
 use Air\Model\ModelAbstract;
 use Air\View\View;
@@ -394,6 +395,10 @@ final class Front
 
     if ($nav = Nav::getSettingsItemWithAlias($controller)) {
       return $nav['controller'];
+    }
+
+    if ($controller === 'robots.txt') {
+      return RobotsTxtUi::class;
     }
 
     if ($this->config['air']['contexts'] ?? false) {
