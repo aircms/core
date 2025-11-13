@@ -4,10 +4,14 @@ class Tiny {
 
   static ready(cb) {
     if (!Tiny.isReady) {
-      $.get('/' + window.fontsUrl + '/fonts', (fonts) => {
-        Tiny.fonts = fonts;
+      if (window.fontsUrl) {
+        $.get('/' + window.fontsUrl + '/fonts', (fonts) => {
+          Tiny.fonts = fonts;
+          cb && cb();
+        });
+      } else {
         cb && cb();
-      });
+      }
     } else {
       cb && cb();
     }
