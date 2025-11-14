@@ -390,7 +390,7 @@ class Router
       throw new RouterWasNotFound($uri);
     }
 
-    if ($parts[0] === 'fonts' && $parts[1] === 'css') {
+    if (($parts[0] ?? false) === 'fonts' && ($parts[1] ?? false) === 'css') {
       $this->controller = 'fonts';
       $this->action = 'index';
 
