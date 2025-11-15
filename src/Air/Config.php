@@ -14,16 +14,24 @@ class Config
     ?string $title = 'AirCms',
     ?array  $settings = null,
     ?array  $extensions = [],
-    ?array  $nav = null,
-    ?array  $routes = null,
-    ?bool   $reportErrors = false,
+    array   $nav = [],
+    array   $routes = [],
+    bool    $strictRoutes = true,
+    bool    $reportErrors = false,
     ?array  $richContent = null,
-    ?string $timezone = "Europe/Kyiv",
+    string  $timezone = "Europe/Kyiv",
+    bool    $single = false,
   ): array
   {
     $appEntryPoint = realpath(dirname($_SERVER['SCRIPT_FILENAME'], 2));
-    $routes = $routes ?: (is_file($appEntryPoint . '/config/routes.php') ? require_once $appEntryPoint . '/config/routes.php' : []);
-    $nav = $nav ?: require_once $appEntryPoint . '/config/nav.php';
+
+    if (!$routes && is_file($appEntryPoint . '/config/routes.php')) {
+      $routes = require_once $appEntryPoint . '/config/routes.php';
+    }
+
+    if (!$nav && is_file($appEntryPoint . '/config/nav.php')) {
+      $nav = require_once $appEntryPoint . '/config/nav.php';
+    }
 
     $contextAvailable = false;
 
@@ -45,10 +53,52 @@ class Config
       $contextAvailable = false;
     }
 
+    $router = [];
+    $modules = [];
+
+    if (!$single) {
+      $modules['modules'] = '\\App\\Module';
+      $router = [
+        'cli' => [
+          'module' => 'cli'
+        ],
+        'admin.*' => [
+          'module' => 'admin',
+          'air' => [
+            'asset' => [
+              'underscore' => false,
+              'prefix' => '/assets/air',
+            ],
+          ],
+        ],
+        'api.*' => [
+          'strict' => $strictRoutes,
+          'module' => 'api',
+          'routes' => $routes,
+          'air' => [
+            'strictInject' => true,
+            'contexts' => $contextAvailable ? '\\App\\Context' : null
+          ],
+        ],
+        '*' => [
+          'strict' => $strictRoutes,
+          'module' => 'ui',
+          'routes' => $routes,
+          'air' => [
+            'strictInject' => true,
+            'asset' => [
+              'underscore' => false,
+              'prefix' => '/assets/ui',
+            ],
+          ],
+        ]
+      ];
+    }
+
     return array_replace_recursive(
       [
         'air' => [
-          'modules' => '\\App\\Module',
+          ...$modules,
           'exception' => $reportErrors,
           'phpIni' => [
             'display_errors' => $reportErrors ? '1' : '0',
@@ -100,41 +150,7 @@ class Config
             'menu' => $nav,
           ],
         ],
-        'router' => [
-          'cli' => [
-            'module' => 'cli',
-          ],
-          'admin.*' => [
-            'module' => 'admin',
-            'air' => [
-              'asset' => [
-                'underscore' => false,
-                'prefix' => '/assets/air',
-              ],
-            ]
-          ],
-          'api.*' => [
-            'strict' => true,
-            'module' => 'api',
-            'routes' => $routes,
-            'air' => [
-              'strictInject' => true,
-              'contexts' => $contextAvailable ? '\\App\\Context' : null
-            ],
-          ],
-          '*' => [
-            'strict' => true,
-            'module' => 'ui',
-            'routes' => $routes,
-            'air' => [
-              'strictInject' => true,
-              'asset' => [
-                'underscore' => false,
-                'prefix' => '/assets/ui',
-              ],
-            ],
-          ],
-        ],
+        ...$router
       ],
       $extensions ?: []
     );
