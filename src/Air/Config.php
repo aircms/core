@@ -58,7 +58,7 @@ class Config
 
     if (!$single) {
       $modules['modules'] = '\\App\\Module';
-      $router = [
+      $router['router'] = [
         'cli' => [
           'module' => 'cli'
         ],
