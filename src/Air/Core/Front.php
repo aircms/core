@@ -592,8 +592,7 @@ final class Front
               } else {
                 $args[$var] = new $className($value);
               }
-            } catch (Throwable $ee) {
-              var_dump($ee);
+            } catch (Throwable) {
               $args[$var] = $value;
             }
         }

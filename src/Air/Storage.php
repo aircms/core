@@ -45,11 +45,7 @@ class Storage
 
   public static function deleteFolder(string $path): bool
   {
-     $r = self::action('deleteFolder', ['path' => $path]);
-
-     var_dump( $r); die();
-
-    $r->isOk();
+     return self::action('deleteFolder', ['path' => $path])->isOk();
   }
 
   public static function uploadByUrl(string $path, string $url, bool $sharding = false): File

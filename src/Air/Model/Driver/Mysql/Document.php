@@ -217,11 +217,6 @@ class Document extends DocumentAbstract
       return $toArray ? $instance->toRaw() : $instance;
     }
 
-
-    var_dump($property, $value, $isSet, $toArray);
-
-    die();
-
     throw new PropertyHasDifferentType(
       $this->getModel()->getMeta()->getCollection(),
       $property->getName(),

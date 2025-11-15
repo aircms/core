@@ -7,6 +7,7 @@ namespace Air\Form\Element;
 use Air\Core\Front;
 use Air\Crud\Locale;
 use Air\Crud\Nav;
+use Throwable;
 
 class Permissions extends ElementAbstract
 {
@@ -69,8 +70,7 @@ class Permissions extends ElementAbstract
       foreach ($groups['items'] as $permission) {
         try {
           $permissions[md5(serialize($permission['url']))] = $permission['url'];
-        } catch (\Throwable) {
-          var_dump($permission);
+        } catch (Throwable) {
           die();
         }
       }
