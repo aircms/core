@@ -47,7 +47,7 @@ echo $this->partial('common/header');
           <input type="hidden" value="1" name="isQuickManage"/>
         <?php endif; ?>
         <div data-admin-tab>
-          <div class="d-flex justify-content-between">
+          <div class="d-flex <?php if (count($groupedElements) > 1) : ?>justify-content-between<?php else: ?>justify-content-end p-3<?php endif; ?>">
             <div class="<?php if (count($groupedElements) === 1) : ?>d-none<?php else: ?>d-flex mb-2<?php endif; ?>"
                  data-admin-tab-nav>
               <?php foreach ($groupedElements as $title => $group) : ?>
