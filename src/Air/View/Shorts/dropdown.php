@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 function dropdown(
-  string|array         $containerClass = [],
-  string|array         $containerAttributes = [],
-  string|array         $containerData = [],
-  string|array         $buttonClass = [],
-  string|array         $buttonData = [],
-  string|array         $buttonAttributes = [],
-  string|array         $boxClass = [],
-  Closure|array|string $button = null,
-  Closure|array|string $box = null,
+  string|array              $containerClass = [],
+  string|array              $containerAttributes = [],
+  string|array              $containerData = [],
+  string|array              $buttonClass = [],
+  string|array              $buttonData = [],
+  string|array              $buttonAttributes = [],
+  string|array              $boxClass = [],
+  Closure|array|string|null $button = null,
+  Closure|array|string|null $box = null,
 ): string
 {
   $containerClass = (array)$containerClass;

@@ -59,9 +59,9 @@ class DeepSeek extends Single
 
   /**
    * @param \Air\Crud\Model\DeepSeek $model
-   * @return Form|null
+   * @return Form
    */
-  protected function getForm($model = null): ?Form
+  protected function getForm($model = null): Form
   {
     return Generator::full($model, [
       Input::text('key', allowNull: true),

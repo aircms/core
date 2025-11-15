@@ -5,7 +5,7 @@ declare(strict_types=1);
 function swiper(
   mixed                     $slides,
   Closure                   $renderer,
-  string                    $dataId = null,
+  ?string                   $dataId = null,
   Closure|string|array|null $additionalContent = null,
   ?string                   $mainClass = null,
   ?string                   $slideClass = null,
@@ -68,7 +68,7 @@ function swiper(
 
 function swiperStatic(
   array                     $slides,
-  string                    $dataId = null,
+  ?string                   $dataId = null,
   Closure|string|array|null $additionalContent = null,
   ?string                   $mainClass = null,
   ?string                   $slideClass = null,

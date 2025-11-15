@@ -32,7 +32,11 @@ class Billing extends Single
     return Nav::getSettingsItem(Nav::SETTINGS_BILLING)['alias'];
   }
 
-  protected function getForm($model = null): ?Form
+  /**
+   * @param \Air\Crud\Model\Billing $model
+   * @return Form
+   */
+  protected function getForm($model = null): Form
   {
     return new Form(['data' => $model], [
       'LiqPay' => [

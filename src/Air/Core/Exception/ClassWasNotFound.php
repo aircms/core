@@ -8,7 +8,7 @@ use Exception;
 
 class ClassWasNotFound extends Exception
 {
-  public function __construct(string $className = null)
+  public function __construct(?string $className = null)
   {
     parent::__construct($className, 404);
   }

@@ -142,11 +142,11 @@ function tag(
 }
 
 function div(
-  string|array                        $class = null,
+  string|array|null                   $class = null,
   Closure|string|array|null|Generator $content = null,
-  array|string                        $attributes = null,
-  array|string                        $data = null,
-  File|string                         $bgImage = null
+  array|string|null                   $attributes = null,
+  array|string|null                   $data = null,
+  File|string|null                    $bgImage = null
 ): string
 {
   return tag(
@@ -161,9 +161,9 @@ function div(
 
 function pre(
   Closure|string|array|null $content = null,
-  string|array              $class = null,
-  array|string              $attributes = null,
-  array|string              $data = null,
+  string|array|null         $class = null,
+  array|string|null         $attributes = null,
+  array|string|null         $data = null,
 ): string
 {
   return tag(

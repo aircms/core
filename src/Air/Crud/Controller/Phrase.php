@@ -70,6 +70,10 @@ class Phrase extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_PHRASES)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\Phrase $model
+   * @return null
+   */
   protected function getForm($model = null): null
   {
     return null;

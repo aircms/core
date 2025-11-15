@@ -9,6 +9,11 @@ use Air\Storage;
 
 class File extends TypeAbstract
 {
+  const string JPG = 'jpg';
+  const string PNG = 'png';
+  const string WEBP = 'webp';
+  const string AVIF = 'avif';
+
   public int $size = 0;
   public string $mime = '';
   public string $path = '';
@@ -62,7 +67,11 @@ class File extends TypeAbstract
     if (str_starts_with($this->thumbnail, 'http')) {
       return $this->thumbnail;
     }
-    return Front::getInstance()->getConfig()['air']['storage']['url'] . $this->thumbnail;
+
+    $storageUrl = Front::getInstance()->getConfig()['air']['storage']['url'];
+    $thumbnail = implode('/', array_filter(explode('/', $this->thumbnail)));
+
+    return $storageUrl . $thumbnail;
   }
 
   public function getSrc(
@@ -89,12 +98,15 @@ class File extends TypeAbstract
     if ($quality !== null) $mods[] = 'q' . $quality;
 
     $newFilename = $filename;
+    $newExt = $format ? strtolower($format) : $ext;
 
-    if (!empty($mods)) {
-      $newFilename .= '_mod_' . implode('_', $mods);
+    if (!empty($mods) || $format) {
+      $newFilename .= '_mod_';
     }
 
-    $newExt = $format ? strtolower($format) : $ext;
+    if (!empty($mods)) {
+      $newFilename .= implode('_', $mods);
+    }
 
     $src = array_values(array_filter(explode('/', "{$dirname}/{$newFilename}.{$newExt}")));
     $src = implode('/', $src);
@@ -105,9 +117,7 @@ class File extends TypeAbstract
   public function getFilename(): string
   {
     $src = explode('/', $this->src);
-    $src = array_pop($src);
-
-    return $src;
+    return array_pop($src);
   }
 
   public function getSrcContent(): string|false
@@ -127,7 +137,10 @@ class File extends TypeAbstract
 
   public function remove(): bool
   {
-    return Storage::deleteFile($this->path);
+    if ($this->mime === 'directory') {
+      return Storage::deleteFolder($this->src);
+    }
+    return Storage::deleteFile($this->src);
   }
 
   public static function fromArray(?array $file): self

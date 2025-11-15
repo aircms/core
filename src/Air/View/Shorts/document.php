@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 function document(
-  array|string         $htmlAttributes = null,
-  array|string         $htmlData = null,
-  array|string         $headAttributes = null,
-  array|string         $headData = null,
-  Closure|array|string $headContent = null,
-  array|string         $bodyAttributes = null,
-  array|string         $bodyData = null,
-  array|string         $bodyClass = null,
-  Closure|array|string $bodyContent = null,
+  array|string|null         $htmlAttributes = null,
+  array|string|null         $htmlData = null,
+  array|string|null         $headAttributes = null,
+  array|string|null         $headData = null,
+  Closure|array|string|null $headContent = null,
+  array|string|null         $bodyAttributes = null,
+  array|string|null         $bodyData = null,
+  array|string|null         $bodyClass = null,
+  Closure|array|string|null $bodyContent = null,
 ): string
 {
   return

@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 function richRadio(
-  string $name = '',
-  string $value = null,
-  array  $radios = [],
-  string $mainClass = null,
-  string $titleClass = null,
-  string $bodyClass = null
+  string  $name = '',
+  ?string $value = null,
+  array   $radios = [],
+  ?string $mainClass = null,
+  ?string $titleClass = null,
+  ?string $bodyClass = null
 ): string
 {
   $containers = [

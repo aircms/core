@@ -8,7 +8,7 @@ use Exception;
 
 class ValidatorClassWasNotFound extends Exception
 {
-  public function __construct(string $validatorClassName = null)
+  public function __construct(?string $validatorClassName = null)
   {
     parent::__construct($validatorClassName);
   }

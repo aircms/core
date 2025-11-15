@@ -5,12 +5,12 @@ declare(strict_types=1);
 use Air\Type\FaIcon;
 
 function faIcon(
-  string|FaIcon $icon = null,
-  string        $style = null,
-  string|array  $data = [],
-  array         $attributes = [],
-  string        $tag = 'i',
-  string|array  $class = null,
+  string|FaIcon|null $icon = null,
+  ?string            $style = null,
+  string|array       $data = [],
+  array              $attributes = [],
+  string             $tag = 'i',
+  string|array|null  $class = null,
 ): string
 {
   if ($icon === null) {

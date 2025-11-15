@@ -46,6 +46,10 @@ class Font extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_FONTS)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\Font $model
+   * @return Form
+   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [

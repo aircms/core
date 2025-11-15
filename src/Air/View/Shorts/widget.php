@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 function widget(
-  string               $title = null,
-  Closure|array|string $content = null,
-  bool                 $opened = false,
-  string               $mainClass = null,
-  string               $titleClass = null,
-  string               $bodyClass = null
+  ?string                   $title = null,
+  Closure|array|string|null $content = null,
+  bool                      $opened = false,
+  ?string                   $mainClass = null,
+  ?string                   $titleClass = null,
+  ?string                   $bodyClass = null
 ): string
 {
   return div(

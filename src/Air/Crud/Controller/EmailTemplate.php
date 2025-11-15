@@ -52,6 +52,10 @@ class EmailTemplate extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_EMAIL_TEMPLATES)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\EmailTemplate  $model
+   * @return Form
+   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [

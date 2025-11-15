@@ -33,6 +33,10 @@ class EmailSettings extends Single
     return Nav::getSettingsItem(Nav::SETTINGS_EMAIL_SETTINGS)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\EmailSettings $model
+   * @return Form
+   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [

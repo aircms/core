@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 function hidden(
-  string $name = null,
-  string $value = null,
-  array  $attributes = [],
+  ?string $name = null,
+  ?string $value = null,
+  array   $attributes = [],
 ): string
 {
   return tag(
@@ -22,8 +22,8 @@ function hidden(
 }
 
 function checkbox(
-  string       $name = null,
-  string       $value = null,
+  ?string      $name = null,
+  ?string      $value = null,
   bool         $checked = false,
   array|string $attributes = [],
   array|string $data = [],
@@ -67,12 +67,12 @@ function button(
 }
 
 function text(
-  string       $name = null,
-  string       $value = null,
-  array|string $class = null,
-  array|string $attributes = [],
-  array|string $data = [],
-  string       $placeholder = null,
+  ?string           $name = null,
+  ?string           $value = null,
+  array|string|null $class = null,
+  array|string      $attributes = [],
+  array|string      $data = [],
+  ?string           $placeholder = null,
 ): string
 {
   return tag(
@@ -91,12 +91,12 @@ function text(
 }
 
 function textarea(
-  string       $name = null,
-  string       $value = null,
-  array|string $class = null,
-  array|string $attributes = [],
-  array|string $data = [],
-  string       $placeholder = null,
+  ?string           $name = null,
+  ?string           $value = null,
+  array|string|null $class = null,
+  array|string      $attributes = [],
+  array|string      $data = [],
+  ?string           $placeholder = null,
 ): string
 {
   return tag(
@@ -115,11 +115,11 @@ function textarea(
 }
 
 function tel(
-  string       $name = null,
-  string       $value = null,
-  array|string $class = null,
-  array        $attributes = [],
-  string       $placeholder = null,
+  ?string           $name = null,
+  ?string           $value = null,
+  array|string|null $class = null,
+  array             $attributes = [],
+  ?string           $placeholder = null,
 ): string
 {
   return tag(
@@ -138,11 +138,11 @@ function tel(
 }
 
 function number(
-  string       $name = null,
-  string       $value = null,
-  array|string $class = null,
-  array        $attributes = [],
-  string       $placeholder = null,
+  ?string           $name = null,
+  ?string           $value = null,
+  array|string|null $class = null,
+  array             $attributes = [],
+  ?string           $placeholder = null,
 ): string
 {
   return tag(
@@ -159,11 +159,11 @@ function number(
 }
 
 function email(
-  string       $name = null,
-  string       $value = null,
-  array|string $class = null,
-  array        $attributes = [],
-  string       $placeholder = null,
+  ?string           $name = null,
+  ?string           $value = null,
+  array|string|null $class = null,
+  array             $attributes = [],
+  ?string           $placeholder = null,
 ): string
 {
   return tag(

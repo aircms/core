@@ -150,7 +150,7 @@ final class Front
     return $this;
   }
 
-  public function run(Exception|Error $exception = null)
+  public function run(Exception|Error|null $exception = null)
   {
     if (!$this->request) {
 

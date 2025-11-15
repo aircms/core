@@ -35,9 +35,9 @@ class OpenAi extends Single
 
   /**
    * @param \Air\Crud\Model\OpenAi $model
-   * @return Form|null
+   * @return Form
    */
-  protected function getForm($model = null): ?Form
+  protected function getForm($model = null): Form
   {
     return Generator::full($model, [
       Input::text('key', allowNull: true),

@@ -33,6 +33,10 @@ class SmsSettings extends Single
     return Nav::getSettingsItem(Nav::SETTINGS_SMS_SETTINGS)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\SmsSettings $model
+   * @return Form
+   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [

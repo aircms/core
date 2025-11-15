@@ -52,6 +52,10 @@ class SmsTemplate extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_SMS_TEMPLATES)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\SmsTemplate $model
+   * @return Form
+   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [

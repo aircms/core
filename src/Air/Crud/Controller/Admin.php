@@ -52,7 +52,11 @@ class Admin extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_ADMINISTRATORS)['alias'];
   }
 
-  protected function getForm($model = null): ?Form
+  /**
+   * @param \Air\Crud\Model\Admin $model
+   * @return Form
+   */
+  protected function getForm($model = null): Form
   {
     return Generator::full($model, [
       'General' => [

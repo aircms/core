@@ -16,46 +16,58 @@ class Storage
   public static function createFolder(
     string $path,
     string $name,
-    ?bool  $recursive = false,
-    ?bool  $sharding = false
-  ): string|false
+    bool   $recursive = false,
+    bool   $sharding = false
+  ): string
   {
-    $path = $path . $name;
-
     if ($sharding) {
       $hash = md5(microtime());
 
       $dir1 = substr($hash, 0, 2);
       $dir2 = substr($hash, 2, 2);
 
-      $path = $path . '/' . $dir1 . '/' . $dir2;
+      $name = $name . '/' . $dir1 . '/' . $dir2;
+      $recursive = true;
     }
 
-    return self::action('createFolder', [
+    $response = self::action('createFolder', [
       'path' => $path,
       'name' => $name,
       'recursive' => $recursive
-    ])->isOk() ? $path : false;
+    ]);
+
+    if (!$response->isOk()) {
+      throw new Exception($response->body['message']);
+    }
+
+    return $response->body['src'];
   }
 
   public static function deleteFolder(string $path): bool
   {
-    return self::action('deleteFolder', ['path' => $path])->isOk();
+     $r = self::action('deleteFolder', ['path' => $path]);
+
+     var_dump( $r); die();
+
+    $r->isOk();
   }
 
-  public static function uploadByUrl(string $path, string $url, ?string $name = null, ?bool $sharding = false): File
+  public static function uploadByUrl(string $path, string $url, bool $sharding = false): File
   {
-    $r = self::action('uploadByUrl', [
-      'path' => $path,
-      'url' => $url,
-      'name' => $name
-    ]);
-
-    if (!$r->isOk()) {
-      throw new Exception($r->body['message']);
+    if ($sharding) {
+      $path = self::createFolder('/', $path, true, $sharding);
     }
 
-    return new File($r->body);
+    $response = self::action('uploadByUrl', [
+      'path' => $path,
+      'url' => $url,
+    ]);
+
+    if (!$response->isOk()) {
+      throw new Exception($response->body['message']);
+    }
+
+    return new File($response->body);
   }
 
   public static function deleteFile(string $path): bool
@@ -65,13 +77,16 @@ class Storage
 
   /**
    * @param string $path
-   * @param File[] $files
-   * @return array
+   * @param array $files
+   * @param bool $sharding
+   * @return File[]
    * @throws Exception
    */
-  public static function uploadFiles(string $path, array $files, ?bool $sharding = false): array
+  public static function uploadFiles(string $path, array $files, bool $sharding = false): array
   {
-    $path = self::createFolder('/', $path, true, $sharding);
+    if ($sharding) {
+      $path = self::createFolder('/', $path, true, $sharding);
+    }
 
     $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
     $url = $storageConfig['url'] . '/api/uploadFile';
@@ -86,22 +101,25 @@ class Storage
       ]
     ]);
 
-    $files = [];
-    foreach ($response->body as $file) {
-      $files[] = new File($file);
+    if (!$response->isOk()) {
+      throw new Exception($response->body['message']);
     }
-    return $files;
+
+    return array_map(fn(array $file) => new File($files), $response->body);
   }
 
   /**
    * @param string $path
    * @param array $datum
-   * @return array|File[]
+   * @param bool $sharding
+   * @return File[]
    * @throws Exception
    */
-  public static function uploadDatum(string $path, array $datum, ?bool $sharding = false): array
+  public static function uploadDatum(string $path, array $datum, bool $sharding = false): array
   {
-    $path = self::createFolder('/', $path, true, $sharding);
+    if ($sharding) {
+      $path = self::createFolder('/', $path, true, $sharding);
+    }
 
     $response = self::action('uploadDatum', [
       'path' => $path,
@@ -122,10 +140,11 @@ class Storage
   /**
    * @param string $path
    * @param array $datum
+   * @param bool $sharding
    * @return File[]
    * @throws Exception
    */
-  public static function uploadBase64Datum(string $path, array $datum, ?bool $sharding = false): array
+  public static function uploadBase64Datum(string $path, array $datum, bool $sharding = false): array
   {
     foreach ($datum as $index => $image) {
       $datum[$index] = [
@@ -134,6 +153,48 @@ class Storage
       ];
     }
     return self::uploadDatum($path, $datum, $sharding);
+  }
+
+  /**
+   * @param array|string $paths
+   * @return File[]|File
+   * @throws Exception
+   */
+  public static function info(array|string $paths): array|File
+  {
+    $response = self::action('info', [
+      'paths' => $paths,
+    ]);
+
+    $files = [];
+    foreach ($response->body as $file) {
+      $files[] = new File($file);
+    }
+
+    return is_array($paths) ? $files : $files[0];
+  }
+
+  public static function annotation(
+    string $folder,
+    string $fileName,
+    string $title,
+    string $backColor,
+    string $frontColor
+  ): ?File
+  {
+    $response = self::action('annotation', [
+      'folder' => $folder,
+      'fileName' => $fileName,
+      'title' => $title,
+      'backColor' => $backColor,
+      'frontColor' => $frontColor
+    ]);
+
+    if (!$response->isOk()) {
+      return null;
+    }
+
+    return new File($response->body);
   }
 
   public static function action(string $endpoint, ?array $params = []): Response
@@ -147,61 +208,6 @@ class Storage
       'body' => $params,
       'method' => Request::POST
     ]);
-  }
-
-  /**
-   * @param array $paths
-   * @return File[]
-   * @throws Exception
-   */
-  public static function info(array $paths): array
-  {
-    $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
-    $url = $storageConfig['url'] . '/api/info';
-
-    $response = Request::run($url, [
-      'method' => Request::POST,
-      'body' => [
-        'key' => $storageConfig['key'],
-        'paths' => $paths,
-      ]
-    ]);
-
-    $files = [];
-    foreach ($response->body as $file) {
-      $files[] = new File($file);
-    }
-    return $files;
-  }
-
-  public static function annotation(
-    string $folder,
-    string $fileName,
-    string $title,
-    string $backColor,
-    string $frontColor
-  ): ?File
-  {
-    $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
-    $url = $storageConfig['url'] . '/api/annotation';
-
-    $params['key'] = $storageConfig['key'];
-    $params['folder'] = $folder;
-    $params['fileName'] = $fileName;
-    $params['title'] = $title;
-    $params['backColor'] = $backColor;
-    $params['frontColor'] = $frontColor;
-
-    $response = Request::run($url, [
-      'body' => $params,
-      'method' => Request::POST
-    ]);
-
-    if (!$response->isOk()) {
-      return null;
-    }
-
-    return new File($response->body);
   }
 
   public static function isImage(string|array $input): bool

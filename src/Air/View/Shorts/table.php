@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 function table(
   Closure|string|array|null|Generator $trs = null,
-  string|array                        $class = null,
+  string|array|null                   $class = null,
   array|string                        $attributes = [],
   array|string                        $data = [],
 ): string
@@ -20,7 +20,7 @@ function table(
 
 function tr(
   Closure|string|array|null|Generator $tds = [],
-  string|array                        $class = null,
+  string|array|null                   $class = null,
   array|string                        $attributes = [],
   array|string                        $data = [],
 ): string
@@ -36,7 +36,7 @@ function tr(
 
 function td(
   Closure|string|array|null $content = null,
-  string|array              $class = null,
+  string|array|null         $class = null,
   array|string              $attributes = [],
   array|string              $data = [],
 ): string

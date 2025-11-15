@@ -43,6 +43,10 @@ class Codes extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_CODES)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\Codes $model
+   * @return Form
+   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [

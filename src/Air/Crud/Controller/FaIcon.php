@@ -22,7 +22,7 @@ class FaIcon extends Multiple
     $this->style = $filter['style'] ?? \Air\Type\FaIcon::STYLE_SOLID;
   }
 
-  public function index(string $id = null)
+  public function index(?string $id = null)
   {
     $this->select();
   }

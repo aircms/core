@@ -12,8 +12,8 @@ function richContent(
   Closure           $htmlRenderer = null,
   Closure           $embedRenderer = null,
   Closure           $quoteRendered = null,
-  string            $containerClassName = null,
-  string            $itemClassName = null,
+  ?string           $containerClassName = null,
+  ?string           $itemClassName = null,
 ): string
 {
   if (is_string($content)) {

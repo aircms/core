@@ -10,7 +10,7 @@ class Asset extends HelperAbstract
 {
   public static ?array $config = null;
 
-  public function call(string|array $assets, string $type = null): string
+  public function call(string|array $assets, ?string $type = null): string
   {
     if (!self::$config) {
       self::$config = array_merge([

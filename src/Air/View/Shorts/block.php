@@ -6,10 +6,10 @@ use Air\Type\File;
 
 function container(
   Closure|string|array|null $content = null,
-  string|array              $class = null,
+  string|array|null         $class = null,
   array|string              $attributes = [],
   array|string              $data = [],
-  File|string               $bgImage = null
+  File|string|null          $bgImage = null
 ): string
 {
   $class = (array)$class ?? [];
@@ -25,7 +25,7 @@ function container(
 }
 
 function flex(
-  string|array              $class = null,
+  string|array|null         $class = null,
   Closure|string|array|null $content = null,
   array|string              $attributes = [],
   array|string              $data = [],
@@ -46,9 +46,9 @@ function flex(
 
 function row(
   Closure|string|array|null $content = null,
-  string|array              $class = null,
+  string|array|null         $class = null,
   array                     $attributes = [],
-  File|string               $bgImage = null
+  File|string|null          $bgImage = null
 ): string
 {
   $class = (array)$class ?? [];

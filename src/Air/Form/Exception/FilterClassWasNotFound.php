@@ -8,7 +8,7 @@ use Exception;
 
 class FilterClassWasNotFound extends Exception
 {
-  public function __construct(string $filterClassName = null)
+  public function __construct(?string $filterClassName = null)
   {
     parent::__construct($filterClassName);
   }

@@ -56,6 +56,10 @@ class Language extends Multiple
     return Nav::getSettingsItem(Nav::SETTINGS_LANGUAGES)['alias'];
   }
 
+  /**
+   * @param \Air\Crud\Model\Language $model
+   * @return Form
+   */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
