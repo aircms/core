@@ -20,6 +20,7 @@ class Config
     bool    $reportErrors = false,
     ?array  $richContent = null,
     string  $timezone = "Europe/Kyiv",
+    bool    $single = false,
   ): array
   {
     $appEntryPoint = realpath(dirname($_SERVER['SCRIPT_FILENAME'], 2));
@@ -52,10 +53,52 @@ class Config
       $contextAvailable = false;
     }
 
+    $router = [];
+    $modules = [];
+
+    if (!$single) {
+      $modules['modules'] = '\\App\\Module';
+      $router = [
+        'cli' => [
+          'module' => 'cli'
+        ],
+        'admin.*' => [
+          'module' => 'admin',
+          'air' => [
+            'asset' => [
+              'underscore' => false,
+              'prefix' => '/assets/air',
+            ],
+          ],
+        ],
+        'api.*' => [
+          'strict' => $strictRoutes,
+          'module' => 'api',
+          'routes' => $routes,
+          'air' => [
+            'strictInject' => true,
+            'contexts' => $contextAvailable ? '\\App\\Context' : null
+          ],
+        ],
+        '*' => [
+          'strict' => $strictRoutes,
+          'module' => 'ui',
+          'routes' => $routes,
+          'air' => [
+            'strictInject' => true,
+            'asset' => [
+              'underscore' => false,
+              'prefix' => '/assets/ui',
+            ],
+          ],
+        ]
+      ];
+    }
+
     return array_replace_recursive(
       [
         'air' => [
-          'modules' => '\\App\\Module',
+          ...$modules,
           'exception' => $reportErrors,
           'phpIni' => [
             'display_errors' => $reportErrors ? '1' : '0',
@@ -107,41 +150,7 @@ class Config
             'menu' => $nav,
           ],
         ],
-        'router' => [
-          'cli' => [
-            'module' => 'cli',
-          ],
-          'admin.*' => [
-            'module' => 'admin',
-            'air' => [
-              'asset' => [
-                'underscore' => false,
-                'prefix' => '/assets/air',
-              ],
-            ]
-          ],
-          'api.*' => [
-            'strict' => $strictRoutes,
-            'module' => 'api',
-            'routes' => $routes,
-            'air' => [
-              'strictInject' => true,
-              'contexts' => $contextAvailable ? '\\App\\Context' : null
-            ],
-          ],
-          '*' => [
-            'strict' => $strictRoutes,
-            'module' => 'ui',
-            'routes' => $routes,
-            'air' => [
-              'strictInject' => true,
-              'asset' => [
-                'underscore' => false,
-                'prefix' => '/assets/ui',
-              ],
-            ],
-          ],
-        ],
+        ...$router
       ],
       $extensions ?: []
     );
