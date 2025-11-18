@@ -7,10 +7,12 @@ namespace Air\Form\Element;
 class Checkbox extends ElementAbstract
 {
   public ?string $elementTemplate = 'form/element/checkbox';
+  public array $deactivate = [];
+  public bool $deactivateWhen = false;
 
-  public function __construct(string $name, array $userOptions = [])
+  public function init(): void
   {
-    parent::__construct($name, $userOptions);
+    parent::init();
     $this->setAllowNull(true);
   }
 
@@ -22,5 +24,25 @@ class Checkbox extends ElementAbstract
   public function getCleanValue(): bool
   {
     return (bool)parent::getCleanValue();
+  }
+
+  public function getDeactivate(): array
+  {
+    return $this->deactivate;
+  }
+
+  public function setDeactivate(array $deactivate): void
+  {
+    $this->deactivate = $deactivate;
+  }
+
+  public function getDeactivateWhen(): bool
+  {
+    return $this->deactivateWhen;
+  }
+
+  public function setDeactivateWhen(bool $deactivateWhen): void
+  {
+    $this->deactivateWhen = $deactivateWhen;
   }
 }

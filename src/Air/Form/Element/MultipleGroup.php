@@ -16,6 +16,9 @@ class MultipleGroup extends ElementAbstract
   public bool $allowNullGroup = true;
   public bool $isFixed = false;
 
+  /** @var ElementAbstract[][] */
+  public ?array $elementsMap = null;
+
   public function getDefaultValue(): ?array
   {
     return $this->defaultValue;
@@ -36,6 +39,9 @@ class MultipleGroup extends ElementAbstract
     $this->allowNullGroup = $allowNullGroup;
   }
 
+  /**
+   * @return ElementAbstract[]
+   */
   public function getElements(): array
   {
     $cleanElements = [];
@@ -45,9 +51,47 @@ class MultipleGroup extends ElementAbstract
     return $cleanElements;
   }
 
+  public function getElementsMap(): ?array
+  {
+    if (!$this->elementsMap) {
+      return null;
+    }
+
+    $elementsMap = [];
+
+    foreach ($this->elementsMap as $rowIndex => $row) {
+      foreach ($row as $name) {
+        foreach ($this->getElements() as $element) {
+          if ($name === $element->getName()) {
+            $elementsMap[$rowIndex][] = $element;
+          }
+        }
+      }
+    }
+    return $elementsMap;
+  }
+
+  public function setElementsMap(?array $elementsMap): void
+  {
+    $this->elementsMap = $elementsMap;
+  }
+
   public function setElements(array $elements): void
   {
-    $this->elements = $elements;
+    if (is_array($elements[0])) {
+      $plainElements = [];
+      $this->elementsMap = [];
+      foreach ($elements as $rowIndex => $map) {
+        foreach ($map as $element) {
+          $this->elementsMap[$rowIndex][] = $element->getName();
+          $plainElements[] = $element;
+        }
+      }
+      $this->elements = $plainElements;
+
+    } else {
+      $this->elements = $elements;
+    }
   }
 
   public function getGroups(): array
@@ -89,7 +133,7 @@ class MultipleGroup extends ElementAbstract
     $name = $this->getName() . '[{{groupId}}]';
 
     $this->group = new Group($name, [
-      'elements' => $this->getElements(),
+      'elements' => $this->getElementsMap() ?? $this->getElements(),
       'allowNull' => $this->isAllowNullGroup(),
       'containerTemplate' => 'form/element/multiple-group/group-template',
       'value' => $this->defaultValue,
@@ -137,7 +181,7 @@ class MultipleGroup extends ElementAbstract
     foreach (($value ?? []) as $groupValue) {
       $group = new Group($this->getName() . '[' . uniqid() . ']', [
         'label' => $this->getLabel(),
-        'elements' => $this->getElements(),
+        'elements' => $this->getElementsMap() ?? $this->getElements(),
         'allowNull' => $this->isAllowNullGroup(),
         'containerTemplate' => 'form/element/multiple-group/group-template',
         'value' => $groupValue,

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
-use Air\Crud\Locale;
 use Air\Form\Element\ElementAbstract;
 use Air\Form\Element\Hidden;
 use Air\Form\Element\Tab;
@@ -16,14 +15,20 @@ class Form
 {
   public array $elements = [];
   public string $firstTabLabel = '';
-  public string $submit = 'Save';
-  public string $template = 'index.phtml';
   public ?View $view = null;
   public string $method = 'POST';
   public ?string $action = null;
   public mixed $data = [];
   public ?string $returnUrl = null;
 
+  /**
+   * @var string[]|string[][]
+   */
+  public ?array $elementsMap = null;
+
+  /**
+   * @return ElementAbstract[]
+   */
   public function getElements(): array
   {
     return $this->elements;
@@ -34,6 +39,19 @@ class Form
     return $this->firstTabLabel;
   }
 
+  public function getElementsMap(): ?array
+  {
+    return $this->elementsMap;
+  }
+
+  public function setElementsMap(?array $elementsMap): void
+  {
+    $this->elementsMap = $elementsMap;
+  }
+
+  /**
+   * @return ElementAbstract[]
+   */
   public function getGroupedElements(): array
   {
     $groupTitle = $this->getFirstTabLabel();
@@ -68,25 +86,52 @@ class Form
     return $this->elements[$name];
   }
 
+  /**
+   * @param ElementAbstract[]|ElementAbstract[][] $elements
+   * @return void
+   */
   public function addElements(array $elements): void
   {
     if (count($elements)) {
-
-      $firstKey = array_keys($elements)[0];
-
-      if (is_string($firstKey)) {
-
-        foreach ($elements as $separator => $groupElements) {
-
-          $this->addElement(new Tab(Locale::t($separator)));
-
-          foreach ($groupElements as $element) {
-            $this->elements[$element->getName()] = $element;
-          }
+      if (is_string(array_keys($elements)[0])) {
+        foreach ($elements as $separator => $elementsGroup) {
+          $this->addElement(new Tab($separator));
+          $this->addElementsGroup($elementsGroup, $separator);
         }
       } else {
-        foreach ($elements as $element) {
-          $this->elements[$element->getName()] = $element;
+        $this->addElementsGroup($elements);
+      }
+    }
+  }
+
+  /**
+   * @param ElementAbstract[] $elementGroup
+   * @param string|null $groupName
+   * @return void
+   */
+  private function addElementsGroup(array $elementGroup, ?string $groupName = null): void
+  {
+    foreach ($elementGroup as $elementGroupIndex => $elements) {
+      if (!is_array($elements)) {
+        $elements = [$elements];
+      } else {
+        $this->elementsMap = $this->elementsMap ?? [];
+      }
+
+      foreach ($elements as $elementIndex => $element) {
+
+        $this->addElement($element);
+
+        if (is_array($this->elementsMap)) {
+          if ($groupName) {
+            $this->elementsMap[$groupName] = is_array($this->elementsMap[$groupName] ?? false) ? $this->elementsMap[$groupName] : [];
+            $this->elementsMap[$groupName][$elementGroupIndex][$elementIndex] = $element->getName();
+
+            $this->elementsMap[$groupName][$elementGroupIndex] = array_unique($this->elementsMap[$groupName][$elementGroupIndex]);
+          } else {
+            $this->elementsMap[$elementGroupIndex][$elementIndex] = $element->getName();
+            $this->elementsMap[$elementGroupIndex] = array_unique($this->elementsMap[$elementGroupIndex]);
+          }
         }
       }
     }
@@ -117,26 +162,6 @@ class Form
       }
     }
     return $values;
-  }
-
-  public function getSubmit(): string
-  {
-    return $this->submit;
-  }
-
-  public function setSubmit(string $submit): void
-  {
-    $this->submit = $submit;
-  }
-
-  public function getTemplate(): string
-  {
-    return $this->template;
-  }
-
-  public function setTemplate(string $template): void
-  {
-    $this->template = $template;
   }
 
   public function getView(): View

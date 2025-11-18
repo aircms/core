@@ -8,6 +8,7 @@ use Air\Crud\Locale;
 use Air\Filter\Email;
 use Air\Filter\HtmlSpecialChars;
 use Air\Filter\Phone;
+use Air\Filter\StripTags;
 use Air\Filter\Trim;
 use Air\Form\Element\Checkbox;
 use Air\Form\Element\Date;
@@ -36,13 +37,16 @@ use Air\Form\Element\Storage;
 use Air\Form\Element\Tab;
 use Air\Form\Element\Text;
 use Air\Form\Element\Textarea;
+use Air\Form\Element\Time;
 use Air\Form\Element\Tiny;
 use Air\Form\Element\TreeModel;
 use Air\Form\Element\Url;
+use Air\Validator\StringLength;
 
 /**
- * @method static Checkbox checkbox(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null): Checkbox
+ * @method static Checkbox checkbox(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null, array $deactivate = [], bool $deactivateWhen = false): Checkbox
  * @method static Date date(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
+ * @method static Time time(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  * @method static DateTime dateTime(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  * @method static Embed embed(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  * @method static FaIcon faIcon(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
@@ -74,6 +78,7 @@ use Air\Form\Element\Url;
  * @method static Text phone(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  * @method static Text email(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  * @method static Text safe(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
+ * @method static Text password(string $name, mixed $value = null, string $label = null, string $description = null, string $hint = null, array $filters = null, array $validators = null, bool $allowNull = null, string $placeholder = null, string $format = null, string $phpFormat = null, array $elements = null, string $keyLabel = 'Key', string $valueLabel = 'Value', string $keyPropertyName = 'key', string $valuePropertyName = 'value', string $model = null, string $field = null, array $options = null, string $type = null, bool $multiple = null)
  */
 final class Input
 {
@@ -88,7 +93,24 @@ final class Input
       $name = 'text';
       $arguments['filters'] = [
         ...$arguments['filters'] ?? [],
-        ...[Trim::class, HtmlSpecialChars::class]
+        ...[Trim::class, HtmlSpecialChars::class, StripTags::class]
+      ];
+    }
+
+    if ($name === 'password') {
+      $name = 'text';
+      $arguments['filters'] = [
+        ...$arguments['filters'] ?? [],
+        ...[Trim::class]
+      ];
+      $arguments['validators'] = [
+        ...$arguments['validators'] ?? [],
+        ...[
+          StringLength::class => [
+            'min' => 6,
+            'max' => 255
+          ],
+        ],
       ];
     }
 
@@ -122,13 +144,13 @@ final class Input
     unset($arguments['name']);
 
     if (!isset($arguments['label'])) {
-      if (str_ends_with($inputName, 'SubTitle')) {
+      if (str_ends_with($inputName, 'ubTitle')) {
         $arguments['label'] = Locale::t('Sub title');
 
-      } else if (str_ends_with($inputName, 'Title')) {
+      } else if (str_ends_with($inputName, 'itle')) {
         $arguments['label'] = Locale::t('Title');
 
-      } else if (str_ends_with($inputName, 'Description')) {
+      } else if (str_ends_with($inputName, 'escription')) {
         $arguments['label'] = Locale::t('Description');
 
       } else {

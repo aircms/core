@@ -1,117 +1,37 @@
 <?php
 
-use Air\Form\Element\Hidden;
 use Air\Form\Form;
-use Air\Crud\Locale;
-use Air\Core\Front;
 
 /** @var Form $form */
 $form = $this->form;
 
-/** @var bool $isQuickManage */
-$isQuickManage = $this->isQuickManage;
-
-$groupedElements = $form->getGroupedElements();
-
-/** @var string $formBlock */
-$formBlock = $this->formBlock;
-
-/** @var bool $isOpenAiEnabled */
-$isOpenAiEnabled = $this->isOpenAiEnabled;
-
-/** @var bool $isDeepSeekEnabled */
-$isDeepSeekEnabled = $this->isDeepSeekEnabled;
-
-/** @var array $structure */
-$structure = $this->structure;
+$onlyOneTab = count($form->getGroupedElements()) === 1;
 
 echo $this->partial('common/header');
 ?>
 
 <div class="p-3 pt-0 overflow-hidden overflow-y-auto z-1 content">
 
-  <?php if ($formBlock) : ?>
-    <div class="card mb-3">
-      <div class="card-body p-3">
-        <?php echo $formBlock; ?>
-      </div>
-    </div>
-  <?php endif; ?>
+  <?php echo $this->partial('form/partial/block'); ?>
 
   <div class="card">
-    <div class="<?php if (count($groupedElements) > 1) : ?>card-body p-3<?php endif; ?>">
+    <div class="<?php if (!$onlyOneTab) : ?>card-body p-3<?php endif; ?>">
       <form data-admin-from-manage>
-        <input type="hidden" value="<?php echo $form->getReturnUrl(); ?>" name="return-url"/>
-        <input type="hidden" value="" name="quick-save"/>
-        <?php if ($isQuickManage) : ?>
-          <input type="hidden" value="1" name="isQuickManage"/>
-        <?php endif; ?>
+
+        <?php echo $this->partial('form/partial/hidden'); ?>
+
         <div data-admin-tab>
-          <div class="d-flex <?php if (count($groupedElements) > 1) : ?>justify-content-between<?php else: ?>justify-content-end p-3<?php endif; ?>">
-            <div class="<?php if (count($groupedElements) === 1) : ?>d-none<?php else: ?>d-flex mb-2<?php endif; ?>"
-                 data-admin-tab-nav>
-              <?php foreach ($groupedElements as $title => $group) : ?>
-                <div class="rounded-4 p-3 m-0 me-2 h6 position-relative" role="button" data-mdb-ripple-init>
-                  <?php echo $title; ?>
-                  <?php if ($group['hasErrors']) : ?>
-                    <div
-                      class="rounded-pill bg-danger position-absolute end-0 top-0 lh-sm admin-form-tab-has-errors"></div>
-                  <?php endif; ?>
-                </div>
-              <?php endforeach; ?>
-            </div>
-
-            <?php if ($structure && ($isDeepSeekEnabled || $isOpenAiEnabled)) : ?>
-              <?php
-              /** @var array $storageConfig */
-              $storageConfig = Front::getInstance()->getConfig()['air']['storage'];
-              ?>
-
-              <div class="dropdown ms-2"
-                   data-admin-from-manage-magic-container
-                   data-admin-form-storage-add-key="<?php echo $storageConfig['key']; ?>"
-                   data-admin-form-storage-add-url="<?php echo $storageConfig['url']; ?>">
-                <button class="btn btn-secondary btn-sm dropdown-toggle"
-                        type="button"
-                        id="dropdownMenuButton"
-                        data-mdb-dropdown-init
-                        data-mdb-ripple-init>
-                  <i class="fa fa-sparkles me-1"></i>
-                  <?php echo Locale::t('Do magic'); ?>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <?php if ($isOpenAiEnabled) : ?>
-                    <li>
-                      <a class="dropdown-item" data-admin-from-manage-magic="openAi" role="button">
-                        <i class="fa fa-sparkles me-1"></i>
-                        Open AI
-                      </a>
-                    </li>
-                  <?php endif; ?>
-                  <?php if ($isOpenAiEnabled) : ?>
-                    <li>
-                      <a class="dropdown-item" data-admin-from-manage-magic="deepSeek" role="button">
-                        <i class="fa fa-sparkles me-1"></i>
-                        DeepSeek
-                      </a>
-                    </li>
-                  <?php endif; ?>
-                </ul>
-              </div>
-            <?php endif; ?>
+          <div
+            class="d-flex <?php if (!$onlyOneTab) : ?>justify-content-between<?php else: ?>justify-content-end p-3<?php endif; ?>">
+            <?php echo $this->partial('form/partial/tabs'); ?>
+            <?php echo $this->partial('form/partial/magic'); ?>
           </div>
           <div class="d-flex w-100" data-admin-tab-content>
-            <?php foreach ($groupedElements as $title => $group) : ?>
-              <div class="rounded-4 py-0 px-3 bg-body-secondary w-100" data-admin-tab-content-item>
-                <?php foreach ($group['elements'] as $element) : ?>
-                  <?php if ($element instanceof Hidden) : ?>
-                    <?php echo $element; ?>
-                  <?php else: ?>
-                    <div class="py-3"><?php echo $element; ?></div>
-                  <?php endif; ?>
-                <?php endforeach; ?>
-              </div>
-            <?php endforeach; ?>
+            <?php if ($form->getElementsMap()) : ?>
+              <?php echo $this->partial('form/partial/grouped-elements'); ?>
+            <?php else: ?>
+              <?php echo $this->partial('form/partial/plain-elements'); ?>
+            <?php endif; ?>
           </div>
         </div>
       </form>

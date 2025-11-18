@@ -33,14 +33,24 @@ class Language extends ModelAbstract
     self::$defaultLanguage = $language;
   }
 
+  public static function getDefault(): Language
+  {
+    return self::singleOne(['isDefault' => true]);
+  }
+
+  public static function getLanguageWithKey(string $key): Language
+  {
+    return Language::one([
+      'key' => strtolower(trim($key))
+    ]);
+  }
+
   public static function getLanguage(): ?self
   {
     if (self::$defaultLanguage) {
       return self::$defaultLanguage;
     }
-    self::$defaultLanguage = self::singleOne([
-      'isDefault' => true
-    ]);
+    self::$defaultLanguage = self::getDefault();
     return self::$defaultLanguage;
   }
 }

@@ -58,14 +58,48 @@ $(document).ready(() => {
       ],
       today: locale('Today'),
       clear: locale('Clear'),
-      dateFormat: 'MM/dd/yyyy',
+      dateFormat: 'yyyy-MM-dd',
       timeFormat: 'HH:mm',
       firstDay: 1
     },
     buttons: [locale('clear')]
   };
 
-  wait.on('[data-admin-datepicker]', (dP) => new AirDatepicker(dP, aTPS));
-  wait.on('[data-admin-timepicker]', (tP) => new AirDatepicker(tP, {...aTPS, timepicker: true, onlyTimepicker: true}));
-  wait.on('[data-admin-datetimepicker]', (dTP) => new AirDatepicker(dTP, {...aTPS, timepicker: true}));
+  const initAirDateTimePicker = (el, options = {}) => {
+    let selectedDates = $(el).val();
+    if (options.onlyTimepicker) {
+      selectedDates = '2000-03-04 ' + selectedDates;
+    }
+    new AirDatepicker(el, {
+      ...aTPS,
+      ...options,
+      ...{selectedDates}
+    });
+  };
+
+
+  wait.on('[data-admin-datepicker]', (dP) => {
+    const dateFormat = $(dP).data('admin-datetimepicker-format') ?? 'yyyy-MM-dd';
+
+    initAirDateTimePicker(dP, {dateFormat});
+  });
+
+  wait.on('[data-admin-timepicker]', (dP) => {
+    const timeFormat = $(dP).data('admin-datetimepicker-format') ?? 'HH:mm';
+
+    initAirDateTimePicker(dP, {
+      timepicker: true,
+      onlyTimepicker: true,
+      timeFormat
+    });
+  });
+  wait.on('[data-admin-datetimepicker]', (dP) => {
+    const dateFormat = $(dP).data('admin-datetimepicker-format') ?? 'yyyy-MM-dd HH:mm';
+
+    initAirDateTimePicker(dP, {
+      timepicker: true,
+      dateFormat: dateFormat.split(' ')[0],
+      timeFormat: dateFormat.split(' ')[1],
+    });
+  });
 });

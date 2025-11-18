@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Air\Form;
 
-use Air\Core\Front;
 use Air\Crud\Locale;
 use Air\Crud\Model\Language;
 use Air\Crud\Nav;
@@ -22,12 +21,12 @@ use Air\Form\Element\Model;
 use Air\Form\Element\MultipleModel;
 use Air\Form\Element\MultiplePage;
 use Air\Form\Element\Page;
-use Air\Form\Element\Quote;
 use Air\Form\Element\RichContent;
 use Air\Form\Element\Select;
 use Air\Form\Element\Storage;
 use Air\Form\Element\Text;
 use Air\Form\Element\Textarea;
+use Air\Form\Element\Time;
 use Air\Form\Element\Tiny;
 use Air\Form\Element\Url;
 use Air\Model\ModelAbstract;
@@ -41,19 +40,20 @@ final class Generator
 
   public static function full(?ModelAbstract $model = null, array $elements = []): Form
   {
-    return new Form(['data' => $model], self::defaultElement($model, $elements, true));
+    return new Form(['data' => $model], self::defaultElement($model, $elements, true, true));
   }
 
   public static function fullRequired(?ModelAbstract $model, array $elements = []): Form
   {
-    return new Form(['data' => $model], self::defaultElement($model, $elements, true, false));
+    return new Form(['data' => $model], self::defaultElement($model, $elements, true, true, false));
   }
 
-  public static function defaultElement(
+  private static function defaultElement(
     ?ModelAbstract $model = null,
-    array         $userElements = [],
-    ?bool         $includeReferences = false,
-    bool          $allowNull = true
+    array          $userElements = [],
+    bool           $includeReferences = false,
+    bool           $includeEnums = false,
+    bool           $allowNull = true
   ): array
   {
     if (count($userElements) && isset($userElements[0])) {
@@ -64,46 +64,57 @@ final class Generator
 
     $formElements = [
       'General' => [
-        'enabled' => null,
-        'url' => null,
-        'date' => null,
-        'dateTime' => null,
-        'title' => null,
-        'subTitle' => null,
-        'description' => null,
-        'quote' => null,
-        'icon' => null,
-        'faIcon' => null,
-        'image' => null,
-        'images' => null,
-        'file' => null,
-        'files' => null,
-        'name' => null,
-        'login' => null,
-        'password' => null,
-        'language' => null
-      ],
-      'Documents' => [
-        'page' => null,
-        'pages' => null,
+        'Common' => [
+          'language' => null,
+          'enabled' => null,
+          'date' => null,
+          'dateTime' => null,
+          'time' => null,
+        ],
+        'Title' => [
+          'title' => null,
+          'url' => null,
+        ],
+        'Description' => [
+          'subTitle' => null,
+          'description' => null,
+          'name' => null,
+          'login' => null,
+        ],
+        'Media' => [
+          'icon' => null,
+          'faIcon' => null,
+          'image' => null,
+          'images' => null,
+          'file' => null,
+          'files' => null,
+        ],
       ],
       'Content' => [
-        'content' => null,
-        'richContent' => null,
-        'embed' => null,
+        [
+          'content' => null,
+          'richContent' => null,
+          'embed' => null,
+          'page' => null,
+          'pages' => null
+        ],
       ],
       'META settings' => [
-        'meta' => null,
+        [
+          'meta' => null
+        ],
       ],
     ];
 
     if (!Nav::getSettingsItem(Nav::SETTINGS_LANGUAGES)) {
-      $formElements['General']['language'] = null;
+      $formElements['General'][0]['language'] = null;
     }
 
     foreach ($model->getMeta()->getProperties() as $property) {
       if ($property->isEnum()) {
-        $formElements['General'][$property->getName()] = null;
+        foreach ($formElements['General'] as $groupIndex => $group) {
+          unset($formElements['General'][$groupIndex][$property->getName()]);
+        }
       }
     }
 
@@ -119,51 +130,65 @@ final class Generator
           $type = substr($type, 0, strlen($type) - 2);
         }
         if (class_exists($type) && is_subclass_of($type, ModelAbstract::class)) {
-          $formElements['References'][$property->getName()] = null;
+          $formElements['References'][][$property->getName()] = null;
         }
       }
     }
 
-    foreach ($userElements as $userGroupName => $userGroupElements) {
-      foreach ($userGroupElements as $userGroupElement) {
-        $userGroupElementName = $userGroupElement->getname();
-
-        $formElements[$userGroupName] = $formElements[$userGroupName] ?? [];
-
-        if (!isset($formElements[$userGroupName][$userGroupElementName])) {
-          $formElements[$userGroupName][$userGroupElementName] = $userGroupElement;
-        }
-
-        foreach ($formElements as $formGroupName => $formGroupElements) {
-          if ($formGroupName !== $userGroupName) {
-            unset($formElements[$formGroupName][$userGroupElementName]);
-          }
+    if ($includeEnums) {
+      $formElements['Enums'] = [];
+      foreach ($model->getMeta()->getProperties() as $property) {
+        if ($property->isEnum()) {
+          $formElements['Enums'][][$property->getName()] = null;
         }
       }
     }
 
-    foreach ($formElements as $groupName => $elements) {
-      foreach ($elements as $elementName => $element) {
+    foreach ($userElements as $userGroupName => $userGroupElementRows) {
+      foreach ($userGroupElementRows as $userGroupElementRowIndex => $userGroupElements) {
 
-        if ($model->getMeta()->hasProperty($elementName)) {
-          $property = $model->getMeta()->getPropertyWithName($elementName);
-          $type = $property->getType();
-          if (str_contains($type, '[]')) {
-            $type = substr($type, 0, strlen($type) - 2);
+        if (!is_array($userGroupElements)) {
+          $userGroupElements = [$userGroupElements];
+        }
+
+        foreach ($userGroupElements as $userGroupElement) {
+
+          $formElements[$userGroupName] = $formElements[$userGroupName] ?? [];
+
+          $userGroupElementName = $userGroupElement->getName();
+
+          foreach ($formElements as $formElementGroupName => $formElementsGroup) {
+            foreach ($formElementsGroup as $formElementsRowIndex => $formElementsRow) {
+              unset($formElements[$formElementGroupName][$formElementsRowIndex][$userGroupElementName]);
+            }
           }
 
-          if (is_subclass_of($type, ModelAbstract::class)
-            && $completedElement = self::addModelElement($elementName, $model, $element, $allowNull)
-          ) {
-            $formElements[$groupName][$elementName] = $completedElement;
-
-          } elseif ($completedElement = self::addElement($elementName, $model, $element, $allowNull)) {
-            $formElements[$groupName][$elementName] = $completedElement;
-          }
+          $formElements[$userGroupName][$userGroupElementRowIndex][$userGroupElementName] = $userGroupElement;
         }
       }
-      $formElements[$groupName] = array_values(array_filter($formElements[$groupName]));
     }
+
+    foreach ($formElements as $groupName => $rowElements) {
+      foreach ($rowElements as $rowElementIndex => $elements) {
+        foreach ($elements as $elementName => $element) {
+
+          if ($model->getMeta()->hasProperty($elementName)) {
+            $property = $model->getMeta()->getPropertyWithName($elementName);
+
+            if ($property->isModel() && $completedElement = self::addModelElement($elementName, $model, $element, $allowNull)) {
+              $formElements[$groupName][$rowElementIndex][$elementName] = $completedElement;
+
+            } elseif ($completedElement = self::addElement($elementName, $model, $element)) {
+              $formElements[$groupName][$rowElementIndex][$elementName] = $completedElement;
+            }
+          }
+
+          $formElements[$groupName][$rowElementIndex] = array_filter($formElements[$groupName][$rowElementIndex]);
+        }
+      }
+      $formElements[$groupName] = array_filter($formElements[$groupName]);
+    }
+
     return array_filter($formElements);
   }
 
@@ -176,14 +201,14 @@ final class Generator
     return match ($name) {
       'language' => Model::class,
       'url' => Url::class,
-      'title', 'subTitle', 'name', 'login', 'password' => Text::class,
+      'title', 'subTitle', 'name', 'login' => Text::class,
       'enabled' => Checkbox::class,
       'date' => Date::class,
       'dateTime' => DateTime::class,
+      'time' => Time::class,
       'description' => Textarea::class,
       'image', 'images', 'file', 'files' => Storage::class,
       'meta' => Meta::class,
-      'quote' => Quote::class,
       'content' => Tiny::class,
       'embed' => Embed::class,
       'richContent' => RichContent::class,
@@ -196,8 +221,8 @@ final class Generator
   }
 
   private static function addElement(
-    string          $name,
-    ModelAbstract   $model,
+    string           $name,
+    ModelAbstract    $model,
     ?ElementAbstract $userElement = null,
   ): ?ElementAbstract
   {
@@ -303,6 +328,13 @@ final class Generator
     ];
   }
 
+  private static function time(): array
+  {
+    return [
+      'label' => Locale::t('Time'),
+    ];
+  }
+
   private static function title(): array
   {
     return [
@@ -374,14 +406,6 @@ final class Generator
       'description' => Locale::t('Complete your web page meta tags, including title, description, and keywords, to enhance ' .
         'visibility on search engines and attract your target audience.'),
       'allowNull' => false,
-    ];
-  }
-
-  private static function quote(): array
-  {
-    return [
-      'label' => Locale::t('Quote'),
-      'allowNull' => true,
     ];
   }
 
@@ -471,14 +495,6 @@ final class Generator
   {
     return [
       'label' => Locale::t('Login'),
-      'allowNull' => false,
-    ];
-  }
-
-  private static function password(): array
-  {
-    return [
-      'label' => Locale::t('Password'),
       'allowNull' => false,
     ];
   }

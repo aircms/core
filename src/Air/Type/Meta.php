@@ -160,11 +160,11 @@ class Meta extends TypeAbstract
     if ($object) {
       if ($object->getMeta()->hasProperty('title')
         && $object->getMeta()->getPropertyWithName('title')->getType() === 'string') {
-        $defaults['title'] = mb_substr($object->title, 0, 60);
+        $defaults['title'] = mb_substr($object->title ?? '', 0, 60);
 
       } elseif ($object->getMeta()->hasProperty('subTitle')
         && $object->getMeta()->getPropertyWithName('subTitle')->getType() === 'string') {
-        $defaults['title'] = mb_substr($object->subTitle, 0, 60);
+        $defaults['title'] = mb_substr($object->subTitle ?? '', 0, 60);
       }
 
       if ($object->getMeta()->hasProperty('description')
@@ -173,7 +173,7 @@ class Meta extends TypeAbstract
 
       } elseif ($object->getMeta()->hasProperty('content')
         && $object->getMeta()->getPropertyWithName('content')->getType() === 'string') {
-        $defaults['description'] = mb_substr(strip_tags($object->content), 0, 60);
+        $defaults['description'] = mb_substr(strip_tags($object->content ?? ''), 0, 60);
 
       } elseif ($object->getMeta()->hasProperty('richContent')) {
         /** @var RichContent $richContent */

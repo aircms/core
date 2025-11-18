@@ -7,7 +7,7 @@ namespace Air\Form\Element;
 class DateTime extends ElementAbstract
 {
   public ?string $elementTemplate = 'form/element/date-time';
-  public string $format = 'YYYY-MM-DD HH:mm';
+  public string $format = 'yyyy-MM-dd HH:mm';
   public string $phpFormat = 'Y-m-d H:i';
 
   public function getFormat(): string

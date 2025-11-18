@@ -7,9 +7,7 @@ namespace Air\Form\Element;
 class Date extends ElementAbstract
 {
   public ?string $elementTemplate = 'form/element/date';
-
   public string $format = 'YYYY-MM-DD';
-
   public string $phpFormat = 'Y-m-d';
 
   public function getFormat(): string

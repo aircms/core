@@ -1,24 +1,23 @@
 <?php
 
-use Air\Form\Element\Date;
+use Air\Form\Element\Time;
 
-/** @var Date $element */
+/** @var Time $element */
 $element = $this->element;
 ?>
 <div class="form-outline" data-mdb-input-init>
-  <i class="fas fa-calendar trailing"></i>
+  <i class="fas fa-clock trailing"></i>
   <input type="text"
          id="<?php echo $element->getName(); ?>"
          name="<?php echo $element->getName(); ?>"
     <?php if ($element->getValue()) : ?>
-      value="<?php echo date($element->getPhpFormat(), $element->getValue()); ?>"
+      value="<?php echo $element->getValue(); ?>"
     <?php endif; ?>
          class="form-control form-icon-trailing"
          autocomplete="off"
          readonly
          role="button"
-         data-admin-datepicker-format="<?php echo $element->getFormat(); ?>"
-         data-admin-datepicker>
+         data-admin-timepicker>
   <label class="form-label" for="<?php echo $element->getName(); ?>">
     <?php echo $element->getLabel(); ?>
   </label>

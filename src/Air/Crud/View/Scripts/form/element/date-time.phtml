@@ -17,6 +17,7 @@ $element = $this->element;
          autocomplete="off"
          readonly
          role="button"
+         data-admin-datetimepicker-format="<?php echo $element->getFormat(); ?>"
          data-admin-datetimepicker>
   <label class="form-label" for="<?php echo $element->getName(); ?>">
     <?php echo $element->getLabel(); ?>

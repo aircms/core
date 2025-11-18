@@ -10,6 +10,32 @@ class Group extends ElementAbstract
   public array $elements = [];
   public array $originalElementNames = [];
 
+  /** @var string[][] */
+  public ?array $elementsMap = null;
+
+  public function __construct(string $name, array $userOptions = [])
+  {
+    $this->elementsMap = [];
+    $elements = [];
+    foreach ($userOptions['elements'] as $index => $userElements) {
+      $this->elementsMap[$index] = [];
+
+      if (is_array($userElements)) {
+        /** @var ElementAbstract $element */
+        foreach ($userElements as $element) {
+          $this->elementsMap[$index][] = $element->getName();
+          $elements[] = $element;
+        }
+      } else {
+        $this->elementsMap[$index][] = $userElements->getName();
+        $elements[] = $userElements;
+      }
+    }
+    $userOptions['elements'] = $elements;
+
+    parent::__construct($name, $userOptions);
+  }
+
   public function init(): void
   {
     parent::init();
@@ -22,6 +48,17 @@ class Group extends ElementAbstract
     }
 
     $this->updateNamesWith($this->getName());
+
+    if ($this->elementsMap) {
+      $elementIndex = 0;
+      foreach ($this->elementsMap as $rowIndex => $map) {
+        foreach ($map as $colIndex => $element) {
+          $name = $this->getName() . '[' . $this->originalElementNames[$elementIndex] . ']';
+          $this->elementsMap[$rowIndex][$colIndex] = $name;
+          $elementIndex++;
+        }
+      }
+    }
   }
 
   public function updateNamesWith(string $parentName): void
@@ -40,6 +77,19 @@ class Group extends ElementAbstract
     }
   }
 
+  public function getElementsMap(): ?array
+  {
+    return $this->elementsMap;
+  }
+
+  public function setElementsMap(?array $elementsMap): void
+  {
+    $this->elementsMap = $elementsMap;
+  }
+
+  /**
+   * @return ElementAbstract[]
+   */
   public function getElements(): array
   {
     return $this->elements;
