@@ -32,6 +32,10 @@ class Auth
       return true;
     }
 
+    if ((Front::getInstance()->getConfig()['air']['admin']['notAllowed'] ?? false) == $controller) {
+      return true;
+    }
+
     foreach ($admin->permissions as $permission) {
       if (strtolower($permission['controller']) === strtolower($controller)) {
         return true;

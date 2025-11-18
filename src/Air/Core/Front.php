@@ -8,6 +8,8 @@ use Air\Core\Exception\ActionMethodIsReserved;
 use Air\Core\Exception\ActionMethodWasNotFound;
 use Air\Core\Exception\ControllerClassWasNotFound;
 use Air\Core\Exception\Stop;
+use Air\Crud\Controller\Login;
+use Air\Crud\Controller\NotAllowed;
 use Air\Crud\Controller\RobotsTxtUi;
 use Air\Crud\Nav;
 use Air\Model\ModelAbstract;
@@ -399,6 +401,14 @@ final class Front
 
     if ($controller === 'robots.txt') {
       return RobotsTxtUi::class;
+    }
+
+    if (($this->getConfig()['air']['admin']['auth']['route'] ?? false) === $controller) {
+      return Login::class;
+    }
+
+    if (($this->getConfig()['air']['admin']['notAllowed'] ?? false) === $controller) {
+      return NotAllowed::class;
     }
 
     if ($this->config['air']['contexts'] ?? false) {

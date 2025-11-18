@@ -11,7 +11,6 @@ use Air\Model\ModelAbstract;
  *
  * @property string $id
  *
- * @property string $name
  * @property string $login
  * @property string $password
  *
