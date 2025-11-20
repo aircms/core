@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Crud\Controller\MultipleHelper;
 
 use Air\Crud\Model\DeepSeek;
+use Air\Crud\Nav;
 use Air\Model\ModelAbstract;
 use Air\Crud\Model\OpenAi;
 use Air\Type\File;
@@ -53,11 +54,19 @@ trait Magic
 
   protected function isOpenAiEnabled(): bool
   {
+    if (!Nav::getSettingsItem(Nav::SETTINGS_OPENAI)) {
+      return false;
+    }
+
     return OpenAi::singleOne()?->enabled ?? false;
   }
 
   protected function isDeepSeekEnabled(): bool
   {
+    if (!Nav::getSettingsItem(Nav::SETTINGS_DEEPSEEK)) {
+      return false;
+    }
+
     return DeepSeek::singleOne()?->enabled ?? false;
   }
 

@@ -31,7 +31,6 @@ class Meta extends ElementAbstract
       $value['ogImage'] = json_decode($value['ogImage'], true);
     }
     $value['useModelData'] = (bool)($value['useModelData'] ?? false);
-
     return new \Air\Type\Meta($value);
   }
 }

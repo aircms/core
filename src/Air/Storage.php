@@ -45,7 +45,7 @@ class Storage
 
   public static function deleteFolder(string $path): bool
   {
-     return self::action('deleteFolder', ['path' => $path])->isOk();
+    return self::action('deleteFolder', ['path' => $path])->isOk();
   }
 
   public static function uploadByUrl(string $path, string $url, bool $sharding = false): File
@@ -113,9 +113,9 @@ class Storage
    */
   public static function uploadDatum(string $path, array $datum, bool $sharding = false): array
   {
-    if ($sharding) {
-      $path = self::createFolder('/', $path, true, $sharding);
-    }
+    $path = self::createFolder('/', $path, true, $sharding);
+
+    ini_set('memory_limit', -1);
 
     $response = self::action('uploadDatum', [
       'path' => $path,
@@ -123,14 +123,12 @@ class Storage
     ]);
 
     if (!$response->isOk()) {
-      throw new Exception($response->body['message']);
+      throw new Exception($response->body['message'] ?? 'Unknown exception');
     }
 
-    $files = [];
-    foreach ($response->body as $file) {
-      $files[] = new File($file);
-    }
-    return $files;
+    return Map::multiple($response->body, function (array $file) {
+      return new File($file);
+    });
   }
 
   /**
@@ -168,6 +166,31 @@ class Storage
     }
 
     return is_array($paths) ? $files : $files[0];
+  }
+
+  public static function refactor(
+    File $file,
+    ?int $width = null,
+    ?int $height = null,
+    ?int $quality = null,
+  ): bool
+  {
+    if (!$file->isImage()) {
+      return false;
+    }
+
+    try {
+      return self::action('refactor', [
+        'path' => $file->src,
+        'width' => $width,
+        'height' => $height,
+        'quality' => $quality,
+      ])->isOk();
+
+    } catch (Throwable) {
+
+    }
+    return false;
   }
 
   public static function annotation(

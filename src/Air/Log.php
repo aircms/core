@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Air;
 
 use Air\Core\Front;
+use Air\Core\Request;
+use Throwable;
 
 class Log
 {
@@ -33,5 +35,32 @@ class Log
     }
 
     return 0;
+  }
+
+  public static function requestException(Throwable $exception, Request $request): void
+  {
+    $params = [
+      'params' => [
+        'get' => $request->getGetAll(),
+        'post' => $request->getPostAll(),
+      ],
+    ];
+
+    $log = [
+      'ip' => $request->getIp(),
+      'user-agent' => $request->getUserAgent(),
+      'handler' => get_class($exception),
+      'trace' => $exception->getTrace(),
+      'code' => $exception->getCode(),
+    ];
+
+    try {
+      Log::error($exception->getMessage(), [...$log, ...$params]);
+    } catch (Throwable) {
+      try {
+        Log::error($exception->getMessage(), $log);
+      } catch (Throwable) {
+      }
+    }
   }
 }

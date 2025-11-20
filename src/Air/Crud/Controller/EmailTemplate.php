@@ -53,12 +53,13 @@ class EmailTemplate extends Multiple
   }
 
   /**
-   * @param \Air\Crud\Model\EmailTemplate  $model
+   * @param \Air\Crud\Model\EmailTemplate $model
    * @return Form
    */
   protected function getForm($model = null): Form
   {
     return Generator::full($model, [
+      Input::text('url'),
       Input::text('subject'),
       Input::tiny('body'),
     ]);

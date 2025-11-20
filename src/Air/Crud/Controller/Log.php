@@ -4,16 +4,41 @@ declare(strict_types=1);
 
 namespace Air\Crud\Controller;
 
+use Air\Core\Route;
 use Air\Crud\Controller\MultipleHelper\Accessor\Control;
 use Air\Crud\Controller\MultipleHelper\Accessor\Filter;
 use Air\Crud\Controller\MultipleHelper\Accessor\Header;
+use Air\Crud\Controller\MultipleHelper\Accessor\HeaderButton;
 use Air\Crud\Controller\MultipleHelper\Accessor\Ui;
 
 use Air\Crud\Locale;
+use Air\Crud\Nav;
 use Air\Type\FaIcon;
 
 class Log extends Multiple
 {
+  protected function getSorting(): array
+  {
+    return [
+      'createdAt' => -1
+    ];
+  }
+
+  protected function getForm($model = null): null
+  {
+    return null;
+  }
+
+  protected function getHeaderButtons(): array
+  {
+    if ($nav = Nav::getSettingsItem(Nav::SETTINGS_LOGS)) {
+      return [
+        HeaderButton::item(Route::assembleRoute(controller: $nav['alias'], action: 'clear'), title: 'Clear')
+      ];
+    }
+    return [];
+  }
+
   protected function getTitle(): string
   {
     return Locale::t("Logs");
@@ -63,6 +88,15 @@ class Log extends Multiple
     return [
       Control::html(['action' => 'details'], FaIcon::ICON_INFO_CIRCLE, Locale::t('Details'))
     ];
+  }
+
+  public function clear(): void
+  {
+    \Air\Crud\Model\Log::batchRemove();
+
+    if ($nav = Nav::getSettingsItem(Nav::SETTINGS_LOGS)) {
+      $this->redirect(Route::assembleRoute(controller: $nav['alias']));
+    }
   }
 
   public function details(\Air\Crud\Model\Log $id): string

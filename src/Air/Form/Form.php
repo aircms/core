@@ -285,7 +285,7 @@ class Form
 
     foreach ($this->getElements() as $element) {
       if (!($element instanceof Tab)) {
-        $element->setValue($model[$element->getName()] ?? null);
+        $element->setValue($model[$element->getName()] ?? $element->getValue());
       }
       $element->init();
     }

@@ -46,7 +46,9 @@ class Control
 
   public static function runAndReload(array|string $url, string $icon, string $title, string|false $confirm = false): array
   {
-    $url['controller'] = $url['controller'] ?? Front::getInstance()->getRouter()->getController();
+    if (is_array($url)) {
+      $url['controller'] = $url['controller'] ?? Front::getInstance()->getRouter()->getController();
+    }
 
     return [
       'type' => 'run-and-reload',

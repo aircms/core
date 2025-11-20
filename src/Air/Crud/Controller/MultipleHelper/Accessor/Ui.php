@@ -52,6 +52,16 @@ class Ui
     return implode(' ', $parts);
   }
 
+  public static function isToday(int $timestamp): bool
+  {
+    return date("Y-m-d") === date("Y-m-d", $timestamp);
+  }
+
+  public static function isTomorrow(int $timestamp): bool
+  {
+    return date("Y-m-d", strtotime('tomorrow')) === date("Y-m-d", $timestamp);
+  }
+
   public static function date(int $timestamp, string $format = 'Y/m/d H:i'): string
   {
     return date($format, $timestamp);
@@ -131,13 +141,27 @@ class Ui
 
   public static function modelPreview(ModelAbstract $model): string
   {
-    return div(class: 'admin-table-row-image', content: div(
-      class: 'd-flex align-items-center',
-      content: [
-        $model->getMeta()->hasProperty('image') ? div(class: 'bg-image me-3', content: self::imgPreview($model->image)) : null,
-        span($model->title)
-      ]
-    ));
+    $imagePreview = null;
+    if ($model->getMeta()->hasProperty('image')) {
+      $imagePreview = div(class: 'bg-image me-3', content: self::imgPreview($model->image));
+    } else if ($model->getMeta()->hasProperty('images')) {
+      $imagePreview = div(class: 'bg-image me-3', content: self::imgPreview($model->image[0]));
+    }
+
+    $title = null;
+    if ($model->getMeta()->hasProperty('title')) {
+      $title = span($model->title);
+    } else if ($model->getMeta()->hasProperty('name')) {
+      $title = span($model->name);
+    }
+
+    return div(
+      class: 'admin-table-row-image',
+      content: div(
+        class: 'd-flex align-items-center',
+        content: [$imagePreview, $title]
+      )
+    );
   }
 
   public static function imgsPreview(?array $files = null): string
@@ -245,7 +269,7 @@ class Ui
             $collClass = 'col-6';
             yield col($collClass . ' small', render(content($key)));
           }
-          yield col($collClass, render(content($value)));
+          yield col($collClass, render(content($value ?? '')));
         }
       }
     );
@@ -260,7 +284,7 @@ class Ui
     Closure|string|array|null $header1 = null,
     Closure|string|array|null $header2 = null,
     Closure|string|array|null $content = null,
-    string|array|null              $containerClass = null,
+    string|array|null         $containerClass = null,
   ): string
   {
     return div(

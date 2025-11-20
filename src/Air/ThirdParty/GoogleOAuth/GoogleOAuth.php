@@ -10,17 +10,14 @@ use Air\ThirdParty\GoogleOAuth\Exception\InvalidCode;
 use Air\ThirdParty\GoogleOAuth\Exception\UnableToGetUserByAccessToken;
 use Throwable;
 
-class GoogleOAuth
+readonly class GoogleOAuth
 {
-  private string $clientId;
-  private string $clientSecret;
-  private string $redirectUrl;
-
-  public function __construct(string $clientId, string $clientSecret, string $redirectUrl)
+  public function __construct(
+    private ?string $clientId = null,
+    private ?string $clientSecret = null,
+    private ?string $redirectUrl = null,
+  )
   {
-    $this->clientId = $clientId;
-    $this->clientSecret = $clientSecret;
-    $this->redirectUrl = $redirectUrl;
   }
 
   public function authUrl(): string

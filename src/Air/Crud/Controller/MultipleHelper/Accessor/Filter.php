@@ -28,17 +28,17 @@ class Filter
   }
 
   public static function filter(
-    string       $type,
-    string|array $by,
-    mixed        $value = null,
-    ?string      $title = null,
-    ?string      $true = null,
-    ?string      $false = null,
-    ?string      $field = null,
-    ?string      $model = null,
-    ?string      $parent = null,
-    ?Closure     $source = null,
-    ?array       $options = null,
+    string            $type,
+    string|array|null $by = null,
+    mixed             $value = null,
+    ?string           $title = null,
+    ?string           $true = null,
+    ?string           $false = null,
+    ?string           $field = null,
+    ?string           $model = null,
+    ?string           $parent = null,
+    ?Closure          $source = null,
+    ?array            $options = null,
   ): array
   {
     if (!$title && is_string($by)) {
@@ -92,7 +92,7 @@ class Filter
 
   public static function search(
     array|string $by = ['search', 'id', 'title', 'subTitle', 'description'],
-    ?string       $value = null
+    ?string      $value = null
   ): array
   {
     return self::filter(self::SEARCH, $by, $value);
@@ -131,9 +131,9 @@ class Filter
   }
 
   public static function enum(
-    string $by,
+    string  $by,
     ?string $title = null,
-    mixed  $value = null,
+    mixed   $value = null,
   ): array
   {
     $reflectionClass = new ReflectionClass(self::getModelClass());
@@ -163,7 +163,7 @@ class Filter
   public static function select(
     ?string $title = null,
     ?string $by = null,
-    mixed  $value = null,
+    mixed   $value = null,
     ?array  $options = []
   ): array
   {

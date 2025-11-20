@@ -10,7 +10,7 @@ $element = $this->element;
          type="<?php echo $element->getType(); ?>"
          id="<?php echo $element->getName(); ?>"
          name="<?php echo $element->getName(); ?>"
-         value="<?php echo htmlspecialchars($element->getValue()); ?>"
+         value="<?php echo htmlspecialchars($element->getValue() ?? ''); ?>"
          <?php if ($element->isAllowNull()) : ?>required<?php endif; ?>>
 
   <?php if ($hint = ($element->getHint() ?? $element->getLabel())) : ?>

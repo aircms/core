@@ -15,7 +15,7 @@ $html = $this->html;
   <div class="card-body p-3" role="button" data-admin-form-tiny>
     <textarea class="d-none" name="<?php echo $name; ?>[value]"><?php echo $html; ?></textarea>
     <div data-admin-form-tiny-preview class="admin-tiny-preview">
-      <?php if (!strlen($html)) : ?>
+      <?php if (!strlen($html ?? '')) : ?>
         <div class="text-muted text-center small" style="user-select: none">
           <?php echo \Air\Crud\Locale::t('Double click to edit text'); ?>
         </div>

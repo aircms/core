@@ -67,9 +67,15 @@ class Driver extends DriverAbstract
       $cond = [$cond];
     }
     if (is_array($cond) && array_key_exists('id', $cond)) {
-      $cond['_id'] = new ObjectId(
-        !empty($cond['id']) ? (string)$cond['id'] : null
-      );
+      try {
+        $cond['_id'] = new ObjectId(
+          !empty($cond['id']) ? (string)$cond['id'] : null
+        );
+      } catch (Throwable $e) {
+        if ($this->getModel()->getMeta()->hasProperty('url')) {
+          $cond['url'] = $cond['id'];
+        }
+      }
       unset($cond['id']);
     }
     return $cond;

@@ -42,7 +42,7 @@ class Email
   protected static function render(string $text, array $vars = []): string
   {
     foreach ($vars as $k => $v) {
-      $text = str_replace('{' . $k . '}', $v, $text);
+      $text = str_replace('{' . $k . '}', $v ?: '', $text);
     }
     return $text;
   }
