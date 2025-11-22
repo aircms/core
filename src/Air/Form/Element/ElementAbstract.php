@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Air\Form\Element;
 
 use Air\Crud\Locale;
+use Air\Exception\InvalidInput;
 use Air\Filter\FilterAbstract;
 use Air\Form\Exception\FilterClassWasNotFound;
 use Air\Form\Exception\ValidatorClassWasNotFound;
@@ -356,6 +357,14 @@ abstract class ElementAbstract
   public function setContainerTemplate(string $containerTemplate): void
   {
     $this->containerTemplate = $containerTemplate;
+  }
+
+  public function validateOfFail(mixed $value = null): mixed
+  {
+    if (!$this->isValid($value)) {
+      throw new InvalidInput();
+    }
+    return $this->getValue();
   }
 
   public function init()
