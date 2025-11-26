@@ -42,7 +42,7 @@ $isCard = function (ElementAbstract $element): bool {
 
       <?php foreach ($tab as $groupTitle => $group) : ?>
 
-        <div class="d-flex align-items-start">
+        <div class="d-flex gap-3 align-items-start">
 
           <?php if (is_string($groupTitle)) : ?>
             <div class="admin-form-label">
@@ -52,7 +52,7 @@ $isCard = function (ElementAbstract $element): bool {
             </div>
           <?php endif; ?>
 
-          <div class="row flex-grow-1">
+          <div class="d-flex gap-3 flex-grow-1">
             <?php foreach ($group as $elementName) : ?>
 
               <?php if (!is_string($groupTitle) && $label = $elements[$elementName]->getLabel()) : ?>
